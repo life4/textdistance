@@ -1,4 +1,4 @@
-#Algorithms
+# Algorithms
 
 * **h -- hamming: substitution**. Compute the Hamming distance between the two or more sequences. The Hamming distance is the number of differing items in ordered sequences.
 * **l -- levenstein: deletion, insertion, substitution**. Compute the absolute Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
@@ -6,22 +6,22 @@
 * **s -- sorensen**. Compute the Sorensen distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
 * **j -- jaccard**. Compute the Jaccard distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
 
-#Installation
+# Installation
 
 ```bash
 sudo pip3 install textdistance
 ```
 
-#Usage
+# Usage
 
-##Importing
+## Importing
 
 ```python
 >>> from textdistance import distance
 
 ```
 
-##Hamming
+## Hamming
 
 ```python
 >>> distance('h', 'lorem', 'lorum')
@@ -36,7 +36,7 @@ sudo pip3 install textdistance
 4
 ```
 
-##Sorensen
+## Sorensen
 
 ```python
 >>> distance('s', 'lorem', 'lorem')
@@ -53,7 +53,7 @@ sudo pip3 install textdistance
 0.16666666666666663
 ```
 
-##Jaccard
+## Jaccard
 
 ```python
 >>> distance('j', 'lorem', 'lorem')
@@ -70,7 +70,7 @@ sudo pip3 install textdistance
 0.2857142857142857
 ```
 
-##Levenstein
+## Levenstein
 
 ```python
 >>> distance('l', 'lorem', 'lorim')
@@ -88,7 +88,7 @@ sudo pip3 install textdistance
 1
 ```
 
-##Damerau-Levenshtein
+## Damerau-Levenshtein
 
 ```python
 >>> distance('dl', 'lorem', 'lorim')
@@ -109,7 +109,7 @@ sudo pip3 install textdistance
 1
 ```
 
-##Test with words permutations
+## Test with words permutations
 
 ```python
 >>> distance('dlw', 'lorem ipsum', 'ipsum lorum')
@@ -120,7 +120,7 @@ sudo pip3 install textdistance
 1
 ```
 
-##Find minimal text by distance
+## Find minimal text by distance
 
 ```python
 >>> distance.find_minimal('h', 'lorem', ['larum', 'lorum'])
