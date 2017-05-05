@@ -42,7 +42,7 @@ class TestAlgos(unittest.TestCase):
 	
 	def test_minimal(self):
 		with self.subTest(algo='h', distance='1'):
-			self.assertEqual(distance.find_minimal('h', 'lorem', ['larum', 'lorum']), 1)
+			self.assertEqual(distance.find_minimal('h', 'lorem', ['larum', 'lorum']), (1, 'lorum'))
 
 
 if __name__ == '__main__':

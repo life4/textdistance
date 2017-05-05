@@ -4,7 +4,7 @@ class Distance:
 	'''
 	algorithms:
 	h - hamming: substitution.
-	d - damerau: deletion, insertion, substitution.
+	l - levenstein: deletion, insertion, substitution.
 	dl - damerau-levenshtein: deletion, insertion, substitution, transposition.
 	s - sorensen. 0-1.
 	j - jaccard. 0-1.
@@ -142,7 +142,7 @@ class Distance:
 		return f(*texts)
 	
 	def find_minimal(self, algorithm, text, texts):
-		return min([self(algorithm, text, t) for t in texts])
+		return min([(self(algorithm, text, t), t) for t in texts])
 
 
 distance = Distance()
