@@ -1,4 +1,12 @@
-from itertools import zip_longest, product, permutations
+import sys
+
+PY3 = sys.version_info.major >= 3
+
+if PY3:
+	from itertools import zip_longest
+else:
+	from itertools import izip_longest as zip_longest
+
 
 class Distance:
 	'''
@@ -104,23 +112,7 @@ class Distance:
 				if i and j and s1[i] == s2[j - 1] and s1[i - 1] == s2[j]:
 					d[i, j] = min(d[i, j], d[i - 2, j - 2] + cost) #transposition
 		return d[len_s1 - 1, len_s2 - 1]
-	
-	@staticmethod
-	def w(f, *texts, equality=False):
-		m = float('Inf')
-		#split by words
-		texts = [t.split() for t in texts]
-		#permutations
-		texts = [permutations(words) for words in texts]
-		#combinations
-		for subtexts in product(*texts):
-			if equality:
-				words_min_cnt = len(min(subtexts, key=len))
-				subtexts = [t[:words_min_cnt] for t in subtexts]
-			subtexts = [' '.join(t) for t in subtexts]
-			m = min(m, f(*subtexts))
-		return m
-	
+
 	def __call__(self, algorithm, *texts):
 		if algorithm[0] == 'h':
 			f = self.h
@@ -136,13 +128,21 @@ class Distance:
 			raise KeyError('bad algorithm!')
 		
 		if algorithm[-2:] == 'we':
-			return self.w(f, *texts, equality=True)
+			return self.w(f, *texts, equality=True) if PY3 else self.w(f, True,  *texts)
 		if algorithm[-1] == 'w':
-			return self.w(f, *texts)
+			return self.w(f, *texts)                if PY3 else self.w(f, False, *texts)
 		return f(*texts)
 	
 	def find_minimal(self, algorithm, text, texts):
 		return min([(self(algorithm, text, t), t) for t in texts])
+
+
+# dynamic definition of static method due to differing syntax
+if PY3:
+	from textdistance.py3 import w as _w  # requires package prefix
+else:  # is PY2
+	from py2 import w as _w
+Distance.w = _w
 
 
 distance = Distance()
