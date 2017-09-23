@@ -52,6 +52,11 @@ class TestAlgos(unittest.TestCase):
 		with self.subTest(algo='h', distance='1'):
 			self.assertEqual(distance.find_minimal('h', 'lorem', ['larum', 'lorum']), (1, 'lorum'))
 
+	def test_maximal(self):
+		with self.subTest(algo='h', distance='200'):
+			self.assertEqual(distance('h', 'abcdeflko' * 100, 'bcafedlko' * 100), 500)
+			# self.assertEqual(distance('l', 'abcdeflko' * 100, 'bcafedlko' * 100), 500)  # crashes due to recursion depth
+
 
 if __name__ == '__main__':
 	unittest.main()
