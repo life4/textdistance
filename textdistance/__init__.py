@@ -1,4 +1,11 @@
-from itertools import zip_longest, product, permutations
+from itertools import product, permutations
+try:
+    # python3
+    from itertools import zip_longest
+except ImportError:
+    # python2
+    from itertools import izip_longest as zip_longest
+
 
 class Distance:
     '''
@@ -105,7 +112,7 @@ class Distance:
         return d[len_s1 - 1, len_s2 - 1]
 
     @staticmethod
-    def w(f, *texts, equality=False):
+    def w(f, *texts):
         m = float('Inf')
         # split by words
         texts = [t.split() for t in texts]
@@ -113,7 +120,7 @@ class Distance:
         texts = [permutations(words) for words in texts]
         # combinations
         for subtexts in product(*texts):
-            if equality:
+            if f.equality:
                 words_min_cnt = len(min(subtexts, key=len))
                 subtexts = [t[:words_min_cnt] for t in subtexts]
             subtexts = [' '.join(t) for t in subtexts]
@@ -135,8 +142,10 @@ class Distance:
             raise KeyError('bad algorithm!')
 
         if algorithm[-2:] == 'we':
-            return self.w(f, *texts, equality=True)
+            f.equality = True
+            return self.w(f, *texts)
         if algorithm[-1] == 'w':
+            f.equality = False
             return self.w(f, *texts)
         return f(*texts)
 

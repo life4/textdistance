@@ -1,8 +1,17 @@
 import unittest
 from textdistance import distance
+from contextlib import contextmanager
+
+
+@contextmanager
+def breakOnFirstError(*args, **kwargs):
+    yield
 
 
 class TestAlgos(unittest.TestCase):
+
+    def setUp(self):
+        self.subTest = breakOnFirstError
 
     def test_hamming(self):
         with self.subTest(length='equal', distance='1', texts='2'):

@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name     = 'textdistance',
-    version  = '1.0.0',
+    version  = '1.1.0',
 
     author       = 'orsinium',
     author_email = 'master_fess@mail.ru',
@@ -16,7 +16,7 @@ setup(
     keywords         = 'distance between text strings sequences iterators',
 
     packages = ['textdistance'],
-    requires = ['python (>= 3.4)'],
+    requires = ['python (>= 2.7)'],
 
     url          = 'https://github.com/orsinium/textdistance',
     download_url = 'https://github.com/orsinium/textdistance/tarball/master',
