@@ -126,3 +126,8 @@ sudo pip3 install textdistance
 >>> distance.find_minimal('h', 'lorem', ['larum', 'lorum'])
 (1, 'lorum')
 ```
+
+# Contributors
+
+* [Gram Orsinium](https://github.com/orsinium)
+* [Arne Bachmann](https://github.com/ArneBachmann)
