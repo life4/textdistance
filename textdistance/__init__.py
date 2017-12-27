@@ -7,7 +7,7 @@ except ImportError:
     from itertools import izip_longest as zip_longest
 
 
-class Distance:
+class Distance(object):
     '''
     algorithms:
     h - hamming: substitution.
@@ -19,40 +19,41 @@ class Distance:
 
     # hamming
     @staticmethod
-    def h(*texts):
+    def h(*sequences):
         '''
         Compute the Hamming distance between the two or more sequences.
         The Hamming distance is the number of differing items in ordered sequences.
         '''
-        return len([1 for t in zip_longest(*texts) if len(set(t)) > 1])
+        return len([1 for t in zip_longest(*sequences) if len(set(t)) > 1])
 
     # jaccard
     @staticmethod
-    def j(s1, s2):
+    def j(*sequences):
         '''
         Compute the Jaccard distance between the two sequences.
         They should contain hashable items.
         The return value is a float between 0 and 1, where 0 means equal,
         and 1 totally different.
         '''
-        s1, s2 = set(s1), set(s2)
-        return 1 - len(s1 & s2) / float(len(s1 | s2))
+        sequences = map(set, sequences)
+        return 1 - len(set.intersection(sequences)) / float(len(set.union(sequences)))
 
     # sorensen
     @staticmethod
-    def s(s1, s2):
+    def s(*sequences):
         '''
         Compute the Sorensen distance between the two sequences.
         They should contain hashable items.
         The return value is a float between 0 and 1, where 0 means equal,
         and 1 totally different.
         '''
-        s1, s2 = set(s1), set(s2)
-        return 1 - (2 * len(s1 & s2) / float(len(s1) + len(s2)))
+        sequences = map(set, sequences)
+        total_length = sum(map(len, sequences))
+        return 1 - (2 * len(set.intersection(sequences)) / float(total_length))
 
     # levenshtein
     @classmethod
-    def l(cl, s1, s2):
+    def l(cls, s1, s2):
         '''
         Compute the absolute Levenshtein distance between the two sequences.
         The Levenshtein distance is the minimum number of edit operations necessary
@@ -65,12 +66,12 @@ class Distance:
         if not s1 or not s2:
             return len(s1) + len(s2)
         elif s1[-1] == s2[-1]:
-            return cl.l(s1[:-1], s2[:-1])
+            return cls.l(s1[:-1], s2[:-1])
         else:
             # deletion/insertion
-            a = min(cl.l(s1[:-1], s2), cl.l(s1, s2[:-1]))
+            a = min(cls.l(s1[:-1], s2), cls.l(s1, s2[:-1]))
             # substitution
-            b = cl.l(s1[:-1], s2[:-1])
+            b = cls.l(s1[:-1], s2[:-1])
             return min(a, b) + 1
 
     # damerau-levenshtein
@@ -81,9 +82,9 @@ class Distance:
         The Damerau-Levenshtein distance is the minimum number of edit operations necessary
         for transforming one sequence into the other. The edit operations allowed are:
 
-            * deletion:     ABC -> BC, AC, AB
-            * insertion:    ABC -> ABCD, EABC, AEBC..
-            * substitution: ABC -> ABE, ADC, FBC..
+            * deletion:      ABC -> BC, AC, AB
+            * insertion:     ABC -> ABCD, EABC, AEBC..
+            * substitution:  ABC -> ABE, ADC, FBC..
             * transposition: ABC -> ACB, BAC
         '''
         d = {}
