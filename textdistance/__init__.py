@@ -128,7 +128,7 @@ class Distance(object):
             m = min(m, f(*subtexts))
         return m
 
-    def __call__(self, algorithm, *texts):
+    def __call__(self, algorithm, *sequences):
         if algorithm[0] == 'h':
             f = self.h
         elif algorithm[:2] == 'dl':
@@ -144,14 +144,23 @@ class Distance(object):
 
         if algorithm[-2:] == 'we':
             f.equality = True
-            return self.w(f, *texts)
+            return self.w(f, *sequences)
         if algorithm[-1] == 'w':
             f.equality = False
-            return self.w(f, *texts)
-        return f(*texts)
+            return self.w(f, *sequences)
+        return f(*sequences)
 
-    def find_minimal(self, algorithm, text, texts):
-        return min([(self(algorithm, text, t), t) for t in texts])
+    def compare(self, algorithm, sequence, sequences):
+        for t in sequences:
+            yield self(algorithm, sequence, t), t
+
+    def find_minimal(self, algorithm, sequence, sequences):
+        return min(self.compare(algorithm, sequence, sequences))
+
+    def find_similar(self, algorithm, sequence, sequences, n=3):
+        for difference, seq in self.compare(algorithm, sequence, sequences):
+            if difference <= n:
+                return difference, seq
 
 
 distance = Distance()

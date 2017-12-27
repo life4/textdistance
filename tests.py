@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def breakOnFirstError(*args, **kwargs):
+def breakOnFirstError(*args, **kwargs): # noQA
     yield
 
 
@@ -52,6 +52,13 @@ class TestAlgos(unittest.TestCase):
     def test_minimal(self):
         with self.subTest(algo='h', distance='1'):
             self.assertEqual(distance.find_minimal('h', 'lorem', ['larum', 'lorum']), (1, 'lorum'))
+
+    def test_similar(self):
+        with self.subTest(algo='h', distance='1'):
+            self.assertEqual(
+                distance.find_similar('h', 'lorem', ['larum', 'lorum'], 1),
+                (1, 'lorum')
+            )
 
 
 if __name__ == '__main__':
