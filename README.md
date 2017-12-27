@@ -1,10 +1,16 @@
 # Algorithms
 
-* **h -- hamming: substitution**. Compute the Hamming distance between the two or more sequences. The Hamming distance is the number of differing items in ordered sequences.
-* **l -- levenstein: deletion, insertion, substitution**. Compute the absolute Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
-* **dl -- damerau-levenshtein: deletion, insertion, substitution, transposition**. Compute the absolute Damerau-Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
-* **s -- sorensen**. Compute the Sorensen distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
-* **j -- jaccard**. Compute the Jaccard distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
+* **Hamming** (`h`): substitution. Compute the Hamming distance between the two or more sequences. The Hamming distance is the number of differing items in ordered sequences.
+* **Levenstein** (`l`): deletion, insertion, substitution. Compute the absolute Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
+* **Damerau-Levenshtein** (`dl`): deletion, insertion, substitution, transposition. Compute the absolute Damerau-Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
+* **Sorensen** (`s`). Compute the Sorensen distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
+* **Jaccard** (`j`). Compute the Jaccard distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
+
+Some features:
+
+* All algorithms except Levenstein and Damerau-Levenshtein can compute distance for more than two sequences.
+* All algorithms work with any ordered sequences.
+
 
 # Installation
 
