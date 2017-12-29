@@ -1,4 +1,10 @@
 
+# python3
+try:
+    from functools import reduce
+except ImportError:
+    pass
+
 
 class Base(object):
     def __call__(self, *sequences):
@@ -18,3 +24,6 @@ class Base(object):
 
     def normalized_similarity(self, *sequences):
         return 1 - self.normalized_distance(*sequences)
+
+    def _ident(self, *sequences):
+        return reduce(lambda s1, s2: s1 == s2, sequences)

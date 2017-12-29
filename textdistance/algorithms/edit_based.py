@@ -2,7 +2,6 @@
 try:
     # python3
     from itertools import zip_longest
-    from functools import reduce
 except ImportError:
     # python2
     from itertools import izip_longest as zip_longest
@@ -177,21 +176,19 @@ class JaroWinkler(_Base):
 class NeedlemanWunsch(_Base):
     """
     Computes the Needleman-Wunsch measure between two strings.
-    The Needleman-Wunsch generalizes the Levenshtein distance and considers global alignment between two strings.
-    Specifically, it is computed by assigning a score to each alignment between two input strings and choosing the
+    The Needleman-Wunsch generalizes the Levenshtein distance and considers global
+    alignment between two strings. Specifically, it is computed by assigning
+    a score to each alignment between two input strings and choosing the
     score of the best alignment, that is, the maximal score.
-    An alignment between two strings is a set of correspondences between the characters of between them, allowing for
-    gaps.
+    An alignment between two strings is a set of correspondences between the
+    characters of between them, allowing for gaps.
     """
     def __init__(self, gap_cost=1.0, sim_test=None):
         self.gap_cost = gap_cost
         if sim_test:
             self.sim_test = sim_test
         else:
-            self.sim_test = self.ident
-
-    def ident(self, *sequences):
-        return reduce(lambda s1, s2: s1 == s2, sequences)
+            self.sim_test = self._ident
 
     def __call__(self, s1, s2):
         if not numpy:
@@ -216,9 +213,47 @@ class NeedlemanWunsch(_Base):
         return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
 
 
+class SmithWaterman(_Base):
+    """
+    Computes the Smith-Waterman measure between two strings.
+    The Smith–Waterman algorithm performs local sequence alignment;
+    that is, for determining similar regions between two strings.
+    Instead of looking at the total sequence, the Smith-Waterman algorithm compares
+    segments of all possible lengths and optimizes the similarity measure.
+    """
+    def __init__(self, gap_cost=1.0, sim_test=None):
+        self.gap_cost = gap_cost
+        if sim_test:
+            self.sim_test = sim_test
+        else:
+            self.sim_test = self._ident
+
+    def __call__(self, s1, s2):
+        if not numpy:
+            raise ImportError('Please, install numpy for Needleman-Wunsch measure')
+        dist_mat = numpy.zeros(
+            (len(s1) + 1, len(s2) + 1),
+            dtype=numpy.float,
+        )
+        max_value = 0
+        for i, sc1 in enumerate(s1, start=1):
+            for j, sc2 in enumerate(s2, start=1):
+                # The score for substituting the letter a[i-1] for b[j-1].
+                # Generally low for mismatch, high for match.
+                match = dist_mat[i - 1, j - 1] + self.sim_test(sc1, sc2)
+                # The scores for for introducing extra letters in one of the strings
+                # (or by symmetry, deleting them from the other).
+                delete = dist_mat[i - 1, j] - self.gap_cost
+                insert = dist_mat[i, j - 1] - self.gap_cost
+                dist_mat[i, j] = max(0, match, delete, insert)
+                max_value = max(max_value, dist_mat[i, j])
+        return max_value
+
+
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau_levenshtein = DamerauLevenshtein()
 jaro = JaroWinkler(long_tolerance=False, winklerize=False)
 jaro_winkler = JaroWinkler(long_tolerance=False, winklerize=True)
 needleman_wunsch = NeedlemanWunsch()
+smith_waterman = SmithWaterman()
