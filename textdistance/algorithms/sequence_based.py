@@ -1,8 +1,4 @@
 # python3
-try:
-    from functools import reduce
-except ImportError:
-    pass
 from .base import BaseSimilarity as _BaseSimilarity
 
 
