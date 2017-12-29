@@ -18,4 +18,4 @@ def words_combinations(f, *texts):
 
 
 def find_ngrams(input_list, n):
-    yield from zip(*[input_list[i:] for i in range(n)])
+    return zip(*[input_list[i:] for i in range(n)])

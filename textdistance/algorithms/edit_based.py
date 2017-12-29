@@ -18,6 +18,8 @@ __all__ = [
     'hamming',
     'levenshtein', 'damerau_levenshtein',
     'jaro', 'jaro_winkler',
+    'needleman_wunsch', 'gotoh',
+    'smith_waterman',
 ]
 
 
@@ -216,7 +218,7 @@ class NeedlemanWunsch(_Base):
 class SmithWaterman(_Base):
     """
     Computes the Smith-Waterman measure between two strings.
-    The Smith–Waterman algorithm performs local sequence alignment;
+    The Smith-Waterman algorithm performs local sequence alignment;
     that is, for determining similar regions between two strings.
     Instead of looking at the total sequence, the Smith-Waterman algorithm compares
     segments of all possible lengths and optimizes the similarity measure.

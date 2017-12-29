@@ -1,10 +1,8 @@
-from collections import Counter
 from itertools import repeat
 from .base import Base as _Base
-from textdistance.utils import find_ngrams
 
 
-__all__ = ['jaccard', 'sorensen']
+__all__ = ['jaccard', 'sorensen', 'tversky']
 
 
 class Jaccard(_Base):
@@ -15,8 +13,12 @@ class Jaccard(_Base):
     and 1 totally different.
     '''
     def __call__(self, *sequences):
-        sequences = map(set, sequences)
-        return 1 - len(set.intersection(sequences)) / float(len(set.union(sequences)))
+        sequences = self._get_counters(*sequences)               # sets
+        intersection = self._intersect_counters(*sequences)      # set
+        intersection = self._count_counters(intersection)        # int
+        union = self._intersect_counters(*sequences)             # set
+        union = self._count_counters(union)                      # int
+        return 1 - intersection / float(union)
 
 
 class Sorensen(_Base):
@@ -27,18 +29,21 @@ class Sorensen(_Base):
     and 1 totally different.
     '''
     def __call__(self, *sequences):
-        sequences = map(set, sequences)
-        total_length = sum(map(len, sequences))
-        return 1 - (2 * len(set.intersection(sequences)) / float(total_length))
+        sequences = self._get_counters(*sequences)               # sets
+        intersection = self._intersect_counters(*sequences)      # set
+        intersection = self._count_counters(intersection)        # int
+        union = self._intersect_counters(*sequences)             # set
+        union = self._count_counters(union)                      # int
+        return 1 - (2 * intersection) / float(union)
 
 
 class Tversky(_Base):
     """Tversky index
     https://en.wikipedia.org/wiki/Tversky_index
     """
-    def __init__(self, qval=2, ks=None, bias=None):
+    def __init__(self, qval=1, ks=None, bias=None):
         self.qval = qval
-        self.ks = ks
+        self.ks = ks or repeat(1)
         self.bias = bias
 
     def __call__(self, *sequences):
@@ -49,16 +54,10 @@ class Tversky(_Base):
         elif not min(map(len, sequences)):
             return 0.0
 
-        if self.qval and self.qval > 0:
-            sequences = [Counter(find_ngrams(s, self.qval)) for s in sequences]
-        else:
-            sequences = [s.split() for s in sequences]
-
-        intersection = sequences[0]
-        for s in sequences[1:]:
-            intersection &= s
-        intersection = sum(intersection.values())
-        sequences = [sum(s.values()) for s in sequences]
+        sequences = self._get_counters(*sequences)               # sets
+        intersection = self._intersect_counters(*sequences)      # set
+        intersection = self._count_counters(intersection)        # int
+        sequences = [self._count_counter(s) for s in sequences]  # ints
         ks = self.ks[:len(sequences)]
 
         if self.bias is None:
@@ -69,13 +68,36 @@ class Tversky(_Base):
 
         a_val = min([s - intersection for s in sequences])
         b_val = max([s - intersection for s in sequences])
-        c_val = intersection + self.bias
+        c_val = float(intersection + self.bias)
         ks_prod = map(lambda a, b: a * b, ks)
         ks_beta = ks[0] and (ks_prod / ks[0])
         result = ks_prod * (a_val - b_val) + b_val * ks_beta
         return c_val / (result + c_val)
 
 
+class Overlap(_Base):
+    """overlap coefficient
+    """
+    def __init__(self, qval=1):
+        self.qval = qval
+
+    def __call__(self, *sequences):
+        # all is equeal
+        if len(set(sequences)) <= 1:
+            return 1.0
+        # any set is empty
+        elif not min(map(len, sequences)):
+            return 0.0
+
+        sequences = self._get_counters(*sequences)               # sets
+        intersection = self._intersect_counters(*sequences)      # set
+        intersection = self._count_counters(intersection)        # int
+        sequences = [self._count_counter(s) for s in sequences]  # ints
+
+        return float(intersection) / min(sequences)
+
+
 jaccard = Jaccard()
 sorensen = Sorensen()
 tversky = Tversky()
+sorensen_dice = Tversky(ks=[.5, .5])
