@@ -1,5 +1,10 @@
 from itertools import repeat
-from .base import Base as _Base
+# python3
+try:
+    from functools import reduce
+except ImportError:
+    pass
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = ['jaccard', 'sorensen', 'tversky']
@@ -37,7 +42,7 @@ class Sorensen(_Base):
         return 1 - (2 * intersection) / float(union)
 
 
-class Tversky(_Base):
+class Tversky(_BaseSimilarity):
     """Tversky index
     https://en.wikipedia.org/wiki/Tversky_index
     """
@@ -75,12 +80,9 @@ class Tversky(_Base):
         return c_val / (result + c_val)
 
 
-class Overlap(_Base):
+class Overlap(_BaseSimilarity):
     """overlap coefficient
     """
-    def __init__(self, qval=1):
-        self.qval = qval
-
     def __call__(self, *sequences):
         # all is equeal
         if len(set(sequences)) <= 1:
@@ -97,7 +99,29 @@ class Overlap(_Base):
         return float(intersection) / min(sequences)
 
 
+class Cosine(_BaseSimilarity):
+    """cosine similarity (Ochiai coefficient)
+    """
+    def __call__(self, *sequences):
+        # all is equeal
+        if len(set(sequences)) <= 1:
+            return 1.0
+        # any set is empty
+        elif not min(map(len, sequences)):
+            return 0.0
+
+        sequences = self._get_counters(*sequences)               # sets
+        intersection = self._intersect_counters(*sequences)      # set
+        intersection = self._count_counters(intersection)        # int
+        sequences = [self._count_counter(s) for s in sequences]  # ints
+        prod = reduce(lambda x, y: x * y, sequences)
+
+        return intersection / prod
+
+
 jaccard = Jaccard()
 sorensen = Sorensen()
 tversky = Tversky()
 sorensen_dice = Tversky(ks=[.5, .5])
+overlap = Overlap()
+cosine = Cosine()

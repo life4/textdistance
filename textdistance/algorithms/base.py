@@ -9,6 +9,8 @@ except ImportError:
 
 
 class Base(object):
+    def __init__(self, qval=1):
+        self.qval = qval
 
     def __call__(self, *sequences):
         raise NotImplementedError
@@ -32,6 +34,9 @@ class Base(object):
         return reduce(lambda s1, s2: s1 == s2, sequences)
 
     def _get_counters(self, *sequences):
+        # already Counters
+        if all(isinstance(s, Counter) for s in sequences):
+            return sequences
         # by words
         if not self.qval:
             return [s.split() for s in sequences]
