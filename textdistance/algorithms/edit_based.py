@@ -6,7 +6,7 @@ except ImportError:
     from itertools import izip_longest as zip_longest
 
 
-__all__ = ['hamming', 'jaccard', 'sorensen', 'levenshtein', 'damerau_levenshtein']
+__all__ = ['hamming', 'levenshtein', 'damerau_levenshtein']
 
 
 def hamming(*sequences):
@@ -15,29 +15,6 @@ def hamming(*sequences):
     The Hamming distance is the number of differing items in ordered sequences.
     '''
     return len([1 for t in zip_longest(*sequences) if len(set(t)) > 1])
-
-
-def jaccard(*sequences):
-    '''
-    Compute the Jaccard distance between the two sequences.
-    They should contain hashable items.
-    The return value is a float between 0 and 1, where 0 means equal,
-    and 1 totally different.
-    '''
-    sequences = map(set, sequences)
-    return 1 - len(set.intersection(sequences)) / float(len(set.union(sequences)))
-
-
-def sorensen(*sequences):
-    '''
-    Compute the Sorensen distance between the two sequences.
-    They should contain hashable items.
-    The return value is a float between 0 and 1, where 0 means equal,
-    and 1 totally different.
-    '''
-    sequences = map(set, sequences)
-    total_length = sum(map(len, sequences))
-    return 1 - (2 * len(set.intersection(sequences)) / float(total_length))
 
 
 def levenshtein(s1, s2):
