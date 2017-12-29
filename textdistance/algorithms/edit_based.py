@@ -1,13 +1,25 @@
+# built-in
 try:
     # python3
     from itertools import zip_longest
+    from functools import reduce
 except ImportError:
     # python2
     from itertools import izip_longest as zip_longest
+# external
+try:
+    import numpy
+except ImportError:
+    numpy = None
+# project
 from .base import Base as _Base
 
 
-__all__ = ['hamming', 'levenshtein', 'damerau_levenshtein']
+__all__ = [
+    'hamming',
+    'levenshtein', 'damerau_levenshtein',
+    'jaro', 'jaro_winkler',
+]
 
 
 class Hamming(_Base):
@@ -80,6 +92,133 @@ class DamerauLevenshtein(_Base):
         return d[len_s1 - 1, len_s2 - 1]
 
 
+class JaroWinkler(_Base):
+    """
+    Computes the Jaro-Winkler measure between two strings.
+    The Jaro-Winkler measure is designed to capture cases where two strings
+    have a low Jaro score, but share a prefix.
+    and thus are likely to match.
+    """
+    def __init__(self, long_tolerance, winklerize):
+        self.long_tolerance = long_tolerance
+        self.winklerize = winklerize
+
+    def __call__(self, s1, s2, prefix_weight=0.1):
+        s1_len = len(s1)
+        s2_len = len(s2)
+
+        if not s1_len or not s2_len:
+            return 0.0
+
+        min_len = max(s1_len, s2_len)
+        search_range = (min_len // 2) - 1
+        if search_range < 0:
+            search_range = 0
+
+        s1_flags = [False]*s1_len
+        s2_flags = [False]*s2_len
+
+        # looking only within search range, count & flag matched pairs
+        common_chars = 0
+        for i, s1_ch in enumerate(s1):
+            low = i - search_range if i > search_range else 0
+            hi = i + search_range if i + search_range < s2_len else s2_len - 1
+            for j in range(low, hi+1):
+                if not s2_flags[j] and s2[j] == s1_ch:
+                    s1_flags[i] = s2_flags[j] = True
+                    common_chars += 1
+                    break
+
+        # short circuit if no characters match
+        if not common_chars:
+            return 0.0
+
+        # count transpositions
+        k = trans_count = 0
+        for i, s1_f in enumerate(s1_flags):
+            if s1_f:
+                for j in range(k, s2_len):
+                    if s2_flags[j]:
+                        k = j + 1
+                        break
+                if s1[i] != s2[j]:
+                    trans_count += 1
+        trans_count /= 2
+
+        # adjust for similarities in nonmatched characters
+        common_chars = float(common_chars)
+        weight = ((common_chars/s1_len + common_chars/s2_len +
+                  (common_chars-trans_count) / common_chars)) / 3
+
+        # stop to boost if strings are not similar
+        if not self.winklerize or weight <= 0.7 or s1_len <= 3 or s2_len <= 3:
+            return weight
+
+        # winkler modification
+        # adjust for up to first 4 chars in common
+        j = min(min_len, 4)
+        i = 0
+        while i < j and s1[i] == s2[i] and s1[i]:
+            i += 1
+        if i:
+            weight += i * prefix_weight * (1.0 - weight)
+
+        # optionally adjust for long strings
+        # after agreeing beginning chars, at least two or more must agree and
+        # agreed characters must be > half of remaining characters
+        if not self.long_tolerance or min_len <= 4:
+            return weight
+        if common_chars < i or 2 * common_chars < min_len + i:
+            return weight
+        weight += (1.0 - weight) * float(common_chars-i-1) / float(s1_len+s2_len-i*2+2)
+        return weight
+
+
+class NeedlemanWunsch(_Base):
+    """
+    Computes the Needleman-Wunsch measure between two strings.
+    The Needleman-Wunsch generalizes the Levenshtein distance and considers global alignment between two strings.
+    Specifically, it is computed by assigning a score to each alignment between two input strings and choosing the
+    score of the best alignment, that is, the maximal score.
+    An alignment between two strings is a set of correspondences between the characters of between them, allowing for
+    gaps.
+    """
+    def __init__(self, gap_cost=1.0, sim_test=None):
+        self.gap_cost = gap_cost
+        if sim_test:
+            self.sim_test = sim_test
+        else:
+            self.sim_test = self.ident
+
+    def ident(self, *sequences):
+        return reduce(lambda s1, s2: s1 == s2, sequences)
+
+    def __call__(self, s1, s2):
+        if not numpy:
+            raise ImportError('Please, install numpy for Needleman-Wunsch measure')
+        dist_mat = numpy.zeros(
+            (len(s1) + 1, len(s2) + 1),
+            dtype=numpy.float,
+        )
+        # DP initialization
+        for i in range(len(s1) + 1):
+            dist_mat[i, 0] = -(i * self.gap_cost)
+        # DP initialization
+        for j in range(len(s2) + 1):
+            dist_mat[0, j] = -(j * self.gap_cost)
+        # Needleman-Wunsch DP calculation
+        for i in range(1, len(s1) + 1):
+            for j in range(1, len(s2) + 1):
+                match = dist_mat[i - 1, j - 1] + self.sim_test(s1[i - 1], s2[j - 1])
+                delete = dist_mat[i - 1, j] - self.gap_cost
+                insert = dist_mat[i, j - 1] - self.gap_cost
+                dist_mat[i, j] = max(match, delete, insert)
+        return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
+
+
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau_levenshtein = DamerauLevenshtein()
+jaro = JaroWinkler(long_tolerance=False, winklerize=False)
+jaro_winkler = JaroWinkler(long_tolerance=False, winklerize=True)
+needleman_wunsch = NeedlemanWunsch()
