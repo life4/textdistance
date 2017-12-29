@@ -15,3 +15,7 @@ def words_combinations(f, *texts):
         subtexts = [' '.join(t) for t in subtexts]
         m = min(m, f(*subtexts))
     return m
+
+
+def find_ngrams(input_list, n):
+    yield from zip(*[input_list[i:] for i in range(n)])
