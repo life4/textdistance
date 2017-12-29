@@ -1,4 +1,5 @@
 from collections import Counter
+from itertools import repeat
 from .base import Base as _Base
 from textdistance.utils import find_ngrams
 
@@ -35,50 +36,44 @@ class Tversky(_Base):
     """Tversky index
     https://en.wikipedia.org/wiki/Tversky_index
     """
-    def __init__(self, qval=2, alpha=1, beta=1, bias=None):
+    def __init__(self, qval=2, ks=None, bias=None):
         self.qval = qval
-        self.alpha = alpha
-        self.beta = beta
+        self.ks = ks
         self.bias = bias
 
-    def __call__(self, s1, s2):
-        if s1 == s2:
+    def __call__(self, *sequences):
+        # all is equeal
+        if len(set(sequences)) <= 1:
             return 1.0
-        elif len(s1) == 0 or len(s2) == 0:
+        # any set is empty
+        elif not min(map(len, sequences)):
             return 0.0
 
         if self.qval and self.qval > 0:
-            s1 = Counter(find_ngrams(s1, self.qval))
-            s2 = Counter(find_ngrams(s2, self.qval))
+            sequences = [Counter(find_ngrams(s, self.qval)) for s in sequences]
         else:
-            s1 = Counter(s1.strip().split())
-            s2 = Counter(s2.strip().split())
+            sequences = [s.split() for s in sequences]
 
-        if len(s1) == 0 or len(s2) == 0:
-            return 0.0
-
-        q_intersection_mag = sum((s1 & s2).values())
-        s1 = sum(s1.values())
-        s2 = sum(s2.values())
+        intersection = sequences[0]
+        for s in sequences[1:]:
+            intersection &= s
+        intersection = sum(intersection.values())
+        sequences = [sum(s.values()) for s in sequences]
+        ks = self.ks[:len(sequences)]
 
         if self.bias is None:
-            result = q_intersection_mag
-            result += self.alpha * (s1 - q_intersection_mag)
-            result += self.beta * (s2 - q_intersection_mag)
-            return q_intersection_mag / result
-        else:
-            a_val = min(
-                s1 - q_intersection_mag,
-                s2 - q_intersection_mag
-            )
-            b_val = max(
-                s1 - q_intersection_mag,
-                s2 - q_intersection_mag
-            )
-            c_val = q_intersection_mag + self.bias
-            result = self.alpha * a_val + (1 - self.alpha) * b_val
-            result = self.beta * result + c_val
-            return c_val / result
+            result = intersection
+            for k, s in zip(ks, sequences):
+                result += k * (s - intersection)
+            return intersection / result
+
+        a_val = min([s - intersection for s in sequences])
+        b_val = max([s - intersection for s in sequences])
+        c_val = intersection + self.bias
+        ks_prod = map(lambda a, b: a * b, ks)
+        ks_beta = ks[0] and (ks_prod / ks[0])
+        result = ks_prod * (a_val - b_val) + b_val * ks_beta
+        return c_val / (result + c_val)
 
 
 jaccard = Jaccard()
