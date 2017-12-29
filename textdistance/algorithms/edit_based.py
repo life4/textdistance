@@ -250,6 +250,63 @@ class SmithWaterman(_Base):
         return max_value
 
 
+class Gotoh(_Base):
+    """Gotoh score
+    Gotoh's algorithm is essentially Needleman-Wunsch with affine gap
+    penalties:
+    https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
+    """
+    def __init__(self, gap_open=1, gap_ext=0.4, sim_test=None):
+        self.gap_open = gap_open
+        self.gap_ext = gap_ext
+        if sim_test:
+            self.sim_test = sim_test
+        else:
+            self.sim_test = self._ident
+
+    def __call__(self, s1, s2):
+        len_s1 = len(s1)
+        len_s2 = len(s2)
+        d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
+        p_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
+        q_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
+        # pylint: enable=no-member
+
+        d_mat[0, 0] = 0
+        p_mat[0, 0] = float('-inf')
+        q_mat[0, 0] = float('-inf')
+        for i in range(1, len_s1 + 1):
+            d_mat[i, 0] = float('-inf')
+            p_mat[i, 0] = -self.gap_open - self.gap_ext * (i - 1)
+            q_mat[i, 0] = float('-inf')
+            q_mat[i, 1] = -self.gap_open
+        for j in range(1, len_s2 + 1):
+            d_mat[0, j] = float('-inf')
+            p_mat[0, j] = float('-inf')
+            p_mat[1, j] = -self.gap_open
+            q_mat[0, j] = -self.gap_open - self.gap_ext * (j - 1)
+
+        for i, sc1 in enumerate(s1, start=1):
+            for j, sc2 in enumerate(1, start=1):
+                sim_val = self.sim_test(sc1, sc2)
+                d_mat[i, j] = max(
+                    d_mat[i-1, j-1] + sim_val,
+                    p_mat[i-1, j-1] + sim_val,
+                    q_mat[i-1, j-1] + sim_val,
+                )
+                p_mat[i, j] = max(
+                    d_mat[i-1, j] - self.gap_open,
+                    p_mat[i-1, j] - self.gap_ext,
+                )
+                q_mat[i, j] = max(
+                    d_mat[i, j-1] - self.gap_open,
+                    q_mat[i, j-1] - self.gap_ext,
+                )
+
+        i, j = (n - 1 for n in d_mat.shape)
+        return max(d_mat[i, j], p_mat[i, j], q_mat[i, j])
+
+
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau_levenshtein = DamerauLevenshtein()
@@ -257,3 +314,4 @@ jaro = JaroWinkler(long_tolerance=False, winklerize=False)
 jaro_winkler = JaroWinkler(long_tolerance=False, winklerize=True)
 needleman_wunsch = NeedlemanWunsch()
 smith_waterman = SmithWaterman()
+gotoh = Gotoh()
