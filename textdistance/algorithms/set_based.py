@@ -7,7 +7,7 @@ except ImportError:
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
-__all__ = ['jaccard', 'sorensen', 'tversky']
+__all__ = ['jaccard', 'sorensen', 'tversky', 'overlap', 'cosine', 'bag']
 
 
 class Jaccard(_Base):
@@ -119,9 +119,18 @@ class Cosine(_BaseSimilarity):
         return intersection / prod
 
 
+class Bag(_BaseSimilarity):
+    """cosine similarity (Ochiai coefficient)
+    """
+    def __call__(self, *sequences):
+        sequences = self._get_counters(*sequences)              # sets
+        intersection = self._intersect_counters(*sequences)     # set
+        return self._count_counters(intersection)               # int
+
+
 jaccard = Jaccard()
 sorensen = Sorensen()
 tversky = Tversky()
 sorensen_dice = Tversky(ks=[.5, .5])
 overlap = Overlap()
-cosine = Cosine()
+bag = Bag()

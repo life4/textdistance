@@ -10,7 +10,7 @@ __all__ = ['lcsseq']
 
 
 class LCSSeq(_BaseSimilarity):
-    """cosine similarity (Ochiai coefficient)
+    """longest common substring similarity
     """
     def __init__(self, qval=1, sim_test=None, empty=''):
         self.qval = qval
