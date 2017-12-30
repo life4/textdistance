@@ -9,23 +9,26 @@ __all__ = ['lcsseq', 'lcsstr', 'ratcliff_obershelp']
 class LCSSeq(_BaseSimilarity):
     """longest common substring similarity
     """
-    def __init__(self, qval=1, sim_test=None, empty=''):
+    def __init__(self, qval=1, sim_test=None):
         self.qval = qval
-        self.empty = empty
         self.sim_test = sim_test or self._ident
 
-    def __call__(self, *sequences):
+    def _custom(self, *sequences):
         if not all(sequences):
-            return self.empty
+            return type(sequences[0])()  # empty sequence
         if self.sim_test(*[s[-1] for s in sequences]):
             c = sequences[0][-1]
             sequences = [s[:-1] for s in sequences]
             return self(*sequences) + c
-        m = self.empty
+        m = type(sequences[0])()  # empty sequence
         for i, s in enumerate(sequences):
             ss = sequences[:i] + (s[:-1], ) + sequences[i + 1:]
             m = max([self(*ss), m], key=len)
         return m
+
+    def __call__(self, *sequences):
+        sequences = self._get_sequences(*sequences)
+        return self._custom(*sequences)
 
     def similarity(self, *sequences):
         return len(self(*sequences))
@@ -34,10 +37,6 @@ class LCSSeq(_BaseSimilarity):
 class LCSStr(_BaseSimilarity):
     """longest common substring similarity
     """
-    def __init__(self, qval=1, empty=''):
-        self.qval = qval
-        self.empty = empty
-
     def _standart(self, s1, s2):
         matcher = _SequenceMatcher(a=s1, b=s2)
         match = matcher.find_longest_match(0, len(s1), 0, len(s2))
@@ -54,7 +53,7 @@ class LCSStr(_BaseSimilarity):
                         break
                 else:
                     return subseq
-        return self.empty
+        return type(short)()  # empty sequence
 
     def __call__(self, *sequences):
         if not all(sequences):
@@ -64,6 +63,7 @@ class LCSStr(_BaseSimilarity):
             return self.empty
         if length == 1:
             return sequences[0]
+        sequences = self._get_sequences(*sequences)
         if length == 2:
             return self._standart(*sequences)
         return self._custom(*sequences)

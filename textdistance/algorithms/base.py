@@ -33,18 +33,21 @@ class Base(object):
     def _ident(self, *sequences):
         return reduce(lambda s1, s2: s1 == s2, sequences)
 
-    def _get_counters(self, *sequences):
-        # already Counters
-        if all(isinstance(s, Counter) for s in sequences):
-            return sequences
+    def _get_sequences(self, *sequences):
         # by words
         if not self.qval:
             return [s.split() for s in sequences]
         # by chars
         if self.qval == 1:
-            return [Counter(s) for s in sequences]
+            return sequences
         # by n-grams
-        return [Counter(find_ngrams(s, self.qval)) for s in sequences]
+        return [find_ngrams(s, self.qval) for s in sequences]
+
+    def _get_counters(self, *sequences):
+        # already Counters
+        if all(isinstance(s, Counter) for s in sequences):
+            return sequences
+        return [Counter(s) for s in self._get_sequences(*sequences)]
 
     def _intersect_counters(self, *sequences):
         intersection = sequences[0].copy()
