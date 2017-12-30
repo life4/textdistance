@@ -1,4 +1,5 @@
 # built-in
+from collections import defaultdict
 try:
     # python3
     from itertools import zip_longest
@@ -17,7 +18,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 __all__ = [
     'hamming',
     'levenshtein', 'damerau_levenshtein',
-    'jaro', 'jaro_winkler',
+    'jaro', 'jaro_winkler', 'strcmp95',
     'needleman_wunsch', 'gotoh',
     'smith_waterman',
 ]
@@ -321,6 +322,135 @@ class Gotoh(_BaseSimilarity):
         return max(d_mat[i, j], p_mat[i, j], q_mat[i, j])
 
 
+class StrCmp95(_BaseSimilarity):
+    """strcmp95 similarity
+    """
+    sp_mx = (
+        ('A', 'E'), ('A', 'I'), ('A', 'O'), ('A', 'U'), ('B', 'V'), ('E', 'I'),
+        ('E', 'O'), ('E', 'U'), ('I', 'O'), ('I', 'U'), ('O', 'U'), ('I', 'Y'),
+        ('E', 'Y'), ('C', 'G'), ('E', 'F'), ('W', 'U'), ('W', 'V'), ('X', 'K'),
+        ('S', 'Z'), ('X', 'S'), ('Q', 'C'), ('U', 'V'), ('M', 'N'), ('L', 'I'),
+        ('Q', 'O'), ('P', 'R'), ('I', 'J'), ('2', 'Z'), ('5', 'S'), ('8', 'B'),
+        ('1', 'I'), ('1', 'L'), ('0', 'O'), ('0', 'Q'), ('C', 'K'), ('G', 'J')
+    )
+
+    def __init__(self, long_strings=False):
+        self.long_strings = long_strings
+
+    def maximum(self, *sequences):
+        return 1
+
+    @staticmethod
+    def _in_range(char):
+        """Return True if char is in the range (0, 91)
+        """
+        return ord(char) > 0 and ord(char) < 91
+
+    def __call__(self, s1, s2):
+        s1 = s1.strip().upper()
+        s2 = s2.strip().upper()
+        len_s1 = len(s1)
+        len_s2 = len(s2)
+
+        if s1 == s2:
+            return 1.0
+        if len_s1 == 0 or len_s2 == 0:
+            return 0.0
+
+        adjwt = defaultdict(int)
+
+        # Initialize the adjwt array on the first call to the function only.
+        # The adjwt array is used to give partial credit for characters that
+        # may be errors due to known phonetic or character recognition errors.
+        # A typical example is to match the letter "O" with the number "0"
+        for i in self.sp_mx:
+            adjwt[(i[0], i[1])] = 3
+            adjwt[(i[1], i[0])] = 3
+
+        if len_s1 > len_s2:
+            search_range = len_s1
+            minv = len_s2
+        else:
+            search_range = len_s2
+            minv = len_s1
+
+        # Blank out the flags
+        s1_flag = [0] * search_range
+        s2_flag = [0] * search_range
+        search_range = max(0, search_range // 2 - 1)
+
+        # Looking only within the search range, count and flag the matched pairs.
+        num_com = 0
+        yl1 = len_s2 - 1
+        for i in range(len_s1):
+            lowlim = (i - search_range) if (i >= search_range) else 0
+            hilim = (i + search_range) if ((i + search_range) <= yl1) else yl1
+            for j in range(lowlim, hilim+1):
+                if s2_flag[j] == 0 and s2[j] == s1[i]:
+                    s2_flag[j] = 1
+                    s1_flag[i] = 1
+                    num_com += 1
+                    break
+
+        # If no characters in common - return
+        if num_com == 0:
+            return 0.0
+
+        # Count the number of transpositions
+        k = n_trans = 0
+        for i in range(len_s1):
+            if s1_flag[i] != 0:
+                for j in range(k, len_s2):
+                    if s2_flag[j] != 0:
+                        k = j + 1
+                        break
+                if s1[i] != s2[j]:
+                    n_trans += 1
+        n_trans = n_trans // 2
+
+        # Adjust for similarities in unmatched characters
+        n_simi = 0
+        if minv > num_com:
+            for i in range(len_s1):
+                if s1_flag[i] == 0 and self._in_range(s1[i]):
+                    for j in range(len_s2):
+                        if s2_flag[j] == 0 and self._in_range(s2[j]):
+                            if (s1[i], s2[j]) in adjwt:
+                                n_simi += adjwt[(s1[i], s2[j])]
+                                s2_flag[j] = 2
+                                break
+        num_sim = n_simi/10.0 + num_com
+
+        # Main weight computation
+        weight = num_sim / len_s1 + num_sim / len_s2 + \
+            (num_com - n_trans) / num_com
+        weight = weight / 3.0
+
+        # Continue to boost the weight if the strings are similar
+        if weight <= 0.7:
+            return weight
+
+        # Adjust for having up to the first 4 characters in common
+        j = 4 if (minv >= 4) else minv
+        i = 0
+        while (i < j) and (s1[i] == s2[i]) and (not s1[i].isdigit()):
+            i += 1
+        if i:
+            weight += i * 0.1 * (1.0 - weight)
+
+        # Optionally adjust for long strings.
+
+        # After agreeing beginning chars, at least two more must agree and
+        # the agreeing characters must be > .5 of remaining characters.
+        if (((long_strings) and (minv > 4) and (num_com > i+1) and
+             (2*num_com >= minv+i))):
+            if not s1[0].isdigit():
+                weight += (1.0-weight) * ((num_com-i-1) /
+                                          (len_s1+len_s2-i*2+2))
+        return weight
+
+
+
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau_levenshtein = DamerauLevenshtein()
@@ -329,3 +459,4 @@ jaro_winkler = JaroWinkler(long_tolerance=False, winklerize=True)
 needleman_wunsch = NeedlemanWunsch()
 smith_waterman = SmithWaterman()
 gotoh = Gotoh()
+strcmp95 = StrCmp95()

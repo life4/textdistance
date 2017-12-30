@@ -24,6 +24,7 @@ algos = [
     textdistance.tversky,
     textdistance.overlap,
     textdistance.cosine,
+    textdistance.strcmp95,
 ]
 
 class CommonTest(unittest.TestCase):

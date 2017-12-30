@@ -1,3 +1,4 @@
+from math import log
 from itertools import repeat, islice
 # python3
 try:
@@ -7,7 +8,10 @@ except ImportError:
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
-__all__ = ['jaccard', 'sorensen', 'tversky', 'overlap', 'cosine']
+__all__ = [
+    'jaccard', 'sorensen', 'tversky', 'sorensen_dice',
+    'overlap', 'cosine',
+]
 
 
 class Jaccard(_Base):
@@ -133,9 +137,23 @@ class Cosine(_BaseSimilarity):
         return intersection / prod
 
 
+class Tanimoto(Jaccard):
+    """Tanimoto distance
+    This is identical to the Jaccard similarity coefficient
+    and the Tversky index for alpha=1 and beta=1.
+    """
+    def __call__(self, *sequences):
+        result = super(Tanimoto, self)(*sequences)
+        if result == 0:
+            return float('-inf')
+        else:
+            return log(result, 2)
+
+
 jaccard = Jaccard()
-sorensen = Sorensen()
+sorensen_dice = dice = sorensen = Sorensen()
 tversky = Tversky()
-sorensen_dice = Tversky(ks=[.5, .5])
+#sorensen_dice = Tversky(ks=[.5, .5])
 overlap = Overlap()
 cosine = Cosine()
+tanimoto = Tanimoto()
