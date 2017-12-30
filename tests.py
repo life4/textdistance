@@ -24,6 +24,26 @@ class CommonTest(unittest.TestCase):
                 d = alg.distance('test me', 'test me')
                 self.assertEqual(d, 0)
 
+    def test_different_similarity(self):
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__):
+                s = alg.similarity('spam', 'qwer')
+                self.assertEqual(s, 0)
+
+
+class NormalizationTest(unittest.TestCase):
+    def test_similar_distance(self):
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__):
+                d = alg.normalized_similarity('test me', 'test me')
+                self.assertEqual(d, 1)
+
+    def test_different_similarity(self):
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__):
+                s = alg.normalized_distance('spam', 'qwer')
+                self.assertEqual(s, 1)
+
 
 if __name__ == '__main__':
     unittest.main()
