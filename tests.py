@@ -7,6 +7,7 @@ import textdistance
 
 algos = [
     textdistance.bag,
+
     textdistance.hamming,
     textdistance.levenshtein,
     textdistance.damerau_levenshtein,
@@ -15,6 +16,14 @@ algos = [
     textdistance.needleman_wunsch,
     textdistance.gotoh,
     textdistance.smith_waterman,
+
+    textdistance.lcsseq,
+
+    textdistance.jaccard,
+#    textdistance.sorensen,
+#    textdistance.tversky,
+#    textdistance.overlap,
+#    textdistance.cosine,
 ]
 
 class CommonTest(unittest.TestCase):

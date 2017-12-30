@@ -22,8 +22,8 @@ class LCSSeq(_BaseSimilarity):
             return self(*sequences) + c
         m = self.empty
         for i, s in enumerate(sequences):
-            ss = sequences[:i] + s[:-1] + sequences[i + 1:]
-            m = max([self(ss), m], key=len)
+            ss = sequences[:i] + (s[:-1], ) + sequences[i + 1:]
+            m = max([self(*ss), m], key=len)
         return m
 
     def similarity(self, *sequences):
