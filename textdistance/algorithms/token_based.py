@@ -1,4 +1,4 @@
-from itertools import repeat
+from itertools import repeat, islice
 # python3
 try:
     from functools import reduce
@@ -56,6 +56,9 @@ class Tversky(_BaseSimilarity):
         self.ks = ks or repeat(1)
         self.bias = bias
 
+    def maximum(self, *sequences):
+        return 1
+
     def __call__(self, *sequences):
         # all is equeal
         if len(set(sequences)) <= 1:
@@ -64,11 +67,11 @@ class Tversky(_BaseSimilarity):
         elif not min(map(len, sequences)):
             return 0.0
 
-        sequences = self._get_counters(*sequences)               # sets
-        intersection = self._intersect_counters(*sequences)      # set
-        intersection = self._count_counters(intersection)        # int
-        sequences = [self._count_counter(s) for s in sequences]  # ints
-        ks = self.ks[:len(sequences)]
+        sequences = self._get_counters(*sequences)                # sets
+        intersection = self._intersect_counters(*sequences)       # set
+        intersection = self._count_counters(intersection)         # int
+        sequences = [self._count_counters(s) for s in sequences]  # ints
+        ks = list(islice(self.ks, len(sequences)))
 
         if self.bias is None:
             result = intersection
