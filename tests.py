@@ -19,6 +19,7 @@ algos = [
 
     textdistance.lcsseq,
     textdistance.lcsstr,
+    textdistance.ratcliff_obershelp,
 
     textdistance.jaccard,
     textdistance.sorensen,

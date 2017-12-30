@@ -13,7 +13,7 @@ class LCSSeq(_BaseSimilarity):
         self.qval = qval
         self.sim_test = sim_test or self._ident
 
-    def _custom(self, *sequences):
+    def _find(self, *sequences):
         if not all(sequences):
             return type(sequences[0])()  # empty sequence
         if self.sim_test(*[s[-1] for s in sequences]):
@@ -28,7 +28,7 @@ class LCSSeq(_BaseSimilarity):
 
     def __call__(self, *sequences):
         sequences = self._get_sequences(*sequences)
-        return self._custom(*sequences)
+        return self._find(*sequences)
 
     def similarity(self, *sequences):
         return len(self(*sequences))
@@ -57,12 +57,13 @@ class LCSStr(_BaseSimilarity):
 
     def __call__(self, *sequences):
         if not all(sequences):
-            return self.empty
+            return ''
         length = len(sequences)
         if length == 0:
-            return self.empty
+            return ''
         if length == 1:
             return sequences[0]
+
         sequences = self._get_sequences(*sequences)
         if length == 2:
             return self._standart(*sequences)
@@ -87,16 +88,29 @@ class RatcliffObershelp(_BaseSimilarity):
     http://www.drdobbs.com/database/pattern-matching-the-gestalt-approach/184407970
     """
 
-    def _lcsstr_stl(self, src, tar):
-        pass
+    def maximum(self, *sequences):
+        return 1
 
-    def _sstr_matches(self, src, tar):
-        pass
+    def _find(self, *sequences):
+        subseq = LCSStr()(*sequences)
+        length = len(subseq)
+        if length == 0:
+            return 0
+        before = [s[:s.find(subseq)] for s in sequences]
+        after = [s[s.find(subseq) + length:] for s in sequences]
+        return self._find(*before) + length + self._find(*after)
 
     def __call__(self, *sequences):
-        pass
+        if not all(sequences):
+            return 0
+        scount = len(sequences)  # sequences count
+        if scount <= 1:
+            return 0
+        ecount = sum(map(len, sequences))  # elements count
+        sequences = self._get_sequences(*sequences)
+        return scount * self._find(*sequences) / ecount
 
 
 lcsseq = LCSSeq()
 lcsstr = LCSStr()
-ratcliff_obershelp = RatcliffObershelp
+ratcliff_obershelp = RatcliffObershelp()
