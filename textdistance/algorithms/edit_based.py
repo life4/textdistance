@@ -382,11 +382,11 @@ class StrCmp95(_BaseSimilarity):
         # Looking only within the search range, count and flag the matched pairs.
         num_com = 0
         yl1 = len_s2 - 1
-        for i in range(len_s1):
+        for i, sc1 in enumerate(s1):
             lowlim = (i - search_range) if (i >= search_range) else 0
             hilim = (i + search_range) if ((i + search_range) <= yl1) else yl1
-            for j in range(lowlim, hilim+1):
-                if s2_flag[j] == 0 and s2[j] == s1[i]:
+            for j in range(lowlim, hilim + 1):
+                if s2_flag[j] == 0 and s2[j] == sc1:
                     s2_flag[j] = 1
                     s1_flag[i] = 1
                     num_com += 1
@@ -398,13 +398,13 @@ class StrCmp95(_BaseSimilarity):
 
         # Count the number of transpositions
         k = n_trans = 0
-        for i in range(len_s1):
+        for i, sc1 in enumerate(s1):
             if s1_flag[i] != 0:
                 for j in range(k, len_s2):
                     if s2_flag[j] != 0:
                         k = j + 1
                         break
-                if s1[i] != s2[j]:
+                if sc1 != s2[j]:
                     n_trans += 1
         n_trans = n_trans // 2
 
@@ -412,18 +412,25 @@ class StrCmp95(_BaseSimilarity):
         n_simi = 0
         if minv > num_com:
             for i in range(len_s1):
-                if s1_flag[i] == 0 and self._in_range(s1[i]):
-                    for j in range(len_s2):
-                        if s2_flag[j] == 0 and self._in_range(s2[j]):
-                            if (s1[i], s2[j]) in adjwt:
-                                n_simi += adjwt[(s1[i], s2[j])]
-                                s2_flag[j] = 2
-                                break
+                if s1_flag[i] != 0:
+                    continue
+                if not self._in_range(s1[i]):
+                    continue
+                for j in range(len_s2):
+                    if s2_flag[j] != 0:
+                        continue
+                    if not self._in_range(s2[j]):
+                        continue
+                    if (s1[i], s2[j]) not in adjwt:
+                        continue
+                    n_simi += adjwt[(s1[i], s2[j])]
+                    s2_flag[j] = 2
+                    break
         num_sim = n_simi/10.0 + num_com
 
         # Main weight computation
-        weight = num_sim / len_s1 + num_sim / len_s2 + \
-            (num_com - n_trans) / num_com
+        weight = num_sim / len_s1 + num_sim / len_s2
+        weight += (num_com - n_trans) / num_com
         weight = weight / 3.0
 
         # Continue to boost the weight if the strings are similar
@@ -433,7 +440,13 @@ class StrCmp95(_BaseSimilarity):
         # Adjust for having up to the first 4 characters in common
         j = 4 if (minv >= 4) else minv
         i = 0
-        while (i < j) and (s1[i] == s2[i]) and (not s1[i].isdigit()):
+        for sc1, sc2 in zip(s1, s2):
+            if i >= j:
+                break
+            if sc1 != sc2:
+                continue
+            if sc1.isdigit():
+                continue
             i += 1
         if i:
             weight += i * 0.1 * (1.0 - weight)
@@ -442,11 +455,16 @@ class StrCmp95(_BaseSimilarity):
 
         # After agreeing beginning chars, at least two more must agree and
         # the agreeing characters must be > .5 of remaining characters.
-        if (((long_strings) and (minv > 4) and (num_com > i+1) and
-             (2*num_com >= minv+i))):
-            if not s1[0].isdigit():
-                weight += (1.0-weight) * ((num_com-i-1) /
-                                          (len_s1+len_s2-i*2+2))
+        if not long_strings:
+            return weight
+        if minv <= 4:
+            return weight
+        if num_com <= i + 1 or 2 * num_com < minv + i:
+            return weight
+        if s1[0].isdigit():
+            return weight
+        res = (num_com-i-1) / (len_s1+len_s2-i*2+2)
+        weight += (1.0 - weight) * res
         return weight
 
 
