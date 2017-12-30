@@ -18,6 +18,7 @@ algos = [
     textdistance.smith_waterman,
 
     textdistance.lcsseq,
+    textdistance.lcsstr,
 
     textdistance.jaccard,
     textdistance.sorensen,
