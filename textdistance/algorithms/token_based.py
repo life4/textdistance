@@ -24,7 +24,7 @@ class Jaccard(_Base):
         sequences = self._get_counters(*sequences)               # sets
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
-        union = self._union_counters(*sequences)             # set
+        union = self._union_counters(*sequences)                 # set
         union = self._count_counters(union)                      # int
         return 1 - intersection / float(union)
 
@@ -36,13 +36,15 @@ class Sorensen(_Base):
     The return value is a float between 0 and 1, where 0 means equal,
     and 1 totally different.
     '''
+    def maximum(self, *sequences):
+        return 1
+
     def __call__(self, *sequences):
+        length = sum(map(len, sequences))
         sequences = self._get_counters(*sequences)               # sets
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
-        union = self._intersect_counters(*sequences)             # set
-        union = self._count_counters(union)                      # int
-        return 1 - (2 * intersection) / float(union)
+        return 1 - (2 * intersection) / float(length)
 
 
 class Tversky(_BaseSimilarity):

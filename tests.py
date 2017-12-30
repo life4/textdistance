@@ -20,7 +20,7 @@ algos = [
     textdistance.lcsseq,
 
     textdistance.jaccard,
-#    textdistance.sorensen,
+    textdistance.sorensen,
 #    textdistance.tversky,
 #    textdistance.overlap,
 #    textdistance.cosine,
@@ -41,13 +41,13 @@ class CommonTest(unittest.TestCase):
 
 
 class NormalizationTest(unittest.TestCase):
-    def test_similar_distance(self):
+    def test_similar_similarity(self):
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__):
                 d = alg.normalized_similarity('test me', 'test me')
                 self.assertEqual(d, 1)
 
-    def test_different_similarity(self):
+    def test_different_distance(self):
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__):
                 s = alg.normalized_distance('spam', 'qwer')
