@@ -91,6 +91,9 @@ class Tversky(_BaseSimilarity):
 class Overlap(_BaseSimilarity):
     """overlap coefficient
     """
+    def maximum(self, *sequences):
+        return 1
+
     def __call__(self, *sequences):
         # all is equeal
         if len(set(sequences)) <= 1:
@@ -102,7 +105,7 @@ class Overlap(_BaseSimilarity):
         sequences = self._get_counters(*sequences)               # sets
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
-        sequences = [self._count_counter(s) for s in sequences]  # ints
+        sequences = [self._count_counters(s) for s in sequences] # ints
 
         return float(intersection) / min(sequences)
 

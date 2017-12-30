@@ -22,7 +22,7 @@ algos = [
     textdistance.jaccard,
     textdistance.sorensen,
     textdistance.tversky,
-#    textdistance.overlap,
+    textdistance.overlap,
 #    textdistance.cosine,
 ]
 

@@ -47,7 +47,7 @@ class Base(object):
         return [Counter(find_ngrams(s, self.qval)) for s in sequences]
 
     def _intersect_counters(self, *sequences):
-        intersection = sequences[0]
+        intersection = sequences[0].copy()
         for s in sequences[1:]:
             intersection &= s
         return intersection
