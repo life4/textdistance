@@ -23,7 +23,7 @@ algos = [
     textdistance.sorensen,
     textdistance.tversky,
     textdistance.overlap,
-#    textdistance.cosine,
+    textdistance.cosine,
 ]
 
 class CommonTest(unittest.TestCase):
