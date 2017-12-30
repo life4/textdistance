@@ -11,7 +11,7 @@ try:
 except ImportError:
     numpy = None
 # project
-from .base import Base as _Base
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = [
@@ -93,7 +93,7 @@ class DamerauLevenshtein(_Base):
         return d[len_s1 - 1, len_s2 - 1]
 
 
-class JaroWinkler(_Base):
+class JaroWinkler(_BaseSimilarity):
     """
     Computes the Jaro-Winkler measure between two strings.
     The Jaro-Winkler measure is designed to capture cases where two strings
@@ -103,6 +103,9 @@ class JaroWinkler(_Base):
     def __init__(self, long_tolerance, winklerize):
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
+
+    def maximum(self, *sequences):
+        return 1
 
     def __call__(self, s1, s2, prefix_weight=0.1):
         s1_len = len(s1)
@@ -175,7 +178,7 @@ class JaroWinkler(_Base):
         return weight
 
 
-class NeedlemanWunsch(_Base):
+class NeedlemanWunsch(_BaseSimilarity):
     """
     Computes the Needleman-Wunsch measure between two strings.
     The Needleman-Wunsch generalizes the Levenshtein distance and considers global
@@ -191,6 +194,9 @@ class NeedlemanWunsch(_Base):
             self.sim_test = sim_test
         else:
             self.sim_test = self._ident
+
+    def maximum(self, *sequences):
+        return min(map(len, sequences))
 
     def __call__(self, s1, s2):
         if not numpy:
@@ -215,7 +221,7 @@ class NeedlemanWunsch(_Base):
         return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
 
 
-class SmithWaterman(_Base):
+class SmithWaterman(_BaseSimilarity):
     """
     Computes the Smith-Waterman measure between two strings.
     The Smith-Waterman algorithm performs local sequence alignment;
@@ -230,9 +236,12 @@ class SmithWaterman(_Base):
         else:
             self.sim_test = self._ident
 
+    def maximum(self, *sequences):
+        return min(map(len, sequences))
+
     def __call__(self, s1, s2):
         if not numpy:
-            raise ImportError('Please, install numpy for Needleman-Wunsch measure')
+            raise ImportError('Please, install numpy for Smith-Waterman measure')
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
             dtype=numpy.float,
@@ -252,7 +261,7 @@ class SmithWaterman(_Base):
         return max_value
 
 
-class Gotoh(_Base):
+class Gotoh(_BaseSimilarity):
     """Gotoh score
     Gotoh's algorithm is essentially Needleman-Wunsch with affine gap
     penalties:
@@ -265,6 +274,9 @@ class Gotoh(_Base):
             self.sim_test = sim_test
         else:
             self.sim_test = self._ident
+
+    def maximum(self, *sequences):
+        return min(map(len, sequences))
 
     def __call__(self, s1, s2):
         len_s1 = len(s1)
@@ -289,7 +301,7 @@ class Gotoh(_Base):
             q_mat[0, j] = -self.gap_open - self.gap_ext * (j - 1)
 
         for i, sc1 in enumerate(s1, start=1):
-            for j, sc2 in enumerate(1, start=1):
+            for j, sc2 in enumerate(s2, start=1):
                 sim_val = self.sim_test(sc1, sc2)
                 d_mat[i, j] = max(
                     d_mat[i-1, j-1] + sim_val,

@@ -64,7 +64,7 @@ class Base(object):
 
 class BaseSimilarity(Base):
     def distance(self, *sequences):
-        return self.maximum(*sequences) - self.distance(*sequences)
+        return self.maximum(*sequences) - self.similarity(*sequences)
 
     def similarity(self, *sequences):
         return self(*sequences)

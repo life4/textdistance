@@ -1,64 +1,28 @@
-import unittest
-from textdistance import distance
-from contextlib import contextmanager
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+import textdistance
 
 
-@contextmanager
-def breakOnFirstError(*args, **kwargs): # noQA
-    yield
+algos = [
+    textdistance.bag,
+    textdistance.hamming,
+    textdistance.levenshtein,
+    textdistance.damerau_levenshtein,
+    textdistance.jaro,
+    textdistance.jaro_winkler,
+    textdistance.needleman_wunsch,
+    textdistance.gotoh,
+    textdistance.smith_waterman,
+]
 
-
-class TestAlgos(unittest.TestCase):
-
-    def setUp(self):
-        self.subTest = breakOnFirstError
-
-    def test_hamming(self):
-        with self.subTest(length='equal', distance='1', texts='2'):
-            self.assertEqual(distance.h('lorem', 'lorim'), 1)
-        with self.subTest(length='not-equal', distance='2', texts='2'):
-            self.assertEqual(distance.h('lorem', 'loremus'), 2)
-        with self.subTest(length='not-equal', distance='3', texts='2'):
-            self.assertEqual(distance.h('lorem', 'lorimus'), 3)
-        with self.subTest(length='not-equal', distance='3', texts='3'):
-            self.assertEqual(distance.h('lorem', 'lorimus', 'larem'), 4)
-
-    def test_levenshtein(self):
-        with self.subTest(category='substitution'):
-            self.assertEqual(distance.l('lorem', 'lorim'), 1)
-        with self.subTest(category='insertion'):
-            self.assertEqual(distance.l('lorem', 'loriem'), 1)
-        with self.subTest(category='deletion'):
-            self.assertEqual(distance.l('lorem', 'lrem'), 1)
-
-    def test_damerau_levenshtein(self):
-        with self.subTest(category='substitution'):
-            self.assertEqual(distance.dl('lorem', 'lorim'), 1)
-        with self.subTest(category='insertion'):
-            self.assertEqual(distance.dl('lorem', 'loriem'), 1)
-        with self.subTest(category='deletion'):
-            self.assertEqual(distance.dl('lorem', 'lrem'), 1)
-        with self.subTest(category='transposition'):
-            self.assertEqual(distance.dl('lorem', 'loerm'), 1)
-
-    def test_word(self):
-        with self.subTest(algo='dlw', distance='1'):
-            self.assertEqual(distance('dlw', 'lorem ipsum', 'ipsum lorum'), 1)
-        with self.subTest(algo='dlw', distance='1', words='+1'):
-            self.assertEqual(distance('dlw', 'lorem ipsum dolor', 'ipsum lorum'), 7)
-        with self.subTest(algo='dlwe', distance='1'):
-            self.assertEqual(distance('dlwe', 'lorem ipsum dolor', 'ipsum lorum'), 1)
-
-    def test_minimal(self):
-        with self.subTest(algo='h', distance='1'):
-            self.assertEqual(distance.find_minimal('h', 'lorem', ['larum', 'lorum']), (1, 'lorum'))
-
-    def test_similar(self):
-        with self.subTest(algo='h', distance='1'):
-            self.assertEqual(
-                distance.find_similar('h', 'lorem', ['larum', 'lorum'], 1),
-                (1, 'lorum')
-            )
+class CommonTest(unittest.TestCase):
+    def test_similar_distance(self):
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__):
+                d = alg.distance('test me', 'test me')
+                self.assertEqual(d, 0)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ __all__ = ['bag']
 
 
 class Bag(_BaseSimilarity):
-    """cosine similarity (Ochiai coefficient)
+    """Bag distance
     """
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
