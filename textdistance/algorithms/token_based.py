@@ -11,7 +11,7 @@ from .edit_based import DamerauLevenshtein
 
 __all__ = [
     'jaccard', 'sorensen', 'tversky', 'sorensen_dice',
-    'overlap', 'cosine', 'monge_elkan',
+    'overlap', 'cosine', 'tanimoto', 'monge_elkan', 'bag',
 ]
 
 
@@ -163,11 +163,21 @@ class MongeElkan(_BaseSimilarity):
             return self._calc(*sequences)
 
 
+class Bag(_BaseSimilarity):
+    """Bag distance
+    """
+    def __call__(self, *sequences):
+        sequences = self._get_counters(*sequences)              # sets
+        intersection = self._intersect_counters(*sequences)     # set
+        return self._count_counters(intersection)               # int
+
+
 jaccard = Jaccard()
 sorensen_dice = dice = sorensen = Sorensen()
 tversky = Tversky()
-#sorensen_dice = Tversky(ks=[.5, .5])
+# sorensen_dice = Tversky(ks=[.5, .5])
 overlap = Overlap()
 cosine = Cosine()
 tanimoto = Tanimoto()
 monge_elkan = MongeElkan()
+bag = Bag()

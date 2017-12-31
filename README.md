@@ -1,139 +1,53 @@
-# Algorithms
+## Algorithms
 
-* **Hamming** (`h`): substitution. Compute the Hamming distance between the two or more sequences. The Hamming distance is the number of differing items in ordered sequences.
-* **Levenstein** (`l`): deletion, insertion, substitution. Compute the absolute Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
-* **Damerau-Levenshtein** (`dl`): deletion, insertion, substitution, transposition. Compute the absolute Damerau-Levenshtein distance between the two sequences. The Levenshtein distance is the minimum number of edit operations necessary for transforming one sequence into the other.
-* **Sorensen** (`s`). Compute the Sorensen distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
-* **Jaccard** (`j`). Compute the Jaccard distance between the two sequences. They should contain hashable items. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
+### Edit based
 
-Some features:
+1. `hamming`
+2. `mlipns`
+3. `levenshtein`
+4. `damerau_levenshtein`
+5. `jaro`
+6. `jaro_winkler`
+7. `strcmp95`
+8. `needleman_wunsch`
+9. `gotoh`
+10. `smith_waterman`
+11. `editex`
 
-* All algorithms except Levenstein and Damerau-Levenshtein can compute distance for more than two sequences.
-* All algorithms work with any ordered sequences.
+### Token based
 
+1. `jaccard`
+2. `sorensen`, `sorensen_dice`, `dice`
+3. `tversky`
+4. `overlap`
+5. `tanimoto`
+6. `cosine`
+7. `monge_elkan`
+8. `bag`
 
-# Installation
+### Sequence based
 
-```bash
-sudo pip3 install textdistance
-```
+1. `lcsseq`
+2. `lcsstr`
+3. `ratcliff_obershelp`
 
-# Usage
+### Compression based
 
-## Importing
+1. `bz2_ncd`
+2. `lzma_ncd`
+3. `arith_ncd`
+4. `rle_ncd`
+5. `bwtrle_ncd
+6. `zlib_ncd`
 
-```python
->>> from textdistance import distance
+### Phonetic
 
-```
+1. `mra`
 
-## Hamming
+### Simple
 
-```python
->>> distance('h', 'lorem', 'lorum')
-1
->>> distance('h', 'lorem', 'loremus')
-2
->>> distance('h', 'lorem', 'lorimus')
-3
->>> distance('h', 'lorimus', 'larem')
-4
->>> distance.h(lorimus', 'larem')
-4
-```
+1. `prefix`
+2. `postfix`
+3. `length`
+4. `identity`
 
-## Sorensen
-
-```python
->>> distance('s', 'lorem', 'lorem')
-0.0
->>> distance('s', 'lorem', 'lorum')
-0.19999999999999996
->>> distance('s', 'lorem', 'lorme')
-0.0
->>> distance('s', 'lorem', 'melor')
-0.0
->>> distance('s', 'lorem', 'loremus')
-0.16666666666666663
->>> distance.s('lorem', 'loremus')
-0.16666666666666663
-```
-
-## Jaccard
-
-```python
->>> distance('j', 'lorem', 'lorem')
-0.0
->>> distance('j', 'lorem', 'lorum')
-0.33333333333333337
->>> distance('j', 'lorem', 'lorme')
-0.0
->>> distance('j', 'lorem', 'melor')
-0.0
->>> distance('j', 'lorem', 'loremus')
-0.2857142857142857
->>> distance.j('lorem', 'loremus')
-0.2857142857142857
-```
-
-## Levenstein
-
-```python
->>> distance('l', 'lorem', 'lorim')
-1
->>> #substitution
-... distance('l', 'lorem', 'lorim')
-1
->>> #insertion
-... distance('l', 'lorem', 'loriem')
-1
->>> #deletion
-... distance('l', 'lorem', 'lrem')
-1
->>> distance.l('lorem', 'lrem')
-1
-```
-
-## Damerau-Levenshtein
-
-```python
->>> distance('dl', 'lorem', 'lorim')
-1
->>> #substitution
-... distance('dl', 'lorem', 'lorim')
-1
->>> #insertion
-... distance('dl', 'lorem', 'loriem')
-1
->>> #deletion
-... distance('dl', 'lorem', 'lrem')
-1
->>> #transposition
-... distance('dl', 'lorem', 'lorme')
-1
->>> distance.dl('lorem', 'lorme')
-1
-```
-
-## Test with words permutations
-
-```python
->>> distance('dlw', 'lorem ipsum', 'ipsum lorum')
-1
->>> distance('dlw', 'lorem ipsum dolor', 'ipsum lorum')
-7
->>> distance('dlwe', 'lorem ipsum dolor', 'ipsum lorum')
-1
-```
-
-## Find minimal text by distance
-
-```python
->>> distance.find_minimal('h', 'lorem', ['larum', 'lorum'])
-(1, 'lorum')
-```
-
-# Contributors
-
-* [Gram Orsinium](https://github.com/orsinium)
-* [Arne Bachmann](https://github.com/ArneBachmann)
