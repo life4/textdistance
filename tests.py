@@ -34,6 +34,7 @@ algos = [
 
     textdistance.prefix,
     textdistance.postfix,
+    textdistance.identity,
 #    textdistance.length,
 
 #    textdistance.bz2_ncd,

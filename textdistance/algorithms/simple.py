@@ -1,7 +1,7 @@
 from itertools import takewhile
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
-__all__ = ['prefix', 'postfix', 'length']
+__all__ = ['prefix', 'postfix', 'length', 'identity']
 
 try:
     string_types = (str, unicode)
@@ -47,6 +47,7 @@ class Postfix(Prefix):
             return b''.join(result)
         return list(result)
 
+
 class Length(_Base):
     """Length distance
     """
@@ -55,6 +56,18 @@ class Length(_Base):
         return max(lengths) - min(lengths)
 
 
+class Identity(_BaseSimilarity):
+    """Identity distance
+    """
+
+    def maximum(self, *sequences):
+        return 1
+
+    def __call__(self, *sequences):
+        return int(self._ident(*sequences))
+
+
 prefix = Prefix()
 postfix = Postfix()
 length = Length()
+identity = Identity()
