@@ -29,6 +29,13 @@ algos = [
     textdistance.strcmp95,
 
     textdistance.mra,
+
+#    textdistance.bz2_compression,
+#    textdistance.lzma_compression,
+#    textdistance.arith_compression,
+#    textdistance.rle_compression,
+#    textdistance.bwtrle_compression,
+#    textdistance.zlib_compression,
 ]
 
 class CommonTest(unittest.TestCase):
