@@ -499,7 +499,7 @@ class MLIPNS(_BaseSimilarity):
 
 hamming = Hamming()
 levenshtein = Levenshtein()
-damerau_levenshtein = DamerauLevenshtein()
+damerau = damerau_levenshtein = DamerauLevenshtein()
 jaro = JaroWinkler(long_tolerance=False, winklerize=False)
 jaro_winkler = JaroWinkler(long_tolerance=False, winklerize=True)
 needleman_wunsch = NeedlemanWunsch()

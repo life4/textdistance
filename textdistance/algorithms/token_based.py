@@ -1,16 +1,17 @@
 from math import log, sqrt
-from itertools import repeat, islice
+from itertools import repeat, islice, permutations
 # python3
 try:
     from functools import reduce
 except ImportError:
     pass
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+from .edit_based import DamerauLevenshtein
 
 
 __all__ = [
     'jaccard', 'sorensen', 'tversky', 'sorensen_dice',
-    'overlap', 'cosine',
+    'overlap', 'cosine', 'monge_elkan',
 ]
 
 
@@ -129,6 +130,39 @@ class Tanimoto(Jaccard):
             return log(result, 2)
 
 
+class MongeElkan(_BaseSimilarity):
+    def __init__(self, sim_func=DamerauLevenshtein().similarity, symmetric=False, qval=1):
+        self.sim_func = sim_func
+        self.symmetric = symmetric
+        self.qval = qval
+
+    def maximum(self, *sequences):
+        return 1
+
+    def _calc(self, seq, *sequences):
+        maxes = []
+        for c1 in seq:
+            for s in sequences:
+                max_sim = float('-inf')
+                for c2 in s:
+                    max_sim = max(max_sim, self.sim_func(c1, c2))
+                maxes.append(max_sim)
+        return float(sum(maxes)) / len(maxes)
+
+    def __call__(self, *sequences):
+        if not all(sequences):
+            return 0
+        sequences = self._get_sequences(*sequences)
+
+        if self.symmetric:
+            result = []
+            for seqs in permutations(sequences):
+                result.append(self._calc(*seqs))
+            return float(sum(result)) / len(result)
+        else:
+            return self._calc(*sequences)
+
+
 jaccard = Jaccard()
 sorensen_dice = dice = sorensen = Sorensen()
 tversky = Tversky()
@@ -136,3 +170,4 @@ tversky = Tversky()
 overlap = Overlap()
 cosine = Cosine()
 tanimoto = Tanimoto()
+monge_elkan = MongeElkan()

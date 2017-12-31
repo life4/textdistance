@@ -28,6 +28,7 @@ algos = [
     textdistance.overlap,
     textdistance.cosine,
     textdistance.strcmp95,
+    textdistance.monge_elkan,
 
     textdistance.mra,
 
