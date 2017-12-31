@@ -16,7 +16,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = [
-    'hamming',
+    'hamming', 'mlipns',
     'levenshtein', 'damerau_levenshtein',
     'jaro', 'jaro_winkler', 'strcmp95',
     'needleman_wunsch', 'gotoh',
@@ -462,6 +462,40 @@ class StrCmp95(_BaseSimilarity):
         return weight
 
 
+class MLIPNS(_BaseSimilarity):
+    '''
+    Compute the Hamming distance between the two or more sequences.
+    The Hamming distance is the number of differing items in ordered sequences.
+    '''
+    def __init__(self, threshold=0.25, maxmismatches=2):
+        self.threshold = threshold
+        self.maxmismatches = maxmismatches
+
+    def maximum(self, *sequences):
+        return 1
+
+    def __call__(self, *sequences):
+        if not all(sequences):
+            return 0
+        if self._ident(*sequences):
+            return 1
+
+        mismatches = 0
+        ham = Hamming()(*sequences)
+        maxlen = max(map(len, sequences))
+        while all(sequences) and mismatches <= self.maxmismatches:
+            if not maxlen:
+                return 1
+            if 1 - float(maxlen - ham) / maxlen <= self.threshold:
+                return 1
+            mismatches += 1
+            ham -= 1
+            maxlen -= 1
+
+        if not maxlen:
+            return 1
+        return 0
+
 
 hamming = Hamming()
 levenshtein = Levenshtein()
@@ -472,3 +506,4 @@ needleman_wunsch = NeedlemanWunsch()
 smith_waterman = SmithWaterman()
 gotoh = Gotoh()
 strcmp95 = StrCmp95()
+mlipns = MLIPNS()

@@ -16,6 +16,7 @@ algos = [
     textdistance.needleman_wunsch,
     textdistance.gotoh,
     textdistance.smith_waterman,
+    textdistance.mlipns,
 
     textdistance.lcsseq,
     textdistance.lcsstr,
