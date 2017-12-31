@@ -11,8 +11,8 @@ from .base import Base as _Base
 
 
 __all__ = [
-    'bz2_compression', 'lzma_compression', 'arith_compression',
-    'rle_compression', 'bwtrle_compression', 'zlib_compression',
+    'bz2_ncd', 'lzma_ncd', 'arith_ncd',
+    'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
 ]
 
 
@@ -22,7 +22,7 @@ except NameError:
     string_types = (str, )
 
 
-class Compression(_Base):
+class NCD(_Base):
     """normalized compression distance (NCD)
     https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance
     """
@@ -140,9 +140,9 @@ class Compression(_Base):
         return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
 
 
-bz2_compression = Compression(compressor='bz2')
-lzma_compression = Compression(compressor='lzma')
-arith_compression = Compression(compressor='arith')
-rle_compression = Compression(compressor='rle')
-bwtrle_compression = Compression(compressor='bwtrle')
-zlib_compression = Compression(compressor='zlib')
+bz2_ncd = NCD(compressor='bz2')
+lzma_ncd = NCD(compressor='lzma')
+arith_ncd = NCD(compressor='arith')
+rle_ncd = NCD(compressor='rle')
+bwtrle_ncd = NCD(compressor='bwtrle')
+zlib_ncd = NCD(compressor='zlib')

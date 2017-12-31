@@ -30,12 +30,12 @@ algos = [
 
     textdistance.mra,
 
-#    textdistance.bz2_compression,
-#    textdistance.lzma_compression,
-#    textdistance.arith_compression,
-#    textdistance.rle_compression,
-#    textdistance.bwtrle_compression,
-#    textdistance.zlib_compression,
+#    textdistance.bz2_ncd,
+#    textdistance.lzma_ncd,
+#    textdistance.arith_ncd,
+#    textdistance.rle_ncd,
+#    textdistance.bwtrle_ncd,
+#    textdistance.zlib_ncd,
 ]
 
 class CommonTest(unittest.TestCase):
