@@ -1,5 +1,5 @@
 from itertools import takewhile
-from .base import BaseSimilarity as _BaseSimilarity
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 __all__ = ['prefix', 'postfix', 'length']
 
@@ -47,11 +47,11 @@ class Postfix(Prefix):
             return b''.join(result)
         return list(result)
 
-class Length(_BaseSimilarity):
+class Length(_Base):
     """Length distance
     """
     def __call__(self, *sequences):
-        lengths = map(len, sequences)
+        lengths = list(map(len, sequences))
         return max(lengths) - min(lengths)
 
 

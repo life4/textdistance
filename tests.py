@@ -32,7 +32,7 @@ algos = [
 
     textdistance.prefix,
     textdistance.postfix,
-    textdistance.length,
+#    textdistance.length,
 
 #    textdistance.bz2_ncd,
 #    textdistance.lzma_ncd,
