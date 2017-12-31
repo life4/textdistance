@@ -17,6 +17,7 @@ algos = [
     textdistance.gotoh,
     textdistance.smith_waterman,
     textdistance.mlipns,
+    textdistance.editex,
 
     textdistance.lcsseq,
     textdistance.lcsstr,

@@ -20,7 +20,7 @@ __all__ = [
     'levenshtein', 'damerau_levenshtein',
     'jaro', 'jaro_winkler', 'strcmp95',
     'needleman_wunsch', 'gotoh',
-    'smith_waterman',
+    'smith_waterman', 'editex',
 ]
 
 
@@ -497,6 +497,78 @@ class MLIPNS(_BaseSimilarity):
         return 0
 
 
+class Editex(_Base):
+    letter_groups = (
+        frozenset('AEIOUY'),
+        frozenset('BP'),
+        frozenset('CKQ'),
+        frozenset('DT'),
+        frozenset('LR'),
+        frozenset('MN'),
+        frozenset('GJ'),
+        frozenset('FPV'),
+        frozenset('SXZ'),
+        frozenset('CSZ'),
+    )
+    all_letters = frozenset('AEIOUYBPCKQDTLRMNGJFVSXZ')
+
+    def __init__(self, local=False, match_cost=0, group_cost=1, mismatch_cost=2):
+        self.match_cost = match_cost
+        self.group_cost = group_cost
+        self.mismatch_cost = mismatch_cost
+        self.local = local
+
+    def maximum(self, *sequences):
+        return max(map(len, sequences)) * self.mismatch_cost
+
+    def r_cost(self, *sequences):
+        if self._ident(*sequences):
+            return self.match_cost
+        if any(map(lambda x: x not in self.all_letters, sequences)):
+            return self.mismatch_cost
+        for group in self.letter_groups:
+            if all(map(lambda x: x not in group, sequences)):
+                return self.group_cost
+        return self.mismatch_cost
+
+    def d_cost(self, *sequences):
+        if not self._ident(*sequences) and sequences[0] in 'HW':
+            return self.group_cost
+        return self.r_cost(*sequences)
+
+    def __call__(self, s1, s2):
+        if not numpy:
+            raise ImportError('Please, install numpy for Smith-Waterman measure')
+        if s1 == s2:
+            return 0
+        if len(s1) == 0:
+            return len(s2) * self.mismatch_cost
+        if len(s2) == 0:
+            return len(s1) * self.mismatch_cost
+
+        d_mat = numpy.zeros((len(s1) + 1, len(s2) + 1), dtype=numpy.int)
+        lens = len(s1)
+        lent = len(s2)
+        s1 = ' ' + s1
+        s2 = ' ' + s2
+
+        if not self.local:
+            for i in range(1, lens+1):
+                d_mat[i, 0] = d_mat[i-1, 0] + self.d_cost(s1[i-1], s1[i])
+        for j in range(1, lent+1):
+            d_mat[0, j] = d_mat[0, j-1] + self.d_cost(s2[j-1], s2[j])
+
+        for i in range(1, lens+1):
+            for j in range(1, lent+1):
+                d_mat[i, j] = min(
+                    d_mat[i-1, j] + self.d_cost(s1[i-1], s1[i]),
+                    d_mat[i, j-1] + self.d_cost(s2[j-1], s2[j]),
+                    d_mat[i-1, j-1] + self.r_cost(s1[i], s2[j]),
+                )
+
+        return d_mat[lens, lent]
+
+
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau = damerau_levenshtein = DamerauLevenshtein()
@@ -507,3 +579,4 @@ smith_waterman = SmithWaterman()
 gotoh = Gotoh()
 strcmp95 = StrCmp95()
 mlipns = MLIPNS()
+editex = Editex()
