@@ -285,7 +285,6 @@ class Gotoh(_BaseSimilarity):
         d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
         p_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
         q_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
-        # pylint: enable=no-member
 
         d_mat[0, 0] = 0
         p_mat[0, 0] = float('-inf')
@@ -351,11 +350,6 @@ class StrCmp95(_BaseSimilarity):
         s2 = s2.strip().upper()
         len_s1 = len(s1)
         len_s2 = len(s2)
-
-        if s1 == s2:
-            return 1.0
-        if len_s1 == 0 or len_s2 == 0:
-            return 0.0
 
         adjwt = defaultdict(int)
 
@@ -455,7 +449,7 @@ class StrCmp95(_BaseSimilarity):
 
         # After agreeing beginning chars, at least two more must agree and
         # the agreeing characters must be > .5 of remaining characters.
-        if not long_strings:
+        if not self.long_strings:
             return weight
         if minv <= 4:
             return weight
