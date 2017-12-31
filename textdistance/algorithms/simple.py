@@ -1,7 +1,7 @@
 from itertools import takewhile
 from .base import BaseSimilarity as _BaseSimilarity
 
-__all__ = ['prefix']
+__all__ = ['prefix', 'postfix']
 
 try:
     string_types = (str, unicode)
@@ -34,4 +34,17 @@ class Prefix(_BaseSimilarity):
         return len(self(*sequences))
 
 
+class Postfix(Prefix):
+    def __call__(self, *sequences):
+        s = sequences[0]
+        sequences = [reversed(s) for s in sequences]
+        result = reversed(super(Postfix, self).__call__(*sequences))
+        if isinstance(s, string_types):
+            return ''.join(result)
+        if isinstance(s, bytes):
+            return b''.join(result)
+        return list(result)
+
+
 prefix = Prefix()
+postfix = Postfix()

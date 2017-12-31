@@ -31,6 +31,7 @@ algos = [
     textdistance.mra,
 
     textdistance.prefix,
+    textdistance.postfix,
 
 #    textdistance.bz2_ncd,
 #    textdistance.lzma_ncd,
