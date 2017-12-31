@@ -1,7 +1,7 @@
 from itertools import takewhile
 from .base import BaseSimilarity as _BaseSimilarity
 
-__all__ = ['prefix', 'postfix']
+__all__ = ['prefix', 'postfix', 'length']
 
 try:
     string_types = (str, unicode)
@@ -35,6 +35,8 @@ class Prefix(_BaseSimilarity):
 
 
 class Postfix(Prefix):
+    """postfix distance
+    """
     def __call__(self, *sequences):
         s = sequences[0]
         sequences = [reversed(s) for s in sequences]
@@ -45,6 +47,14 @@ class Postfix(Prefix):
             return b''.join(result)
         return list(result)
 
+class Length(_BaseSimilarity):
+    """Length distance
+    """
+    def __call__(self, *sequences):
+        lengths = map(len, sequences)
+        return max(lengths) - min(lengths)
+
 
 prefix = Prefix()
 postfix = Postfix()
+length = Length()
