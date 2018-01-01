@@ -397,6 +397,8 @@ class Gotoh(_BaseSimilarity):
 
 class StrCmp95(_BaseSimilarity):
     """strcmp95 similarity
+
+    http://cpansearch.perl.org/src/SCW/Text-JaroWinkler-0.1/strcmp95.c
     """
     sp_mx = (
         ('A', 'E'), ('A', 'I'), ('A', 'O'), ('A', 'U'), ('B', 'V'), ('E', 'I'),
@@ -433,9 +435,9 @@ class StrCmp95(_BaseSimilarity):
         # The adjwt array is used to give partial credit for characters that
         # may be errors due to known phonetic or character recognition errors.
         # A typical example is to match the letter "O" with the number "0"
-        for i in self.sp_mx:
-            adjwt[(i[0], i[1])] = 3
-            adjwt[(i[1], i[0])] = 3
+        for c1, c2 in self.sp_mx:
+            adjwt[c1, c2] = 3
+            adjwt[c2, c1] = 3
 
         if len_s1 > len_s2:
             search_range = len_s1
@@ -453,8 +455,8 @@ class StrCmp95(_BaseSimilarity):
         num_com = 0
         yl1 = len_s2 - 1
         for i, sc1 in enumerate(s1):
-            lowlim = (i - search_range) if (i >= search_range) else 0
-            hilim = (i + search_range) if ((i + search_range) <= yl1) else yl1
+            lowlim = max(i - search_range, 0)
+            hilim = min(i + search_range, yl1)
             for j in range(lowlim, hilim + 1):
                 if s2_flag[j] == 0 and s2[j] == sc1:
                     s2_flag[j] = 1
@@ -469,13 +471,14 @@ class StrCmp95(_BaseSimilarity):
         # Count the number of transpositions
         k = n_trans = 0
         for i, sc1 in enumerate(s1):
-            if s1_flag[i] != 0:
-                for j in range(k, len_s2):
-                    if s2_flag[j] != 0:
-                        k = j + 1
-                        break
-                if sc1 != s2[j]:
-                    n_trans += 1
+            if not s1_flag[i]:
+                continue
+            for j in range(k, len_s2):
+                if s2_flag[j] != 0:
+                    k = j + 1
+                    break
+            if sc1 != s2[j]:
+                n_trans += 1
         n_trans = n_trans // 2
 
         # Adjust for similarities in unmatched characters
@@ -493,10 +496,10 @@ class StrCmp95(_BaseSimilarity):
                         continue
                     if (s1[i], s2[j]) not in adjwt:
                         continue
-                    n_simi += adjwt[(s1[i], s2[j])]
+                    n_simi += adjwt[s1[i], s2[j]]
                     s2_flag[j] = 2
                     break
-        num_sim = n_simi/10.0 + num_com
+        num_sim = n_simi / 10.0 + num_com
 
         # Main weight computation
         weight = num_sim / len_s1 + num_sim / len_s2
@@ -508,15 +511,15 @@ class StrCmp95(_BaseSimilarity):
             return weight
 
         # Adjust for having up to the first 4 characters in common
-        j = 4 if (minv >= 4) else minv
+        j = min(minv, 4)
         i = 0
         for sc1, sc2 in zip(s1, s2):
             if i >= j:
                 break
             if sc1 != sc2:
-                continue
+                break
             if sc1.isdigit():
-                continue
+                break
             i += 1
         if i:
             weight += i * 0.1 * (1.0 - weight)
