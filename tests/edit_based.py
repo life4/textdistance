@@ -45,6 +45,8 @@ class JaroTest(unittest.TestCase):
         self.assertEqual(self.alg.similarity('fly', 'ant'), 0.0)
         self.assertGreater(self.alg.similarity('frog', 'fog'), 0.916)
         self.assertLess(self.alg.similarity('frog', 'fog'), 0.917)
+        self.assertGreater(self.alg.similarity('ATCG', 'TAGC'), 0.833)
+        self.assertLess(self.alg.similarity('ATCG', 'TAGC'), 0.834)
 
 
 class JaroWinklerTest(unittest.TestCase):

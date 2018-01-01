@@ -189,11 +189,14 @@ class JaroWinkler(_BaseSimilarity):
 
         # adjust for similarities in nonmatched characters
         common_chars = float(common_chars)
-        weight = ((common_chars/s1_len + common_chars/s2_len +
-                  (common_chars-trans_count) / common_chars)) / 3
+        weight = common_chars / s1_len + common_chars / s2_len
+        weight += (common_chars - trans_count) / common_chars
+        weight /= 3
 
         # stop to boost if strings are not similar
-        if not self.winklerize or weight <= 0.7 or s1_len <= 3 or s2_len <= 3:
+        if not self.winklerize:
+            return weight
+        if weight <= 0.7 or s1_len <= 3 or s2_len <= 3:
             return weight
 
         # winkler modification
@@ -212,7 +215,8 @@ class JaroWinkler(_BaseSimilarity):
             return weight
         if common_chars < i or 2 * common_chars < min_len + i:
             return weight
-        weight += (1.0 - weight) * float(common_chars-i-1) / float(s1_len+s2_len-i*2+2)
+        tmp = float(common_chars - i - 1) / (s1_len + s2_len - i * 2 + 2)
+        weight += (1.0 - weight) * tmp
         return weight
 
 
@@ -225,6 +229,8 @@ class NeedlemanWunsch(_BaseSimilarity):
     score of the best alignment, that is, the maximal score.
     An alignment between two strings is a set of correspondences between the
     characters of between them, allowing for gaps.
+
+    https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
     """
     def __init__(self, gap_cost=1.0, sim_func=None, qval=1):
         self.qval = qval
