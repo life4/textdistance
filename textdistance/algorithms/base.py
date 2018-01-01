@@ -41,7 +41,15 @@ class Base(object):
             return self.maximum(*sequences)
 
     def _ident(self, *elements):
-        return len(set(elements)) == 1
+        try:
+            # for hashable elements
+            return len(set(elements)) == 1
+        except TypeError:
+            # for unhashable elements
+            for e1, e2 in zip(elements, elements[1:]):
+                if e1 != e2:
+                    return False
+            return True
 
     def _get_sequences(self, *sequences):
         # by words

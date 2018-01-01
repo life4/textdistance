@@ -293,14 +293,13 @@ class SmithWaterman(_BaseSimilarity):
     that is, for determining similar regions between two strings.
     Instead of looking at the total sequence, the Smith-Waterman algorithm compares
     segments of all possible lengths and optimizes the similarity measure.
+
+    https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm
     """
     def __init__(self, gap_cost=1.0, sim_func=None, qval=1):
         self.qval = qval
         self.gap_cost = gap_cost
-        if sim_func:
-            self.sim_func = sim_func
-        else:
-            self.sim_func = self._ident
+        self.sim_func = sim_func or self._ident
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
@@ -328,8 +327,7 @@ class SmithWaterman(_BaseSimilarity):
                 delete = dist_mat[i - 1, j] - self.gap_cost
                 insert = dist_mat[i, j - 1] - self.gap_cost
                 dist_mat[i, j] = max(0, match, delete, insert)
-                max_value = max(max_value, dist_mat[i, j])
-        return max_value
+        return dist_mat[dist_mat.shape[0]-1, dist_mat.shape[1]-1]
 
 
 class Gotoh(_BaseSimilarity):

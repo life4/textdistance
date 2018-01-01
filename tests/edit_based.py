@@ -90,7 +90,7 @@ class MatrixTest(unittest.TestCase):
 
 
 class NeedlemanWunschTest(unittest.TestCase):
-    alg = textdistance.needleman_wunsch
+    alg = textdistance.NeedlemanWunsch
 
     def test_common(self):
         # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
@@ -107,13 +107,43 @@ class NeedlemanWunschTest(unittest.TestCase):
             ('C', 'T'): 0,
         }
         sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
-        alg = textdistance.NeedlemanWunsch(gap_cost=5, sim_func=sim_matrix)
+        alg = self.alg(gap_cost=5, sim_func=sim_matrix)
         self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 16)
 
         sim_ident = lambda x, y: 2 * int(x == y) - 1
-        alg = textdistance.NeedlemanWunsch(sim_func=sim_ident)
+        alg = self.alg(sim_func=sim_ident)
         self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
-        alg = textdistance.NeedlemanWunsch(gap_cost=5, sim_func=sim_ident)
+        alg = self.alg(gap_cost=5, sim_func=sim_ident)
         self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), -5)
         self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), -7)
         self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
+
+
+class SmithWatermanTest(unittest.TestCase):
+    alg = textdistance.SmithWaterman
+
+    def test_common(self):
+        # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
+        nw_matrix = {
+            ('A', 'A'): 10,
+            ('G', 'G'): 7,
+            ('C', 'C'): 9,
+            ('T', 'T'): 8,
+            ('A', 'G'): -1,
+            ('A', 'C'): -3,
+            ('A', 'T'): -4,
+            ('G', 'C'): -5,
+            ('G', 'T'): -3,
+            ('C', 'T'): 0,
+        }
+        sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
+        alg = self.alg(gap_cost=5, sim_func=sim_matrix)
+        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
+
+        sim_ident = lambda x, y: 2 * int(x == y) - 1
+        alg = self.alg(sim_func=sim_ident)
+        self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
+        alg = self.alg(gap_cost=5, sim_func=sim_ident)
+        self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), 0)
+        self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), 1)
+        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 0)
