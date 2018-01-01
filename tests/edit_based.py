@@ -115,3 +115,5 @@ class NeedlemanWunschTest(unittest.TestCase):
         self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
         alg = textdistance.NeedlemanWunsch(gap_cost=5, sim_func=sim_ident)
         self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), -5)
+        self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), -7)
+        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
