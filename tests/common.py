@@ -62,6 +62,13 @@ class EmptyTest(unittest.TestCase):
                 d = alg.distance('', '')
                 self.assertEqual(d, 0)
 
+    def test_unequal_distance(self):
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                if alg.maximum('', 'qwertyui'):
+                    d = alg.distance('', 'qwertyui')
+                    self.assertGreater(d, 0)
+
 
 class NormalizationTest(unittest.TestCase):
     def test_similar_similarity(self):

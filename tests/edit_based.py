@@ -40,21 +40,22 @@ class JaroTest(unittest.TestCase):
     alg = textdistance.jaro
 
     def test_common(self):
-        self.assertGreater(self.alg.similarity('hello', 'haloa'), 0.733)
-        self.assertLess(self.alg.similarity('hello', 'haloa'), 0.734)
+        self.assertAlmostEqual(self.alg.similarity('hello', 'haloa'), 0.73333333)
         self.assertEqual(self.alg.similarity('fly', 'ant'), 0.0)
-        self.assertGreater(self.alg.similarity('frog', 'fog'), 0.916)
-        self.assertLess(self.alg.similarity('frog', 'fog'), 0.917)
-        self.assertGreater(self.alg.similarity('ATCG', 'TAGC'), 0.833)
-        self.assertLess(self.alg.similarity('ATCG', 'TAGC'), 0.834)
+        self.assertAlmostEqual(self.alg.similarity('frog', 'fog'), 0.91666666)
+        self.assertAlmostEqual(self.alg.similarity('ATCG', 'TAGC'), 0.83333333)
+        self.assertAlmostEqual(self.alg.similarity('MARTHA', 'MARHTA'), 0.944444444)
+        self.assertAlmostEqual(self.alg.similarity('DWAYNE', 'DUANE'), 0.822222222)
+        self.assertAlmostEqual(self.alg.similarity('DIXON', 'DICKSONX'), 0.76666666)
 
 
 class JaroWinklerTest(unittest.TestCase):
     alg = textdistance.jaro_winkler
 
     def test_common(self):
-        self.assertGreater(self.alg.similarity('elephant', 'hippo'), 0.441)
-        self.assertLess(self.alg.similarity('elephant', 'hippo'), 0.442)
+        self.assertAlmostEqual(self.alg.similarity('elephant', 'hippo'), 0.44166666)
         self.assertEqual(self.alg.similarity('fly', 'ant'), 0.0)
-        self.assertGreater(self.alg.similarity('frog', 'fog'), 0.916)
-        self.assertLess(self.alg.similarity('frog', 'fog'), 0.917)
+        self.assertAlmostEqual(self.alg.similarity('frog', 'fog'), 0.916666666)
+        self.assertAlmostEqual(self.alg.similarity('MARTHA', 'MARHTA'), 0.96111111)
+        self.assertAlmostEqual(self.alg.similarity('DWAYNE', 'DUANE'), 0.84)
+        self.assertAlmostEqual(self.alg.similarity('DIXON', 'DICKSONX'), 0.81333333)
