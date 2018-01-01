@@ -8,6 +8,8 @@ __all__ = ['lcsseq', 'lcsstr', 'ratcliff_obershelp']
 
 class LCSSeq(_BaseSimilarity):
     """longest common substring similarity
+
+    https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     """
     def __init__(self, qval=1, test_func=None):
         self.qval = qval

@@ -28,6 +28,8 @@ class Hamming(_Base):
     '''
     Compute the Hamming distance between the two or more sequences.
     The Hamming distance is the number of differing items in ordered sequences.
+
+    https://en.wikipedia.org/wiki/Hamming_distance
     '''
     def __init__(self, qval=1, test_func=None, truncate=False):
         self.qval = qval
@@ -49,6 +51,8 @@ class Levenshtein(_Base):
         * deletion:     ABC -> BC, AC, AB
         * insertion:    ABC -> ABCD, EABC, AEBC..
         * substitution: ABC -> ABE, ADC, FBC..
+
+    https://en.wikipedia.org/wiki/Levenshtein_distance
     '''
     def __init__(self, qval=1, test_func=None):
         self.qval = qval
@@ -82,6 +86,8 @@ class DamerauLevenshtein(_Base):
         * insertion:     ABC -> ABCD, EABC, AEBC..
         * substitution:  ABC -> ABE, ADC, FBC..
         * transposition: ABC -> ACB, BAC
+    
+    https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     '''
     def __init__(self, qval=1, test_func=None):
         self.qval = qval
@@ -127,8 +133,10 @@ class JaroWinkler(_BaseSimilarity):
     The Jaro-Winkler measure is designed to capture cases where two strings
     have a low Jaro score, but share a prefix.
     and thus are likely to match.
+
+    https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
     """
-    def __init__(self, long_tolerance, winklerize, qval=1):
+    def __init__(self, long_tolerance=False, winklerize=True, qval=1):
         self.qval = qval
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
@@ -600,8 +608,8 @@ class Editex(_Base):
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau = damerau_levenshtein = DamerauLevenshtein()
-jaro = JaroWinkler(long_tolerance=False, winklerize=False)
-jaro_winkler = JaroWinkler(long_tolerance=False, winklerize=True)
+jaro = JaroWinkler(winklerize=False)
+jaro_winkler = JaroWinkler(winklerize=True)
 needleman_wunsch = NeedlemanWunsch()
 smith_waterman = SmithWaterman()
 gotoh = Gotoh()
