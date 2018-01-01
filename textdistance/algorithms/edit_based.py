@@ -128,7 +128,8 @@ class JaroWinkler(_BaseSimilarity):
     have a low Jaro score, but share a prefix.
     and thus are likely to match.
     """
-    def __init__(self, long_tolerance, winklerize):
+    def __init__(self, long_tolerance, winklerize, qval=1):
+        self.qval = qval
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
 
@@ -136,6 +137,7 @@ class JaroWinkler(_BaseSimilarity):
         return 1
 
     def __call__(self, s1, s2, prefix_weight=0.1):
+        s1, s2 = self._get_sequences(s1, s2)
         s1_len = len(s1)
         s2_len = len(s2)
 
@@ -216,12 +218,13 @@ class NeedlemanWunsch(_BaseSimilarity):
     An alignment between two strings is a set of correspondences between the
     characters of between them, allowing for gaps.
     """
-    def __init__(self, gap_cost=1.0, sim_test=None):
+    def __init__(self, gap_cost=1.0, sim_func=None, qval=1):
+        self.qval = qval
         self.gap_cost = gap_cost
-        if sim_test:
-            self.sim_test = sim_test
+        if sim_func:
+            self.sim_func = sim_func
         else:
-            self.sim_test = self._ident
+            self.sim_func = self._ident
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
@@ -229,6 +232,7 @@ class NeedlemanWunsch(_BaseSimilarity):
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Needleman-Wunsch measure')
+        s1, s2 = self._get_sequences(s1, s2)
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
             dtype=numpy.float,
@@ -242,7 +246,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         # Needleman-Wunsch DP calculation
         for i in range(1, len(s1) + 1):
             for j in range(1, len(s2) + 1):
-                match = dist_mat[i - 1, j - 1] + self.sim_test(s1[i - 1], s2[j - 1])
+                match = dist_mat[i - 1, j - 1] + self.sim_func(s1[i - 1], s2[j - 1])
                 delete = dist_mat[i - 1, j] - self.gap_cost
                 insert = dist_mat[i, j - 1] - self.gap_cost
                 dist_mat[i, j] = max(match, delete, insert)
@@ -257,12 +261,13 @@ class SmithWaterman(_BaseSimilarity):
     Instead of looking at the total sequence, the Smith-Waterman algorithm compares
     segments of all possible lengths and optimizes the similarity measure.
     """
-    def __init__(self, gap_cost=1.0, sim_test=None):
+    def __init__(self, gap_cost=1.0, sim_func=None, qval=1):
+        self.qval = qval
         self.gap_cost = gap_cost
-        if sim_test:
-            self.sim_test = sim_test
+        if sim_func:
+            self.sim_func = sim_func
         else:
-            self.sim_test = self._ident
+            self.sim_func = self._ident
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
@@ -270,6 +275,7 @@ class SmithWaterman(_BaseSimilarity):
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Smith-Waterman measure')
+        s1, s2 = self._get_sequences(s1, s2)
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
             dtype=numpy.float,
@@ -279,7 +285,7 @@ class SmithWaterman(_BaseSimilarity):
             for j, sc2 in enumerate(s2, start=1):
                 # The score for substituting the letter a[i-1] for b[j-1].
                 # Generally low for mismatch, high for match.
-                match = dist_mat[i - 1, j - 1] + self.sim_test(sc1, sc2)
+                match = dist_mat[i - 1, j - 1] + self.sim_func(sc1, sc2)
                 # The scores for for introducing extra letters in one of the strings
                 # (or by symmetry, deleting them from the other).
                 delete = dist_mat[i - 1, j] - self.gap_cost
@@ -295,18 +301,20 @@ class Gotoh(_BaseSimilarity):
     penalties:
     https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
     """
-    def __init__(self, gap_open=1, gap_ext=0.4, sim_test=None):
+    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1):
+        self.qval = qval
         self.gap_open = gap_open
         self.gap_ext = gap_ext
-        if sim_test:
-            self.sim_test = sim_test
+        if sim_func:
+            self.sim_func = sim_func
         else:
-            self.sim_test = self._ident
+            self.sim_func = self._ident
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
 
     def __call__(self, s1, s2):
+        s1, s2 = self._get_sequences(s1, s2)
         len_s1 = len(s1)
         len_s2 = len(s2)
         d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
@@ -329,7 +337,7 @@ class Gotoh(_BaseSimilarity):
 
         for i, sc1 in enumerate(s1, start=1):
             for j, sc2 in enumerate(s2, start=1):
-                sim_val = self.sim_test(sc1, sc2)
+                sim_val = self.sim_func(sc1, sc2)
                 d_mat[i, j] = max(
                     d_mat[i-1, j-1] + sim_val,
                     p_mat[i-1, j-1] + sim_val,
@@ -368,9 +376,7 @@ class StrCmp95(_BaseSimilarity):
 
     @staticmethod
     def _in_range(char):
-        """Return True if char is in the range (0, 91)
-        """
-        return ord(char) > 0 and ord(char) < 91
+        return 0 < ord(char) < 91
 
     def __call__(self, s1, s2):
         s1 = s1.strip().upper()
@@ -494,7 +500,8 @@ class MLIPNS(_BaseSimilarity):
     Compute the Hamming distance between the two or more sequences.
     The Hamming distance is the number of differing items in ordered sequences.
     '''
-    def __init__(self, threshold=0.25, maxmismatches=2):
+    def __init__(self, threshold=0.25, maxmismatches=2, qval=1):
+        self.qval = qval
         self.threshold = threshold
         self.maxmismatches = maxmismatches
 
@@ -502,11 +509,7 @@ class MLIPNS(_BaseSimilarity):
         return 1
 
     def __call__(self, *sequences):
-        if not all(sequences):
-            return 0
-        if self._ident(*sequences):
-            return 1
-
+        sequences = self._get_sequences(*sequences)
         mismatches = 0
         ham = Hamming()(*sequences)
         maxlen = max(map(len, sequences))
@@ -566,8 +569,6 @@ class Editex(_Base):
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Smith-Waterman measure')
-        if s1 == s2:
-            return 0
         if len(s1) == 0:
             return len(s2) * self.mismatch_cost
         if len(s2) == 0:
