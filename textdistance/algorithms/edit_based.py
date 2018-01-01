@@ -568,7 +568,7 @@ class Editex(_Base):
 
     def __call__(self, s1, s2):
         if not numpy:
-            raise ImportError('Please, install numpy for Smith-Waterman measure')
+            raise ImportError('Please, install numpy for Editex measure')
         if len(s1) == 0:
             return len(s2) * self.mismatch_cost
         if len(s2) == 0:

@@ -27,6 +27,8 @@ class LCSSeq(_BaseSimilarity):
         return m
 
     def __call__(self, *sequences):
+        if not sequences:
+            return ''
         sequences = self._get_sequences(*sequences)
         return self._find(*sequences)
 
