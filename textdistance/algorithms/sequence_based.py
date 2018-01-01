@@ -9,14 +9,14 @@ __all__ = ['lcsseq', 'lcsstr', 'ratcliff_obershelp']
 class LCSSeq(_BaseSimilarity):
     """longest common substring similarity
     """
-    def __init__(self, qval=1, sim_test=None):
+    def __init__(self, qval=1, test_func=None):
         self.qval = qval
-        self.sim_test = sim_test or self._ident
+        self.test_func = test_func or self._ident
 
     def _find(self, *sequences):
         if not all(sequences):
             return type(sequences[0])()  # empty sequence
-        if self.sim_test(*[s[-1] for s in sequences]):
+        if self.test_func(*[s[-1] for s in sequences]):
             c = sequences[0][-1]
             sequences = [s[:-1] for s in sequences]
             return self(*sequences) + c

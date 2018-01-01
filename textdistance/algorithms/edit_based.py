@@ -29,8 +29,14 @@ class Hamming(_Base):
     Compute the Hamming distance between the two or more sequences.
     The Hamming distance is the number of differing items in ordered sequences.
     '''
+    def __init__(self, qval=1, test_func=None, truncate=False):
+        self.qval = qval
+        self.test_func = test_func or self._ident
+        self.truncate = truncate
+
     def __call__(self, *sequences):
-        return len([1 for t in zip_longest(*sequences) if len(set(t)) > 1])
+        _zip = zip if self.truncate else zip_longest
+        return sum([not self.test_func(*es) for es in _zip(*sequences)])
 
 
 class Levenshtein(_Base):
@@ -43,10 +49,14 @@ class Levenshtein(_Base):
         * insertion:    ABC -> ABCD, EABC, AEBC..
         * substitution: ABC -> ABE, ADC, FBC..
     '''
+    def __init__(self, qval=1, test_func=None):
+        self.qval = qval
+        self.test_func = test_func or self._ident
+
     def __call__(self, s1, s2):
         if not s1 or not s2:
             return len(s1) + len(s2)
-        elif s1[-1] == s2[-1]:
+        elif self.test_func(s1[-1], s2[-1]):
             return self(s1[:-1], s2[:-1])
         else:
             # deletion/insertion

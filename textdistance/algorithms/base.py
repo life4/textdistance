@@ -30,11 +30,8 @@ class Base(object):
     def normalized_similarity(self, *sequences):
         return 1 - self.normalized_distance(*sequences)
 
-    def _ident(self, *sequence):
-        for c1, c2 in zip(sequence, sequence[1:]):
-            if c1 != c2:
-                return False
-        return True
+    def _ident(self, *elements):
+        return len(set(elements)) == 1
 
     def _get_sequences(self, *sequences):
         # by words
