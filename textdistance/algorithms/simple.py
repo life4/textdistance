@@ -1,7 +1,10 @@
 from itertools import takewhile
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
-__all__ = ['prefix', 'postfix', 'length', 'identity']
+__all__ = [
+    'Prefix', 'Postfix', 'Length', 'Identity', 'Matrix',
+    'prefix', 'postfix', 'length', 'identity', 'matrix',
+]
 
 try:
     string_types = (str, unicode)
@@ -66,8 +69,43 @@ class Identity(_BaseSimilarity):
     def __call__(self, *sequences):
         return int(self._ident(*sequences))
 
+class Matrix(_BaseSimilarity):
+    """Matrix distance
+    """
+
+    def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric=True):
+        self.mat = mat
+        self.mismatch_cost = mismatch_cost
+        self.match_cost = match_cost
+        self.symmetric = symmetric
+        # self.alphabet = sum(mat.keys(), ())
+
+    def maximum(self, *sequences):
+        return self.match_cost
+
+    def __call__(self, *sequences):
+        if not self.mat:
+            if self._ident(*sequences):
+                return self.match_cost
+            return self.mismatch_cost
+
+        # search in matrix
+        if sequences in self.mat:
+            return self.mat[sequences]
+        # search in symmetric matrix
+        if self.symmetric:
+            sequences = tuple(reversed(sequences))
+            if sequences in self.mat:
+                return self.mat[sequences]
+        # if identity then return match_cost
+        if self._ident(*sequences):
+            return self.match_cost
+        # not found
+        return self.mismatch_cost
+
 
 prefix = Prefix()
 postfix = Postfix()
 length = Length()
 identity = Identity()
+matrix = Matrix()

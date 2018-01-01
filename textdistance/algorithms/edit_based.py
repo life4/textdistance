@@ -16,6 +16,12 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = [
+    'Hamming', 'MLIPNS',
+    'Levenshtein', 'DamerauLevenshtein',
+    'JaroWinkler', 'StrCmp95',
+    'NeedlemanWunsch', 'Gotoh',
+    'SmithWaterman', 'Editex',
+
     'hamming', 'mlipns',
     'levenshtein', 'damerau_levenshtein',
     'jaro', 'jaro_winkler', 'strcmp95',
@@ -53,6 +59,7 @@ class Levenshtein(_Base):
         * substitution: ABC -> ABE, ADC, FBC..
 
     https://en.wikipedia.org/wiki/Levenshtein_distance
+    TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
     '''
     def __init__(self, qval=1, test_func=None):
         self.qval = qval
