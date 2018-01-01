@@ -35,6 +35,7 @@ class Hamming(_Base):
         self.truncate = truncate
 
     def __call__(self, *sequences):
+        sequences = self._get_sequences(*sequences)
         _zip = zip if self.truncate else zip_longest
         return sum([not self.test_func(*es) for es in _zip(*sequences)])
 
@@ -54,16 +55,21 @@ class Levenshtein(_Base):
         self.test_func = test_func or self._ident
 
     def __call__(self, s1, s2):
+        s1, s2 = self._get_sequences(s1, s2)
         if not s1 or not s2:
             return len(s1) + len(s2)
-        elif self.test_func(s1[-1], s2[-1]):
+
+        if self.test_func(s1[-1], s2[-1]):
             return self(s1[:-1], s2[:-1])
-        else:
-            # deletion/insertion
-            a = min(self(s1[:-1], s2), self(s1, s2[:-1]))
-            # substitution
-            b = self(s1[:-1], s2[:-1])
-            return min(a, b) + 1
+
+        # deletion/insertion
+        d = min(
+            self(s1[:-1], s2),
+            self(s1, s2[:-1]),
+        )
+        # substitution
+        s = self(s1[:-1], s2[:-1])
+        return min(d, s) + 1
 
 
 class DamerauLevenshtein(_Base):
@@ -77,31 +83,42 @@ class DamerauLevenshtein(_Base):
         * substitution:  ABC -> ABE, ADC, FBC..
         * transposition: ABC -> ACB, BAC
     '''
+    def __init__(self, qval=1, test_func=None):
+        self.qval = qval
+        self.test_func = test_func or self._ident
+
     def __call__(self, s1, s2):
+        s1, s2 = self._get_sequences(s1, s2)
         d = {}
-        len_s1 = len(s1)
-        len_s2 = len(s2)
-        for i in range(-1, len_s1 + 1):
+
+        # matrix
+        for i in range(-1, len(s1) + 1):
             d[i, -1] = i + 1
-        for j in range(-1, len_s2 + 1):
+        for j in range(-1, len(s2) + 1):
             d[-1, j] = j + 1
 
-        for i in range(len_s1):
-            for j in range(len_s2):
-                if s1[i] == s2[j]:
-                    cost = 0
-                else:
-                    cost = 1
+        for i, cs1 in enumerate(s1):
+            for j, cs2 in enumerate(s2):
+                cost = int(not self.test_func(cs1, cs2))
+                # ^ 0 if equal, 1 otherwise
 
-                d[(i, j)] = min(
+                d[i, j] = min(
                     d[i - 1, j] + 1,            # deletion
                     d[i, j - 1] + 1,            # insertion
                     d[i - 1, j - 1] + cost,     # substitution
                 )
 
-                if i and j and s1[i] == s2[j - 1] and s1[i - 1] == s2[j]:
-                    d[i, j] = min(d[i, j], d[i - 2, j - 2] + cost)  # transposition
-        return d[len_s1 - 1, len_s2 - 1]
+                # transposition
+                if not i or not j:
+                    continue
+                if not self.test_func(cs1, s2[j - 1]):
+                    continue
+                d[i, j] = min(
+                    d[i, j],
+                    d[i - 2, j - 2] + cost,
+                )
+
+        return d[len(s1) - 1, len(s2) - 1]
 
 
 class JaroWinkler(_BaseSimilarity):
