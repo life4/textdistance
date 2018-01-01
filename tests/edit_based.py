@@ -189,3 +189,45 @@ class StrCmp95Test(unittest.TestCase):
         self.assertAlmostEqual(self.alg('DWAYNE', 'DUANE'), 0.873)
         self.assertAlmostEqual(self.alg('DIXON', 'DICKSONX'), 0.839333333)
         self.assertAlmostEqual(self.alg('TEST', 'TEXT'), 0.90666666)
+
+
+class MLIPNSTest(unittest.TestCase):
+    alg = textdistance.mlipns
+
+    def test_common(self):
+        self.assertEqual(self.alg('', ''), 1)
+        self.assertEqual(self.alg('a', ''), 0)
+        self.assertEqual(self.alg('', 'a'), 0)
+        self.assertEqual(self.alg('a', 'a'), 1)
+        self.assertEqual(self.alg('ab', 'a'), 1)
+        self.assertEqual(self.alg('abc', 'abc'), 1)
+        self.assertEqual(self.alg('abc', 'abcde'), 1)
+        self.assertEqual(self.alg('abcg', 'abcdeg'), 1)
+        self.assertEqual(self.alg('abcg', 'abcdefg'), 0)
+        self.assertEqual(self.alg('Tomato', 'Tamato'), 1)
+        self.assertEqual(self.alg('ato', 'Tam'), 1)
+
+
+class EditexTest(unittest.TestCase):
+    alg = textdistance.editex
+
+    def test_common(self):
+        self.assertEqual(self.alg('', ''), 0)
+        self.assertEqual(self.alg('nelson', ''), 12)
+        self.assertEqual(self.alg('', 'neilsen'), 14)
+        self.assertEqual(self.alg('ab', 'a'), 2)
+        self.assertEqual(self.alg('ab', 'c'), 4)
+
+        alg = textdistance.Editex(match_cost=2)
+        self.assertEqual(alg('MARTHA', 'MARHTA'), 12)
+        alg = textdistance.Editex(match_cost=4)
+        self.assertEqual(alg('MARTHA', 'MARHTA'), 14)
+        alg = textdistance.Editex(group_cost=1, local=True)
+        self.assertEqual(alg('MARTHA', 'MARHTA'), 3)
+        alg = textdistance.Editex(group_cost=2, local=True)
+        self.assertEqual(alg('MARTHA', 'MARHTA'), 4)
+        alg = textdistance.Editex(mismatch_cost=4, local=True)
+        self.assertEqual(alg('MARTHA', 'MARHTA'), 5)
+
+        self.assertEqual(self.alg('ALIE', 'ALI'), 1)
+        self.assertEqual(self.alg('', 'MARTHA'), 12)

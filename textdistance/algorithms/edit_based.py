@@ -607,7 +607,7 @@ class Editex(_Base):
         if any(map(lambda x: x not in self.all_letters, sequences)):
             return self.mismatch_cost
         for group in self.letter_groups:
-            if all(map(lambda x: x not in group, sequences)):
+            if all(map(lambda x: x in group, sequences)):
                 return self.group_cost
         return self.mismatch_cost
 
@@ -622,32 +622,28 @@ class Editex(_Base):
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
-        if len(s1) == 0:
-            return len(s2) * self.mismatch_cost
-        if len(s2) == 0:
-            return len(s1) * self.mismatch_cost
 
-        d_mat = numpy.zeros((len(s1) + 1, len(s2) + 1), dtype=numpy.int)
-        lens = len(s1)
-        lent = len(s2)
+        len_s1 = len(s1)
+        len_s2 = len(s2)
+        d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.int)
         s1 = ' ' + s1
         s2 = ' ' + s2
 
         if not self.local:
-            for i in range(1, lens+1):
-                d_mat[i, 0] = d_mat[i-1, 0] + self.d_cost(s1[i-1], s1[i])
-        for j in range(1, lent+1):
-            d_mat[0, j] = d_mat[0, j-1] + self.d_cost(s2[j-1], s2[j])
+            for i in range(1, len_s1 + 1):
+                d_mat[i, 0] = d_mat[i - 1, 0] + self.d_cost(s1[i - 1], s1[i])
+        for j in range(1, len_s2 + 1):
+            d_mat[0, j] = d_mat[0, j - 1] + self.d_cost(s2[j - 1], s2[j])
 
-        for i in range(1, lens+1):
-            for j in range(1, lent+1):
+        for i, (cs1_prev, cs1_curr) in enumerate(zip(s1, s1[1:]), start=1):
+            for j, (cs2_prev, cs2_curr) in enumerate(zip(s2, s2[1:]), start=1):
                 d_mat[i, j] = min(
-                    d_mat[i-1, j] + self.d_cost(s1[i-1], s1[i]),
-                    d_mat[i, j-1] + self.d_cost(s2[j-1], s2[j]),
-                    d_mat[i-1, j-1] + self.r_cost(s1[i], s2[j]),
+                    d_mat[i - 1, j] + self.d_cost(cs1_prev, cs1_curr),
+                    d_mat[i, j - 1] + self.d_cost(cs2_prev, cs2_curr),
+                    d_mat[i - 1, j - 1] + self.r_cost(cs1_curr, cs2_curr),
                 )
 
-        return d_mat[lens, lent]
+        return d_mat[len_s1, len_s2]
 
 
 hamming = Hamming()
