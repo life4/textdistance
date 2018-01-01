@@ -105,11 +105,10 @@ class RatcliffObershelp(_BaseSimilarity):
         return self._find(*before) + length + self._find(*after)
 
     def __call__(self, *sequences):
-        if not all(sequences):
-            return 0
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
         scount = len(sequences)  # sequences count
-        if scount <= 1:
-            return 0
         ecount = sum(map(len, sequences))  # elements count
         sequences = self._get_sequences(*sequences)
         return scount * self._find(*sequences) / ecount

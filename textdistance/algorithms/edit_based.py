@@ -95,6 +95,10 @@ class DamerauLevenshtein(_Base):
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+
         d = {}
 
         # matrix
@@ -146,6 +150,10 @@ class JaroWinkler(_BaseSimilarity):
 
     def __call__(self, s1, s2, prefix_weight=0.1):
         s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+
         s1_len = len(s1)
         s2_len = len(s2)
 
@@ -247,6 +255,10 @@ class NeedlemanWunsch(_BaseSimilarity):
         if not numpy:
             raise ImportError('Please, install numpy for Needleman-Wunsch measure')
         s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
             dtype=numpy.float,
@@ -290,6 +302,10 @@ class SmithWaterman(_BaseSimilarity):
         if not numpy:
             raise ImportError('Please, install numpy for Smith-Waterman measure')
         s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
             dtype=numpy.float,
@@ -329,6 +345,10 @@ class Gotoh(_BaseSimilarity):
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+
         len_s1 = len(s1)
         len_s2 = len(s2)
         d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
@@ -395,6 +415,10 @@ class StrCmp95(_BaseSimilarity):
     def __call__(self, s1, s2):
         s1 = s1.strip().upper()
         s2 = s2.strip().upper()
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+
         len_s1 = len(s1)
         len_s2 = len(s2)
 
@@ -524,6 +548,10 @@ class MLIPNS(_BaseSimilarity):
 
     def __call__(self, *sequences):
         sequences = self._get_sequences(*sequences)
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         mismatches = 0
         ham = Hamming()(*sequences)
         maxlen = max(map(len, sequences))
@@ -583,6 +611,9 @@ class Editex(_Base):
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Editex measure')
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
         if len(s1) == 0:
             return len(s2) * self.mismatch_cost
         if len(s2) == 0:

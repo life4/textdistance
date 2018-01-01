@@ -26,6 +26,10 @@ class Jaccard(_Base):
         return 1
 
     def __call__(self, *sequences):
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         sequences = self._get_counters(*sequences)               # sets
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
@@ -45,11 +49,15 @@ class Sorensen(_Base):
         return 1
 
     def __call__(self, *sequences):
-        length = sum(map(len, sequences))
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         sequences = self._get_counters(*sequences)               # sets
+        count = sum(self._count_counters(s) for s in sequences)
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
-        return 1 - (2 * intersection) / float(length)
+        return 1 - (2 * intersection) / float(count)
 
 
 class Tversky(_BaseSimilarity):
@@ -65,6 +73,10 @@ class Tversky(_BaseSimilarity):
         return 1
 
     def __call__(self, *sequences):
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         sequences = self._get_counters(*sequences)                # sets
         intersection = self._intersect_counters(*sequences)       # set
         intersection = self._count_counters(intersection)         # int
@@ -93,6 +105,10 @@ class Overlap(_BaseSimilarity):
         return 1
 
     def __call__(self, *sequences):
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         sequences = self._get_counters(*sequences)               # sets
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
@@ -108,6 +124,10 @@ class Cosine(_BaseSimilarity):
         return 1
 
     def __call__(self, *sequences):
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         sequences = self._get_counters(*sequences)               # sets
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
@@ -150,8 +170,9 @@ class MongeElkan(_BaseSimilarity):
         return float(sum(maxes)) / len(maxes)
 
     def __call__(self, *sequences):
-        if not all(sequences):
-            return 0
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
         sequences = self._get_sequences(*sequences)
 
         if self.symmetric:

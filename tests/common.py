@@ -55,6 +55,13 @@ class CommonTest(unittest.TestCase):
                 s = alg.similarity('spam', 'qwer')
                 self.assertEqual(s, 0)
 
+class EmptyTest(unittest.TestCase):
+    def test_equal_distance(self):
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                d = alg.distance('', '')
+                self.assertEqual(d, 0)
+
 
 class NormalizationTest(unittest.TestCase):
     def test_similar_similarity(self):

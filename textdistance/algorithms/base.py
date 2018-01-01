@@ -30,6 +30,16 @@ class Base(object):
     def normalized_similarity(self, *sequences):
         return 1 - self.normalized_distance(*sequences)
 
+    def quick_answer(self, *sequences):
+        if not sequences:
+            return 0
+        if len(sequences) == 1:
+            return 0
+        if self._ident(*sequences):
+            return 0
+        if not all(sequences):
+            return self.maximum(*sequences)
+
     def _ident(self, *elements):
         return len(set(elements)) == 1
 
@@ -71,3 +81,13 @@ class BaseSimilarity(Base):
 
     def similarity(self, *sequences):
         return self(*sequences)
+
+    def quick_answer(self, *sequences):
+        if not sequences:
+            return self.maximum(*sequences)
+        if len(sequences) == 1:
+            return self.maximum(*sequences)
+        if self._ident(*sequences):
+            return self.maximum(*sequences)
+        if not all(sequences):
+            return 0
