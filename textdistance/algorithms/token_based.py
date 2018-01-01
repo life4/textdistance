@@ -21,6 +21,8 @@ class Jaccard(_Base):
     They should contain hashable items.
     The return value is a float between 0 and 1, where 0 means equal,
     and 1 totally different.
+
+    https://en.wikipedia.org/wiki/Jaccard_index
     '''
     def maximum(self, *sequences):
         return 1
@@ -44,6 +46,8 @@ class Sorensen(_Base):
     They should contain hashable items.
     The return value is a float between 0 and 1, where 0 means equal,
     and 1 totally different.
+
+    https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     '''
     def maximum(self, *sequences):
         return 1
@@ -62,6 +66,7 @@ class Sorensen(_Base):
 
 class Tversky(_BaseSimilarity):
     """Tversky index
+
     https://en.wikipedia.org/wiki/Tversky_index
     """
     def __init__(self, qval=1, ks=None, bias=None):
@@ -100,6 +105,8 @@ class Tversky(_BaseSimilarity):
 
 class Overlap(_BaseSimilarity):
     """overlap coefficient
+
+    https://en.wikipedia.org/wiki/Overlap_coefficient
     """
     def maximum(self, *sequences):
         return 1
@@ -119,6 +126,8 @@ class Overlap(_BaseSimilarity):
 
 class Cosine(_BaseSimilarity):
     """cosine similarity (Ochiai coefficient)
+
+    https://en.wikipedia.org/wiki/Cosine_similarity
     """
     def maximum(self, *sequences):
         return 1
@@ -151,6 +160,10 @@ class Tanimoto(Jaccard):
 
 
 class MongeElkan(_BaseSimilarity):
+    """
+    https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison
+    http://www.cs.cmu.edu/~wcohen/postscript/kdd-2003-match-ws.pdf
+    """
     def __init__(self, sim_func=DamerauLevenshtein().similarity, symmetric=False, qval=1):
         self.sim_func = sim_func
         self.symmetric = symmetric
@@ -186,6 +199,7 @@ class MongeElkan(_BaseSimilarity):
 
 class Bag(_BaseSimilarity):
     """Bag distance
+    Just return count of common tokens
     """
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
