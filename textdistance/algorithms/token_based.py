@@ -100,18 +100,18 @@ class Tversky(_BaseSimilarity):
         sequences = [self._count_counters(s) for s in sequences]  # ints
         ks = list(islice(self.ks, len(sequences)))
 
-        if self.bias is None:
+        if len(sequences) == 2 or self.bias is None:
             result = intersection
             for k, s in zip(ks, sequences):
                 result += k * (s - intersection)
             return float(intersection) / result
 
-        a_val = min([s - intersection for s in sequences])
-        b_val = max([s - intersection for s in sequences])
+        s1, s2 = sequences
+        alpha, beta = ks
+        a_val = min([s1, s2])
+        b_val = max([s1, s2])
         c_val = float(intersection + self.bias)
-        ks_prod = map(lambda a, b: a * b, ks)
-        ks_beta = ks[0] and (ks_prod / ks[0])
-        result = ks_prod * (a_val - b_val) + b_val * ks_beta
+        result = alpha * beta * (a_val - b_val) + b_val * beta
         return c_val / (result + c_val)
 
 
@@ -120,6 +120,10 @@ class Overlap(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Overlap_coefficient
     """
+    def __init__(self, qval=1, as_set=False):
+        self.qval = qval
+        self.as_set = as_set
+
     def maximum(self, *sequences):
         return 1
 
