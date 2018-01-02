@@ -90,6 +90,7 @@ class RatcliffObershelp(_BaseSimilarity):
            src & tar.
 
     http://www.drdobbs.com/database/pattern-matching-the-gestalt-approach/184407970
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/ratcliff-obershelp.js
     """
 
     def maximum(self, *sequences):

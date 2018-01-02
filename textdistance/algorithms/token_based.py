@@ -26,6 +26,7 @@ class Jaccard(_BaseSimilarity):
     and 1 totally different.
 
     https://en.wikipedia.org/wiki/Jaccard_index
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaccard.js
     '''
     def __init__(self, qval=1, as_set=False):
         self.qval = qval
@@ -55,6 +56,7 @@ class Sorensen(_BaseSimilarity):
     and 1 totally different.
 
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/dice.js
     '''
     def __init__(self, qval=1, as_set=False):
         self.qval = qval
@@ -79,6 +81,7 @@ class Tversky(_BaseSimilarity):
     """Tversky index
 
     https://en.wikipedia.org/wiki/Tversky_index
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/tversky.js
     """
     def __init__(self, qval=1, ks=None, bias=None, as_set=False):
         self.qval = qval
@@ -119,6 +122,7 @@ class Overlap(_BaseSimilarity):
     """overlap coefficient
 
     https://en.wikipedia.org/wiki/Overlap_coefficient
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/overlap.js
     """
     def __init__(self, qval=1, as_set=False):
         self.qval = qval
@@ -144,6 +148,7 @@ class Cosine(_BaseSimilarity):
     """cosine similarity (Ochiai coefficient)
 
     https://en.wikipedia.org/wiki/Cosine_similarity
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/cosine.js
     """
     def __init__(self, qval=1, as_set=False):
         self.qval = qval
@@ -183,6 +188,7 @@ class MongeElkan(_BaseSimilarity):
     """
     https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison
     http://www.cs.cmu.edu/~wcohen/postscript/kdd-2003-match-ws.pdf
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/monge-elkan.js
     """
     def __init__(self, algorithm=DamerauLevenshtein(), symmetric=False, qval=1):
         self.algorithm = algorithm
@@ -219,7 +225,7 @@ class MongeElkan(_BaseSimilarity):
 
 class Bag(_Base):
     """Bag distance
-    Just return count of common tokens
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/bag.js
     """
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
