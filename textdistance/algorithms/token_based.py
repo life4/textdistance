@@ -1,4 +1,4 @@
-from math import log, sqrt
+from math import log
 from itertools import repeat, islice, permutations
 # python3
 try:
@@ -145,6 +145,10 @@ class Cosine(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Cosine_similarity
     """
+    def __init__(self, qval=1, as_set=False):
+        self.qval = qval
+        self.as_set = as_set
+
     def maximum(self, *sequences):
         return 1
 
@@ -159,7 +163,7 @@ class Cosine(_BaseSimilarity):
         sequences = [self._count_counters(s) for s in sequences] # ints
         prod = reduce(lambda x, y: x * y, sequences)
 
-        return intersection / sqrt(prod)
+        return intersection / pow(prod, 1.0 / len(sequences))
 
 
 class Tanimoto(Jaccard):
@@ -180,13 +184,13 @@ class MongeElkan(_BaseSimilarity):
     https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison
     http://www.cs.cmu.edu/~wcohen/postscript/kdd-2003-match-ws.pdf
     """
-    def __init__(self, sim_func=DamerauLevenshtein().similarity, symmetric=False, qval=1):
-        self.sim_func = sim_func
+    def __init__(self, algorithm=DamerauLevenshtein(), symmetric=False, qval=1):
+        self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval
 
     def maximum(self, *sequences):
-        return 1
+        return self.algorithm.maximum(*sequences)
 
     def _calc(self, seq, *sequences):
         maxes = []
@@ -194,7 +198,7 @@ class MongeElkan(_BaseSimilarity):
             for s in sequences:
                 max_sim = float('-inf')
                 for c2 in s:
-                    max_sim = max(max_sim, self.sim_func(c1, c2))
+                    max_sim = max(max_sim, self.algorithm.similarity(c1, c2))
                 maxes.append(max_sim)
         return float(sum(maxes)) / len(maxes)
 
