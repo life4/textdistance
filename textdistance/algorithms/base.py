@@ -80,7 +80,10 @@ class Base(object):
         return union
 
     def _count_counters(self, counter):
-        return sum(counter.values())
+        if getattr(self, 'as_set', False):
+            return len(set(counter))
+        else:
+            return sum(counter.values())
 
 
 class BaseSimilarity(Base):

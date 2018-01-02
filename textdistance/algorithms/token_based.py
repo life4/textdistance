@@ -10,12 +10,15 @@ from .edit_based import DamerauLevenshtein
 
 
 __all__ = [
+    'Jaccard', 'Sorensen', 'Tversky',
+    'Overlap', 'Cosine', 'Tanimoto', 'MongeElkan', 'Bag',
+
     'jaccard', 'sorensen', 'tversky', 'sorensen_dice',
     'overlap', 'cosine', 'tanimoto', 'monge_elkan', 'bag',
 ]
 
 
-class Jaccard(_Base):
+class Jaccard(_BaseSimilarity):
     '''
     Compute the Jaccard distance between the two sequences.
     They should contain hashable items.
@@ -24,6 +27,10 @@ class Jaccard(_Base):
 
     https://en.wikipedia.org/wiki/Jaccard_index
     '''
+    def __init__(self, qval=1, as_set=False):
+        self.qval = qval
+        self.as_set = as_set
+
     def maximum(self, *sequences):
         return 1
 
@@ -37,10 +44,10 @@ class Jaccard(_Base):
         intersection = self._count_counters(intersection)        # int
         union = self._union_counters(*sequences)                 # set
         union = self._count_counters(union)                      # int
-        return 1 - intersection / float(union)
+        return intersection / float(union)
 
 
-class Sorensen(_Base):
+class Sorensen(_BaseSimilarity):
     '''
     Compute the Sorensen distance between the two sequences.
     They should contain hashable items.
@@ -49,6 +56,10 @@ class Sorensen(_Base):
 
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     '''
+    def __init__(self, qval=1, as_set=False):
+        self.qval = qval
+        self.as_set = as_set
+
     def maximum(self, *sequences):
         return 1
 
@@ -61,7 +72,7 @@ class Sorensen(_Base):
         count = sum(self._count_counters(s) for s in sequences)
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
-        return 1 - (2 * intersection) / float(count)
+        return 2.0 * intersection / count
 
 
 class Tversky(_BaseSimilarity):
@@ -69,10 +80,11 @@ class Tversky(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Tversky_index
     """
-    def __init__(self, qval=1, ks=None, bias=None):
+    def __init__(self, qval=1, ks=None, bias=None, as_set=False):
         self.qval = qval
         self.ks = ks or repeat(1)
         self.bias = bias
+        self.as_set = as_set
 
     def maximum(self, *sequences):
         return 1
@@ -92,7 +104,7 @@ class Tversky(_BaseSimilarity):
             result = intersection
             for k, s in zip(ks, sequences):
                 result += k * (s - intersection)
-            return intersection / result
+            return float(intersection) / result
 
         a_val = min([s - intersection for s in sequences])
         b_val = max([s - intersection for s in sequences])
