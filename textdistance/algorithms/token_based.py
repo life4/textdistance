@@ -217,14 +217,16 @@ class MongeElkan(_BaseSimilarity):
             return self._calc(*sequences)
 
 
-class Bag(_BaseSimilarity):
+class Bag(_Base):
     """Bag distance
     Just return count of common tokens
     """
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
-        return self._count_counters(intersection)               # int
+        sequences = (self._count_counters(s - intersection) for s in sequences)
+        # ^ ints
+        return max(sequences)
 
 
 jaccard = Jaccard()

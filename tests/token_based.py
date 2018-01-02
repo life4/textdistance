@@ -53,6 +53,15 @@ class MongeElkanTest(unittest.TestCase):
         alg = textdistance.MongeElkan(qval=2, symmetric=True).normalized_distance
         self.assertAlmostEqual(alg('text', 'test'), 2.0 / 3)
 
+class BagTest(unittest.TestCase):
+    alg = textdistance.bag
+
+    def test_common(self):
+        self.assertAlmostEqual(self.alg('qwe', 'qwe'), 0)
+        self.assertAlmostEqual(self.alg('qwe', 'erty'), 3)
+        self.assertAlmostEqual(self.alg('qwe', 'ewq'), 0)
+        self.assertAlmostEqual(self.alg('qwe', 'rtys'), 4)
+
 
 class CompareTest(unittest.TestCase):
     test_cases = (
