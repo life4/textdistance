@@ -43,6 +43,7 @@
 ### Phonetic
 
 | Algorithm                                                                    | Class    | Functions |
+|------------------------------------------------------------------------------|----------|-----------|
 | [MRA](https://en.wikipedia.org/wiki/Match_rating_approach)                   | `MRA`    | `mra`     |
 | [Editex](https://anhaidgroup.github.io/py_stringmatching/v0.3.x/Editex.html) | `Editex` | `editex`  |
 
