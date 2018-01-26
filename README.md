@@ -1,3 +1,16 @@
+# TextDistance
+
+**TextDistance** -- python library for compare distance between two or more sequences by many algorithms.
+
+Features:
+
+* 30+ algorithms
+* Pure python implementation
+* Simple usage
+* More than two sequences comparing
+* Some algorithms have more than one implementation in one class.
+* Optional numpy usage for maximum speed.
+
 ## Algorithms
 
 ### Edit based
@@ -16,22 +29,32 @@
 
 ### Token based
 
-1. `jaccard`
-2. `sorensen`, `sorensen_dice`, `dice`
-3. `tversky`
-4. `overlap`
-5. `tanimoto`
-6. `cosine`
-7. `monge_elkan`
-8. `bag`
+| Algorithm                                                                                 | Class                | Functions     |
+|-------------------------------------------------------------------------------------------|----------------------|---------------|
+| [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)                              | `Jaccard`            | `jaccard`     |
+| [Sørensen–Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient) | `Sorensen`   | `sorensen`, `sorensen_dice`, `dice` |
+| [Tversky index](https://en.wikipedia.org/wiki/Tversky_index)                              | `Tversky`            | `tversky`    |
+| [Overlap coefficient](https://en.wikipedia.org/wiki/Overlap_coefficient)                  | `Overlap`            | `overlap`    |
+| [Tanimoto distance](https://en.wikipedia.org/wiki/Jaccard_index#Tanimoto_similarity_and_distance) | `Tanimoto`   | `tanimoto`   |
+| [Cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)                      | `Cosine`             | `cosine`     |
+| [Monge-Elkan](https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison) | `MongeElkan` | `monge_elkan` |
+| [Bag distance](https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/bag.js) | `Bag`        | `bag`        |
 
 ### Sequence based
 
-1. `lcsseq`
-2. `lcsstr`
-3. `ratcliff_obershelp`
+| Algorithm | Class | Functions |
+|-----------|-------|-----------|
+| [longest common subsequence similarity](https://en.wikipedia.org/wiki/Longest_common_subsequence_problem)          | `LCSSeq` | `lcsseq` |
+| [longest common substring similarity](https://docs.python.org/2/library/difflib.html#difflib.SequenceMatcher)      | `LCSStr` | `lcsstr` |
+| [Ratcliff-Obershelp similarity similarity](http://collaboration.cmc.ec.gc.ca/science/rpn/biblio/ddj/Website/articles/DDJ/1988/8807/8807c/8807c.htm) | `RatcliffObershelp` | `ratcliff_obershelp` |
 
 ### Compression based
+
+Work in progress. Now all algorithms compare two strings as array of bits, not by chars.
+
+`NCD` - normalized compression distance.
+
+Functions:
 
 1. `bz2_ncd`
 2. `lzma_ncd`
@@ -49,10 +72,13 @@
 
 ### Simple
 
-1. `prefix`
-2. `postfix`
-3. `length`
-4. `identity`
+| Algorithm           | Class      | Functions  |
+|---------------------|------------|------------|
+| Prefix similarity   | `Prefix`   | `prefix`   |
+| Postfix similarity  | `Postfix`  | `postfix`  |
+| Length distance     | `Length`   | `length`   |
+| Identity similarity | `Identity` | `identity` |
+| Matrix similarity   | `Matrix`   | `matrix`   |
 
 
 ## Usage
@@ -81,3 +107,27 @@ Most common init arguments:
     * True -- `t` and `ttt` is equal.
     * False (default) -- `t` and `ttt` is different.
 
+## Example
+
+```python
+import textdistance
+
+textdistance.hamming('test', 'text')
+# 1
+
+textdistance.hamming.distance('test', 'text')
+# 1
+
+textdistance.hamming.similarity('test', 'text')
+# 3
+
+textdistance.hamming.normalized_distance('test', 'text')
+# 0.25
+
+textdistance.hamming.normalized_similarity('test', 'text')
+# 0.75
+
+textdistance.Hamming(qval=2).distance('test', 'text')
+# 2
+
+```
