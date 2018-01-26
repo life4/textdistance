@@ -13,7 +13,7 @@ except NameError:
 
 
 class Prefix(_BaseSimilarity):
-    """prefix distance
+    """prefix similarity
     """
     def __init__(self, qval=1, sim_test=None):
         self.qval = qval
@@ -23,7 +23,7 @@ class Prefix(_BaseSimilarity):
         if not sequences:
             return 0
         sequences = self._get_sequences(*sequences)
-        test = lambda seq: self.sim_test(*seq)
+        test = lambda seq: self.sim_test(*seq)  # noQA
         result = [c[0] for c in takewhile(test, zip(*sequences))]
 
         s = sequences[0]
@@ -38,7 +38,7 @@ class Prefix(_BaseSimilarity):
 
 
 class Postfix(Prefix):
-    """postfix distance
+    """postfix similarity
     """
     def __call__(self, *sequences):
         s = sequences[0]
@@ -60,7 +60,7 @@ class Length(_Base):
 
 
 class Identity(_BaseSimilarity):
-    """Identity distance
+    """Identity similarity
     """
 
     def maximum(self, *sequences):
@@ -69,8 +69,9 @@ class Identity(_BaseSimilarity):
     def __call__(self, *sequences):
         return int(self._ident(*sequences))
 
+
 class Matrix(_BaseSimilarity):
-    """Matrix distance
+    """Matrix similarity
     """
 
     def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric=True):

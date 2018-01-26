@@ -7,7 +7,7 @@ __all__ = ['lcsseq', 'lcsstr', 'ratcliff_obershelp']
 
 
 class LCSSeq(_BaseSimilarity):
-    """longest common substring similarity
+    """longest common subsequence similarity
 
     https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     """
@@ -81,16 +81,17 @@ class RatcliffObershelp(_BaseSimilarity):
     """Ratcliff-Obershelp similarity
     This follows the Ratcliff-Obershelp algorithm to derive a similarity
     measure:
-        1. Find the length of the longest common substring in src & tar.
+        1. Find the length of the longest common substring in sequences.
         2. Recurse on the strings to the left & right of each this substring
-           in src & tar. The base case is a 0 length common substring, in which
+           in sequences. The base case is a 0 length common substring, in which
            case, return 0. Otherwise, return the sum of the current longest
            common substring and the left & right recursed sums.
         3. Multiply this length by 2 and divide by the sum of the lengths of
-           src & tar.
+           sequences.
 
-    http://www.drdobbs.com/database/pattern-matching-the-gestalt-approach/184407970
+    http://collaboration.cmc.ec.gc.ca/science/rpn/biblio/ddj/Website/articles/DDJ/1988/8807/8807c/8807c.htm
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/ratcliff-obershelp.js
+    https://xlinux.nist.gov/dads/HTML/ratcliffObershelp.html
     """
 
     def maximum(self, *sequences):
