@@ -503,8 +503,8 @@ class StrCmp95(_BaseSimilarity):
         num_sim = n_simi / 10.0 + num_com
 
         # Main weight computation
-        weight = num_sim / len_s1 + num_sim / len_s2
-        weight += (num_com - n_trans) / num_com
+        weight = float(num_sim) / len_s1 + num_sim / len_s2
+        weight += float(num_com - n_trans) / num_com
         weight = weight / 3.0
 
         # Continue to boost the weight if the strings are similar

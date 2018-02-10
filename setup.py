@@ -6,13 +6,13 @@ from setuptools import setup
 
 setup(
     name     = 'textdistance',
-    version  = '1.1.0',
+    version  = '2.0.0',
 
     author       = 'orsinium',
     author_email = 'master_fess@mail.ru',
 
     description      = 'Compute distance between the two texts.',
-    long_description = open('README.md').read(),
+    long_description = open('README.rst').read(),
     keywords         = 'distance between text strings sequences iterators',
 
     packages = ['textdistance'],

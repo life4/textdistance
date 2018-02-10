@@ -1,6 +1,9 @@
 from itertools import product, permutations
 
 
+__all__ = ['words_combinations', 'find_ngrams']
+
+
 def words_combinations(f, *texts):
     m = float('Inf')
     # split by words
