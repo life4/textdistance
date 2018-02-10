@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name     = 'textdistance',
-    version  = '2.0.0',
+    version  = '2.0.2',
 
     author       = 'orsinium',
     author_email = 'master_fess@mail.ru',
@@ -15,7 +15,7 @@ setup(
     long_description = open('README.rst').read(),
     keywords         = 'distance between text strings sequences iterators',
 
-    packages = ['textdistance'],
+    packages = ['textdistance', 'textdistance.algorithms'],
     requires = ['python (>= 2.7)'],
 
     url          = 'https://github.com/orsinium/textdistance',
