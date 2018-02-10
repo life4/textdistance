@@ -81,6 +81,21 @@ Functions:
 | Matrix similarity   | `Matrix`   | `matrix`   |
 
 
+## Installation
+
+Stable:
+
+```bash
+pip install textdistance
+```
+
+Dev:
+
+```bash
+sudo pip install -e git+https://github.com/orsinium/textdistance.git#egg=textdistance
+```
+
+
 ## Usage
 
 All algorithms have 2 interfaces:
