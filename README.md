@@ -107,9 +107,9 @@ All algorithms have some common methods:
 
 1. `.distance(*sequences)` -- calculate distance between sequences.
 2. `.similarity(*sequences)` -- calculate similarity for sequences.
-3. `.maximum(*sequences)` -- maximum possible value for distance and similarity. `distance + similarity == maximum`.
+3. `.maximum(*sequences)` -- maximum possible value for distance and similarity. For any sequence: `distance + similarity == maximum`.
 4. `.normalized_distance(*sequences)` -- normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
-5. `.normalized_distance(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
+5. `.normalized_similarity(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
 
 
 Most common init arguments:
@@ -123,6 +123,8 @@ Most common init arguments:
     * False (default) -- `t` and `ttt` is different.
 
 ## Example
+
+For example, [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distance):
 
 ```python
 import textdistance
@@ -146,3 +148,6 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 # 2
 
 ```
+
+Any other algorithms have same interfaces.
+
