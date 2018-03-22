@@ -100,8 +100,8 @@ pip install -e git+https://github.com/orsinium/textdistance.git#egg=textdistance
 
 All algorithms have 2 interfaces:
 
-1. Class which can get some algorithm-specific params by init.
-2. Class instance with default init params for quick and simple usage.
+1. Class with algorithm-specific params for customizing.
+2. Class instance with default params for quick and simple usage.
 
 All algorithms have some common methods:
 
@@ -149,5 +149,5 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 
 ```
 
-Any other algorithms have same interfaces.
+Any other algorithms have same interface.
 
