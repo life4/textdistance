@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+  - "3.4"
+  - "3.6"
+env:
+  - WITH_CONSTRAINTS=yes
+  - WITH_CONSTRAINTS=no
+install:
+  - pip install unittest2
+  - if [[ $WITH_CONSTRAINTS == 'yes' ]]; then pip install -r constraints.txt; fi
+script:
+  - python tests.py
