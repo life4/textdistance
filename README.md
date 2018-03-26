@@ -1,5 +1,9 @@
 # TextDistance
 
+![TextDistance logo](logo.png)
+
+[![Build Status](https://travis-ci.org/orsinium/textdistance.svg?branch=master)](https://travis-ci.org/orsinium/textdistance) [![PyPI version](https://img.shields.io/pypi/v/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Status](https://img.shields.io/pypi/status/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Code size](https://img.shields.io/github/languages/code-size/orsinium/textdistance.svg)](https://github.com/orsinium/textdistance) [![License](https://img.shields.io/pypi/l/textdistance.svg)](LICENSE)
+
 **TextDistance** -- python library for compare distance between two or more sequences by many algorithms.
 
 Features:
@@ -150,4 +154,3 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 ```
 
 Any other algorithms have same interface.
-
