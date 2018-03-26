@@ -10,4 +10,4 @@ install:
   - pip install unittest2
   - if [[ $WITH_CONSTRAINTS == 'yes' ]]; then pip install -r constraints.txt; fi
 script:
-  - python tests.py
+  - python run_tests.py
