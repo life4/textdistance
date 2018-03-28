@@ -10,7 +10,7 @@ with open(LIBRARIES_FILE) as f:
 import_cache = {}
 
 
-def get_result(algorithm, seq1, seq2):
+def get_result(algorithm, seq1, seq2, silent=True):
     # no external libs for algorithm
     if algorithm not in LIBS:
         return
@@ -32,4 +32,8 @@ def get_result(algorithm, seq1, seq2):
     # get and call function
     func = import_cache[algorithm]
     if func:
-        return func(seq1, seq2)
+        try:
+            return func(seq1, seq2)
+        except Exception as e:
+            if not silent:
+                raise e
