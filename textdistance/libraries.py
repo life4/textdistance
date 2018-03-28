@@ -1,5 +1,5 @@
 LIBRARIES = {
-    'damerau_levenshtein': (
+    'DamerauLevenshtein': (
         'jellyfish.damerau_levenshtein_distance',
         'pyxdameraulevenshtein.damerau_levenshtein_distance',
     ),

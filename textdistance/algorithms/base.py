@@ -9,8 +9,9 @@ except ImportError:
 
 
 class Base(object):
-    def __init__(self, qval=1):
+    def __init__(self, qval=1, external=True):
         self.qval = qval
+        self.external = external
 
     def __call__(self, *sequences):
         raise NotImplementedError

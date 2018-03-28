@@ -35,10 +35,11 @@ class Hamming(_Base):
 
     https://en.wikipedia.org/wiki/Hamming_distance
     '''
-    def __init__(self, qval=1, test_func=None, truncate=False):
+    def __init__(self, qval=1, test_func=None, truncate=False, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
         self.truncate = truncate
+        self.external = external
 
     def __call__(self, *sequences):
         sequences = self._get_sequences(*sequences)
@@ -59,9 +60,10 @@ class Levenshtein(_Base):
     https://en.wikipedia.org/wiki/Levenshtein_distance
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
     '''
-    def __init__(self, qval=1, test_func=None):
+    def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
+        self.external = external
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
@@ -91,12 +93,13 @@ class DamerauLevenshtein(_Base):
         * insertion:     ABC -> ABCD, EABC, AEBC..
         * substitution:  ABC -> ABE, ADC, FBC..
         * transposition: ABC -> ACB, BAC
-    
+
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     '''
-    def __init__(self, qval=1, test_func=None):
+    def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
+        self.external = external
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
@@ -147,10 +150,11 @@ class JaroWinkler(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaro.js
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaro-winkler.js
     """
-    def __init__(self, long_tolerance=False, winklerize=True, qval=1):
+    def __init__(self, long_tolerance=False, winklerize=True, qval=1, external=True):
         self.qval = qval
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
+        self.external = external
 
     def maximum(self, *sequences):
         return 1
@@ -247,13 +251,14 @@ class NeedlemanWunsch(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
     """
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1):
+    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
         self.qval = qval
         self.gap_cost = gap_cost
         if sim_func:
             self.sim_func = sim_func
         else:
             self.sim_func = self._ident
+        self.external = external
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
@@ -297,10 +302,11 @@ class SmithWaterman(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/smith-waterman.js
     """
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1):
+    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
         self.qval = qval
         self.gap_cost = gap_cost
         self.sim_func = sim_func or self._ident
+        self.external = external
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
@@ -337,7 +343,7 @@ class Gotoh(_BaseSimilarity):
     penalties:
     https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
     """
-    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1):
+    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1, external=True):
         self.qval = qval
         self.gap_open = gap_open
         self.gap_ext = gap_ext
@@ -345,6 +351,7 @@ class Gotoh(_BaseSimilarity):
             self.sim_func = sim_func
         else:
             self.sim_func = self._ident
+        self.external = external
 
     def maximum(self, *sequences):
         return min(map(len, sequences))
@@ -410,8 +417,9 @@ class StrCmp95(_BaseSimilarity):
         ('1', 'I'), ('1', 'L'), ('0', 'O'), ('0', 'Q'), ('C', 'K'), ('G', 'J')
     )
 
-    def __init__(self, long_strings=False):
+    def __init__(self, long_strings=False, external=True):
         self.long_strings = long_strings
+        self.external = external
 
     def maximum(self, *sequences):
         return 1
@@ -550,10 +558,11 @@ class MLIPNS(_BaseSimilarity):
     http://www.sial.iias.spb.su/files/386-386-1-PB.pdf
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/mlipns.js
     """
-    def __init__(self, threshold=0.25, maxmismatches=2, qval=1):
+    def __init__(self, threshold=0.25, maxmismatches=2, qval=1, external=True):
         self.qval = qval
         self.threshold = threshold
         self.maxmismatches = maxmismatches
+        self.external = external
 
     def maximum(self, *sequences):
         return 1

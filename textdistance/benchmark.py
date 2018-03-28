@@ -15,6 +15,9 @@ from .libraries import LIBRARIES
 
 Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'object'])
 
+INTERNAL_SETUP = "from textdistance import {} as cls; func = cls(external=False)"
+
+
 
 class Benchmark(object):
     @staticmethod
@@ -52,7 +55,7 @@ class Benchmark(object):
                 function=alg,
                 time=timeit(
                     stmt="func('text', 'testit')",
-                    setup="from textdistance import {} as func".format(alg),
+                    setup=INTERNAL_SETUP.format(alg),
                     number=10000,
                 ),
                 object=getattr(textdistance, alg),
