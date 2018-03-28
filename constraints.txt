@@ -1,1 +1,4 @@
 numpy
+tabulate
+jellyfish
+pyxDamerauLevenshtein
