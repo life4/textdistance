@@ -11,8 +11,11 @@ import_cache = {}
 
 
 def get_result(algorithm, seq1, seq2):
+    # no external libs for algorithm
     if algorithm not in LIBS:
         return
+
+    # try import any function for algorithm from external libs
     if algorithm not in import_cache:
         variants = LIBS[algorithm]
         for path in variants:
@@ -26,9 +29,7 @@ def get_result(algorithm, seq1, seq2):
         else:
             import_cache[algorithm] = None
 
+    # get and call function
     func = import_cache[algorithm]
     if func:
-        try:
-            return func(seq1, seq2)
-        except:
-            import pdb; pdb.set_trace()
+        return func(seq1, seq2)

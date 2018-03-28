@@ -34,17 +34,15 @@ class Base(object):
         return 1 - self.normalized_distance(*sequences)
 
     def external_answer(self, *sequences):
+        # only for compairing by letters
         if getattr(self, 'qval', 0) != 1:
             return
+        # convert list of letters to string
         if isinstance(sequences[0], (tuple, list)):
             sequences = list(map(lambda x: ''.join(x), sequences))
         return get_result(self.__class__.__name__, *sequences)
 
     def quick_answer(self, *sequences):
-        answer = self.external_answer(*sequences)
-        if answer is not None:
-            return answer
-
         if not sequences:
             return 0
         if len(sequences) == 1:
@@ -53,6 +51,10 @@ class Base(object):
             return 0
         if not all(sequences):
             return self.maximum(*sequences)
+        # try get answer from external libs
+        answer = self.external_answer(*sequences)
+        if answer is not None:
+            return answer
 
     @staticmethod
     def _ident(*elements):
