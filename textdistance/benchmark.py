@@ -1,4 +1,4 @@
-import importlib
+from importlib import import_module
 from collections import namedtuple, defaultdict
 from timeit import timeit
 import json
@@ -23,9 +23,8 @@ class Benchmark(object):
             for path in paths:
                 module_name, _, func_name = path.rpartition('.')
                 try:
-                    module = importlib.import_module(module_name)
+                    module = import_module(module_name)
                 except ImportError:
-                    print(module_name)
                     continue
                 yield Lib(
                     algorithm=alg,
