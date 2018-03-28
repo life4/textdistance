@@ -2,3 +2,5 @@ numpy
 tabulate
 jellyfish
 pyxDamerauLevenshtein
+abydos
+py_stringmatching

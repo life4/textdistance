@@ -2,5 +2,16 @@
   "DamerauLevenshtein": [
     "jellyfish.damerau_levenshtein_distance",
     "pyxdameraulevenshtein.damerau_levenshtein_distance"
+  ],
+  "Hamming": [
+    "jellyfish.hamming_distance",
+    "abydos.distance.dist_hamming"
+  ],
+  "JaroWinkler": [
+    "jellyfish.jaro_winkler"
+  ],
+  "Levenshtein": [
+    "jellyfish.levenshtein_distance",
+    "abydos.distance.dist_levenshtein"
   ]
 }

@@ -2,12 +2,6 @@ from collections import Counter
 from ..utils import find_ngrams
 from ..helpers import get_result
 
-# python3
-try:
-    from functools import reduce
-except ImportError:
-    pass
-
 
 class Base(object):
     def __init__(self, qval=1, external=True):
