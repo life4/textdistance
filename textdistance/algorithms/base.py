@@ -1,5 +1,6 @@
 from collections import Counter
-from textdistance.utils import find_ngrams
+from ..utils import find_ngrams
+from ..helpers import get_result
 
 # python3
 try:
@@ -16,7 +17,8 @@ class Base(object):
     def __call__(self, *sequences):
         raise NotImplementedError
 
-    def maximum(self, *sequences):
+    @staticmethod
+    def maximum(*sequences):
         return max(map(len, sequences))
 
     def distance(self, *sequences):
@@ -31,7 +33,18 @@ class Base(object):
     def normalized_similarity(self, *sequences):
         return 1 - self.normalized_distance(*sequences)
 
+    def external_answer(self, *sequences):
+        if getattr(self, 'qval', 0) != 1:
+            return
+        if isinstance(sequences[0], (tuple, list)):
+            sequences = list(map(lambda x: ''.join(x), sequences))
+        return get_result(self.__class__.__name__, *sequences)
+
     def quick_answer(self, *sequences):
+        answer = self.external_answer(*sequences)
+        if answer is not None:
+            return answer
+
         if not sequences:
             return 0
         if len(sequences) == 1:
@@ -41,7 +54,8 @@ class Base(object):
         if not all(sequences):
             return self.maximum(*sequences)
 
-    def _ident(self, *elements):
+    @staticmethod
+    def _ident(*elements):
         try:
             # for hashable elements
             return len(set(elements)) == 1
