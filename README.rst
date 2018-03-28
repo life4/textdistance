@@ -1,6 +1,13 @@
 TextDistance
 ============
 
+.. figure:: logo.png
+   :alt: TextDistance logo
+
+   TextDistance logo
+
+|Build Status| |PyPI version| |Status| |Code size| |License|
+
 **TextDistance** -- python library for compare distance between two or
 more sequences by many algorithms.
 
@@ -67,46 +74,15 @@ Token based
 Sequence based
 ~~~~~~~~~~~~~~
 
-+--------------+----------+--------------+
-| Algorithm    | Class    | Functions    |
-+==============+==========+==============+
-| `longest     | ``LCSSeq | ``lcsseq``   |
-| common       | ``       |              |
-| subsequence  |          |              |
-| similarity < |          |              |
-| https://en.w |          |              |
-| ikipedia.org |          |              |
-| /wiki/Longes |          |              |
-| t_common_sub |          |              |
-| sequence_pro |          |              |
-| blem>`__     |          |              |
-+--------------+----------+--------------+
-| `longest     | ``LCSStr | ``lcsstr``   |
-| common       | ``       |              |
-| substring    |          |              |
-| similarity < |          |              |
-| https://docs |          |              |
-| .python.org/ |          |              |
-| 2/library/di |          |              |
-| fflib.html#d |          |              |
-| ifflib.Seque |          |              |
-| nceMatcher>` |          |              |
-| __           |          |              |
-+--------------+----------+--------------+
-| `Ratcliff-Ob | ``Ratcli | ``ratcliff_o |
-| ershelp      | ffObersh | bershelp``   |
-| similarity   | elp``    |              |
-| similarity < |          |              |
-| http://colla |          |              |
-| boration.cmc |          |              |
-| .ec.gc.ca/sc |          |              |
-| ience/rpn/bi |          |              |
-| blio/ddj/Web |          |              |
-| site/article |          |              |
-| s/DDJ/1988/8 |          |              |
-| 807/8807c/88 |          |              |
-| 07c.htm>`__  |          |              |
-+--------------+----------+--------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
+| Algorithm                                                                                                                                     | Class                   | Functions                |
++===============================================================================================================================================+=========================+==========================+
+| `longest common subsequence similarity <https://en.wikipedia.org/wiki/Longest_common_subsequence_problem>`__                                  | ``LCSSeq``              | ``lcsseq``               |
++-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
+| `longest common substring similarity <https://docs.python.org/2/library/difflib.html#difflib.SequenceMatcher>`__                              | ``LCSStr``              | ``lcsstr``               |
++-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
+| `Ratcliff-Obershelp similarity <http://collaboration.cmc.ec.gc.ca/science/rpn/biblio/ddj/Website/articles/DDJ/1988/8807/8807c/8807c.htm>`__   | ``RatcliffObershelp``   | ``ratcliff_obershelp``   |
++-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
 
 Compression based
 ~~~~~~~~~~~~~~~~~
@@ -153,24 +129,39 @@ Simple
 | Matrix similarity     | ``Matrix``     | ``matrix``     |
 +-----------------------+----------------+----------------+
 
+Installation
+------------
+
+Stable:
+
+.. code:: bash
+
+    pip install textdistance
+
+Dev:
+
+.. code:: bash
+
+    pip install -e git+https://github.com/orsinium/textdistance.git#egg=textdistance
+
 Usage
 -----
 
 All algorithms have 2 interfaces:
 
-1. Class which can get some algorithm-specific params by init.
-2. Class instance with default init params for quick and simple usage.
+1. Class with algorithm-specific params for customizing.
+2. Class instance with default params for quick and simple usage.
 
 All algorithms have some common methods:
 
 1. ``.distance(*sequences)`` -- calculate distance between sequences.
 2. ``.similarity(*sequences)`` -- calculate similarity for sequences.
 3. ``.maximum(*sequences)`` -- maximum possible value for distance and
-   similarity. ``distance + similarity == maximum``.
+   similarity. For any sequence: ``distance + similarity == maximum``.
 4. ``.normalized_distance(*sequences)`` -- normalized distance between
    sequences. The return value is a float between 0 and 1, where 0 means
    equal, and 1 totally different.
-5. ``.normalized_distance(*sequences)`` -- normalized similarity for
+5. ``.normalized_similarity(*sequences)`` -- normalized similarity for
    sequences. The return value is a float between 0 and 1, where 0 means
    totally different, and 1 equal.
 
@@ -190,6 +181,9 @@ Most common init arguments:
 
 Example
 -------
+
+For example, `Hamming
+distance <https://en.wikipedia.org/wiki/Hamming_distance>`__:
 
 .. code:: python
 
@@ -213,3 +207,15 @@ Example
     textdistance.Hamming(qval=2).distance('test', 'text')
     # 2
 
+Any other algorithms have same interface.
+
+.. |Build Status| image:: https://travis-ci.org/orsinium/textdistance.svg?branch=master
+   :target: https://travis-ci.org/orsinium/textdistance
+.. |PyPI version| image:: https://img.shields.io/pypi/v/textdistance.svg
+   :target: https://pypi.python.org/pypi/textdistance
+.. |Status| image:: https://img.shields.io/pypi/status/textdistance.svg
+   :target: https://pypi.python.org/pypi/textdistance
+.. |Code size| image:: https://img.shields.io/github/languages/code-size/orsinium/textdistance.svg
+   :target: https://github.com/orsinium/textdistance
+.. |License| image:: https://img.shields.io/pypi/l/textdistance.svg
+   :target: LICENSE

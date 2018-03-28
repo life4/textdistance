@@ -3,7 +3,10 @@ from .base import BaseSimilarity as _BaseSimilarity
 from textdistance.utils import find_ngrams
 
 
-__all__ = ['lcsseq', 'lcsstr', 'ratcliff_obershelp']
+__all__ = [
+    'lcsseq', 'lcsstr', 'ratcliff_obershelp',
+    'LCSSeq', 'LCSStr', 'RatcliffObershelp',
+]
 
 
 class LCSSeq(_BaseSimilarity):
