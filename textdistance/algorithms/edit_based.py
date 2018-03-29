@@ -137,7 +137,7 @@ class DamerauLevenshtein(_Base):
 
     def _pure_python(self, s1, s2):
         if numpy:
-            d = numpy.zeros(len(s1) + 1, len(s2) + 1)
+            d = numpy.zeros(len(s1) + 1, len(s2) + 1, dtype=numpy.float)
         else:
             d = {}
 
