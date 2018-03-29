@@ -36,6 +36,7 @@ setup(
     keywords='distance between text strings sequences iterators',
 
     packages=['textdistance', 'textdistance.algorithms'],
+    package_data={'': ['*.json']},
     requires=['python (>= 2.7)'],
     extras_require=get_extras(),
 

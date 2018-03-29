@@ -92,18 +92,21 @@ class Levenshtein(_Base):
         source:
         https://github.com/jamesturk/jellyfish/blob/master/jellyfish/_jellyfish.py#L18
         """
+        rows = len(s1) + 1
+        cols = len(s2) + 1
         prev = None
         if numpy:
             cur = numpy.arange(10)
         else:
             cur = range(cols)
+
         for r in range(1, rows):
-            prev, cur = cur, [r] + [0]*(cols-1)
+            prev, cur = cur, [r] + [0] * (cols - 1)
             for c in range(1, cols):
                 deletion = prev[c] + 1
                 insertion = cur[c-1] + 1
-                dist = self.test_func(s1[r-1], s2[c-1])
-                edit = prev[c-1] + (not dist)
+                dist = self.test_func(s1[r - 1], s2[c - 1])
+                edit = prev[c - 1] + (not dist)
                 cur[c] = min(edit, deletion, insertion)
         return cur[-1]
 
@@ -135,11 +138,41 @@ class DamerauLevenshtein(_Base):
         self.test_func = test_func or self._ident
         self.external = external
 
+    def _numpy(self, s1, s2):
+        # TODO: doesn't pass tests, need improve
+        d = numpy.zeros([len(s1) + 1, len(s2) + 1], dtype=numpy.int)
+
+        # matrix
+        for i in range(-1, len(s1) + 1):
+            d[i][-1] = i + 1
+        for j in range(-1, len(s2) + 1):
+            d[-1][j] = j + 1
+
+        for i, cs1 in enumerate(s1):
+            for j, cs2 in enumerate(s2):
+                cost = int(not self.test_func(cs1, cs2))
+                # ^ 0 if equal, 1 otherwise
+
+                d[i][j] = min(
+                    d[i - 1][j] + 1,            # deletion
+                    d[i][j - 1] + 1,            # insertion
+                    d[i - 1][j - 1] + cost,     # substitution
+                )
+
+                # transposition
+                if not i or not j:
+                    continue
+                if not self.test_func(cs1, s2[j - 1]):
+                    continue
+                d[i][j] = min(
+                    d[i][j],
+                    d[i - 2][j - 2] + cost,
+                )
+
+        return d[len(s1) - 1][len(s2) - 1]
+
     def _pure_python(self, s1, s2):
-        if numpy:
-            d = numpy.zeros(len(s1) + 1, len(s2) + 1, dtype=numpy.float)
-        else:
-            d = {}
+        d = {}
 
         # matrix
         for i in range(-1, len(s1) + 1):
@@ -177,6 +210,9 @@ class DamerauLevenshtein(_Base):
         if result is not None:
             return result
         
+        # if numpy:
+        #     return self._numpy(s1, s2)
+        # else:
         return self._pure_python(s1, s2)
 
 
@@ -403,6 +439,9 @@ class Gotoh(_BaseSimilarity):
         return min(map(len, sequences))
 
     def __call__(self, s1, s2):
+        if not numpy:
+            raise ImportError('Please, install numpy for Gotoh measure')
+
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
