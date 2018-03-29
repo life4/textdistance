@@ -4,8 +4,8 @@ from timeit import timeit
 
 from tabulate import tabulate
 
-from .constants import LIBRARIES_FILE
-from .libraries import libraries
+from .libraries import libraries, LIBRARIES_FILE
+
 
 # python3 -m textdistance.benchmark
 
@@ -94,7 +94,7 @@ class Benchmark(object):
     def save(libs):
         data = defaultdict(list)
         for lib in libs:
-            data[lib.algorithm].append('{}.{}'.format(lib.library, lib.function))
+            data[lib.algorithm].append([lib.library, lib.function])
         with open(LIBRARIES_FILE, 'w') as f:
             json.dump(obj=data, fp=f, indent=2, sort_keys=True)
 

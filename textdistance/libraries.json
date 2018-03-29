@@ -1,18 +1,54 @@
 {
   "DamerauLevenshtein": [
-    "jellyfish.damerau_levenshtein_distance",
-    "pyxdameraulevenshtein.damerau_levenshtein_distance"
+    [
+      "jellyfish",
+      "damerau_levenshtein_distance"
+    ],
+    [
+      "pyxdameraulevenshtein",
+      "damerau_levenshtein_distance"
+    ],
+    [
+      "abydos.distance",
+      "damerau_levenshtein"
+    ]
   ],
   "Hamming": [
-    "jellyfish.hamming_distance",
-    "abydos.distance.hamming"
+    [
+      "jellyfish",
+      "hamming_distance"
+    ],
+    [
+      "abydos.distance",
+      "hamming"
+    ]
   ],
   "JaroWinkler": [
-    "jellyfish.jaro_winkler"
+    [
+      "jellyfish",
+      "jaro_distance"
+    ],
+    [
+      "jellyfish",
+      "jaro_winkler"
+    ],
+    [
+      "py_stringmatching.similarity_measure.jaro",
+      "jaro"
+    ]
   ],
   "Levenshtein": [
-    "jellyfish.levenshtein_distance",
-    "py_stringmatching.similarity_measure.levenshtein.levenshtein",
-    "abydos.distance.levenshtein"
+    [
+      "jellyfish",
+      "levenshtein_distance"
+    ],
+    [
+      "py_stringmatching.similarity_measure.levenshtein",
+      "levenshtein"
+    ],
+    [
+      "abydos.distance",
+      "levenshtein"
+    ]
   ]
 }

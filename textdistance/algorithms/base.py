@@ -3,6 +3,9 @@ from ..utils import find_ngrams
 from ..libraries import libraries
 
 
+libraries.optimize()
+
+
 class Base(object):
     def __init__(self, qval=1, external=True):
         self.qval = qval

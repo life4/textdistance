@@ -1,5 +1,12 @@
+import json
+import os
+import os.path
 from collections import defaultdict
 from importlib import import_module
+
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+LIBRARIES_FILE = os.path.join(CURRENT_DIR, 'libraries.json')
 
 
 class LibrariesManager(object):
@@ -9,6 +16,15 @@ class LibrariesManager(object):
     def register(self, alg, lib):
         self.libs[alg].append(lib)
 
+    def optimize(self):
+        with open(LIBRARIES_FILE, 'r') as f:
+            libs_data = json.load(f)
+        for alg, libs_names in libs_data.items():
+            libs = self.get_libs(alg)
+            if not libs:
+                continue
+            self.libs[alg] = [lib for lib in libs if [lib.module_name, lib.func_name] in libs_names]
+
     def get_algorithms(self):
         return list(self.libs.keys())
 
@@ -17,6 +33,8 @@ class LibrariesManager(object):
 
     def get_lib(self, obj):
         alg = obj.__class__.__name__
+        if alg not in self.libs:
+            return
         for lib in self.libs[alg]:
             if lib.check_conditions(obj) and lib.get_function():
                 return lib
