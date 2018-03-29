@@ -43,6 +43,11 @@ class Hamming(_Base):
 
     def __call__(self, *sequences):
         sequences = self._get_sequences(*sequences)
+
+        result = self.quick_answer(*sequences)
+        if result is not None:
+            return result
+
         _zip = zip if self.truncate else zip_longest
         return sum([not self.test_func(*es) for es in _zip(*sequences)])
 
@@ -104,6 +109,7 @@ class Levenshtein(_Base):
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -166,6 +172,7 @@ class DamerauLevenshtein(_Base):
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -195,6 +202,7 @@ class JaroWinkler(_BaseSimilarity):
 
     def __call__(self, s1, s2, prefix_weight=0.1):
         s1, s2 = self._get_sequences(s1, s2)
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -210,8 +218,8 @@ class JaroWinkler(_BaseSimilarity):
         if search_range < 0:
             search_range = 0
 
-        s1_flags = [False]*s1_len
-        s2_flags = [False]*s2_len
+        s1_flags = [False] * s1_len
+        s2_flags = [False] * s2_len
 
         # looking only within search range, count & flag matched pairs
         common_chars = 0
@@ -300,7 +308,9 @@ class NeedlemanWunsch(_BaseSimilarity):
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Needleman-Wunsch measure')
+
         s1, s2 = self._get_sequences(s1, s2)
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -348,7 +358,9 @@ class SmithWaterman(_BaseSimilarity):
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Smith-Waterman measure')
+
         s1, s2 = self._get_sequences(s1, s2)
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -392,6 +404,7 @@ class Gotoh(_BaseSimilarity):
 
     def __call__(self, s1, s2):
         s1, s2 = self._get_sequences(s1, s2)
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -465,6 +478,7 @@ class StrCmp95(_BaseSimilarity):
     def __call__(self, s1, s2):
         s1 = s1.strip().upper()
         s2 = s2.strip().upper()
+
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -603,6 +617,7 @@ class MLIPNS(_BaseSimilarity):
 
     def __call__(self, *sequences):
         sequences = self._get_sequences(*sequences)
+
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
