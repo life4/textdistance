@@ -91,7 +91,7 @@ libraries.register('Hamming', LibraryBase('abydos.distance', 'hamming'))
 libraries.register('Hamming', LibraryBase('jellyfish', 'hamming_distance'))
 libraries.register('JaroWinkler', LibraryBase('jellyfish', 'jaro_distance', conditions=dict(winklerize=False)))
 libraries.register('JaroWinkler', LibraryBase('jellyfish', 'jaro_winkler'))
-# libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
+libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
 libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro', 'jaro', conditions=dict(winklerize=False)))  # noQA
 libraries.register('Levenshtein', LibraryBase('abydos.distance', 'levenshtein'))
 libraries.register('Levenshtein', LibraryBase('jellyfish', 'levenshtein_distance'))

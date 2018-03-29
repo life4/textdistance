@@ -1,7 +1,7 @@
 from __main__ import unittest, textdistance, NUMPY
 
 class HammingTest(unittest.TestCase):
-    alg = textdistance.hamming
+    alg = textdistance.Hamming(external=False)
 
     def test_common(self):
         self.assertEqual(self.alg.distance('test', 'text'), 1)
@@ -37,7 +37,7 @@ class DamerauLevenshteinTest(unittest.TestCase):
 
 
 class JaroTest(unittest.TestCase):
-    alg = textdistance.jaro
+    alg = textdistance.JaroWinkler(winklerize=False, external=False)
 
     def test_common(self):
         self.assertAlmostEqual(self.alg.similarity('hello', 'haloa'), 0.73333333)
@@ -50,7 +50,7 @@ class JaroTest(unittest.TestCase):
 
 
 class JaroWinklerTest(unittest.TestCase):
-    alg = textdistance.jaro_winkler
+    alg = textdistance.JaroWinkler(external=False)
 
     def test_common(self):
         self.assertAlmostEqual(self.alg.similarity('elephant', 'hippo'), 0.44166666)
