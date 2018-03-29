@@ -97,9 +97,9 @@ class Levenshtein(_Base):
             cur = numpy.arange(10)
         else:
             cur = range(cols)
-        for r in _range(1, rows):
+        for r in range(1, rows):
             prev, cur = cur, [r] + [0]*(cols-1)
-            for c in _range(1, cols):
+            for c in range(1, cols):
                 deletion = prev[c] + 1
                 insertion = cur[c-1] + 1
                 dist = self.test_func(s1[r-1], s2[c-1])
