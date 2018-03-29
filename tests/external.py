@@ -14,11 +14,13 @@ class ExternalTest(unittest.TestCase):
         for alg in libs.get_algorithms():
             for lib in libs.get_libs(alg):
                 external_func = lib.get_function()
-                internal_func = getattr(textdistance, alg)(external=False)
+
+                conditions = lib.conditions or {}
+                internal_func = getattr(textdistance, alg)(external=False, **conditions)
 
                 for s1, s2 in self.test_cases:
                     with self.subTest(alg=alg, lib=lib.module_name, s1=s1, s2=s2):
-                        self.assertEqual(internal_func(s1, s2), external_func(s1, s2))
+                        self.assertAlmostEqual(internal_func(s1, s2), external_func(s1, s2))
 
 
 # Tversky.as_set=True

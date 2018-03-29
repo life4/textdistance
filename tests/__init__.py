@@ -5,5 +5,5 @@ from .edit_based import *  # noQA
 from .token_based import *  # noQA
 
 
-if os.getenv('WITH_CONSTRAINTS', 'no') == 'yes':
+if os.getenv('WITH_CONSTRAINTS', 'yes') == 'yes':
     from .external import *  # noQA
