@@ -3,6 +3,7 @@ try:
 except ImportError:
     import unittest
 import textdistance
+import textdistance.libraries
 
 from tests import *
 
