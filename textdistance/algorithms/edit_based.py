@@ -97,7 +97,8 @@ class Levenshtein(_Base):
             for c in _range(1, cols):
                 deletion = prev[c] + 1
                 insertion = cur[c-1] + 1
-                edit = prev[c-1] + (0 if s1[r-1] == s2[c-1] else 1)
+                dist = self.test_func(s1[r-1], s2[c-1])
+                edit = prev[c-1] + (not dist)
                 cur[c] = min(edit, deletion, insertion)
         return cur[-1]
 
