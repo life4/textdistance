@@ -65,8 +65,8 @@ class Levenshtein(_Base):
         self.test_func = test_func or self._ident
         self.external = external
 
-    def __call__(self, s1, s2):
-        s1, s2 = self._get_sequences(s1, s2)
+    def _recursive(self, s1, s2):
+        # TODO: more than 2 sequences support
         if not s1 or not s2:
             return len(s1) + len(s2)
 
@@ -81,6 +81,33 @@ class Levenshtein(_Base):
         # substitution
         s = self(s1[:-1], s2[:-1])
         return min(d, s) + 1
+
+    def _cicled(self, s1, s2):
+        """
+        source:
+        https://github.com/jamesturk/jellyfish/blob/master/jellyfish/_jellyfish.py#L18
+        """
+        prev = None
+        if numpy:
+            cur = numpy.arange(10)
+        else:
+            cur = range(cols)
+        for r in _range(1, rows):
+            prev, cur = cur, [r] + [0]*(cols-1)
+            for c in _range(1, cols):
+                deletion = prev[c] + 1
+                insertion = cur[c-1] + 1
+                edit = prev[c-1] + (0 if s1[r-1] == s2[c-1] else 1)
+                cur[c] = min(edit, deletion, insertion)
+        return cur[-1]
+
+    def __call__(self, s1, s2):
+        s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+        
+        return self._cicled(s1, s2)
 
 
 class DamerauLevenshtein(_Base):
