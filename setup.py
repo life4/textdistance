@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name     = 'textdistance',
-    version  = '2.0.3',
+    version  = '2.0.4',
 
     author       = 'orsinium',
     author_email = 'master_fess@mail.ru',
