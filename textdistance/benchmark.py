@@ -1,64 +1,79 @@
-from importlib import import_module
-from collections import namedtuple, defaultdict
-from timeit import timeit
 import json
+from collections import defaultdict, namedtuple
+from timeit import timeit
 
 from tabulate import tabulate
 
-from . import algorithms as textdistance
 from .constants import LIBRARIES_FILE
-from .libraries import LIBRARIES
-
+from .libraries import libraries
 
 # python3 -m textdistance.benchmark
 
 
-Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'object'])
+Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'presets'])
 
-INTERNAL_SETUP = "from textdistance import {} as cls; func = cls(external=False)"
 
+EXTERNAL_SETUP = """
+from {library} import {function} as func
+presets = {presets}
+if presets:
+    func = func(presets)
+"""
+
+INTERNAL_SETUP = """
+from textdistance import {} as cls
+func = cls(external=False)
+"""
+
+STMT = """
+func('text', 'test')
+func('test', 'testit')
+# func('a' * 30, 'a' * 30)
+# func('a' * 30, 'b' * 30)
+"""
+
+RUNS = 500
 
 
 class Benchmark(object):
     @staticmethod
     def get_installed():
-        for alg, paths in LIBRARIES.items():
-            for path in paths:
-                module_name, _, func_name = path.rpartition('.')
-                try:
-                    module = import_module(module_name)
-                except ImportError:
+        for alg in libraries.get_algorithms():
+            for lib in libraries.get_libs(alg):
+                # try load function
+                if not lib.get_function():
                     continue
+                # return library info
                 yield Lib(
                     algorithm=alg,
-                    library=module_name,
-                    function=func_name,
+                    library=lib.module_name,
+                    function=lib.func_name,
                     time=float('Inf'),
-                    object=getattr(module, func_name),
+                    presets=lib.presets,
                 )
 
     @staticmethod
     def get_external_benchmark(installed):
         for lib in installed:
             yield lib._replace(time=timeit(
-                stmt="func('text', 'testit')",
-                setup="from {} import {} as func".format(lib.library, lib.function),
-                number=10000,
+                stmt=STMT,
+                setup=EXTERNAL_SETUP.format(**lib._asdict()),
+                number=RUNS,
             ))
 
     @staticmethod
     def get_internal_benchmark():
-        for alg in LIBRARIES:
+        for alg in libraries.get_algorithms():
             yield Lib(
                 algorithm=alg,
                 library='textdistance',
                 function=alg,
                 time=timeit(
-                    stmt="func('text', 'testit')",
+                    stmt=STMT,
                     setup=INTERNAL_SETUP.format(alg),
-                    number=10000,
+                    number=RUNS,
                 ),
-                object=getattr(textdistance, alg),
+                presets=None,
             )
 
     @staticmethod
