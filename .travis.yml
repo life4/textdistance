@@ -3,6 +3,11 @@ language: python
 python:
   - "2.7"
   - "3.4"
+env:
+  - WITH_CONSTRAINTS=yes
+  - WITH_CONSTRAINTS=no
+  - WITH_NUMPY=yes
+  - WITH_NUMPY=no
 install: pip install tox-travis
 script: tox
 
