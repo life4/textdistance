@@ -101,13 +101,11 @@ class DamerauLevenshtein(_Base):
         self.test_func = test_func or self._ident
         self.external = external
 
-    def __call__(self, s1, s2):
-        s1, s2 = self._get_sequences(s1, s2)
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
-
-        d = {}
+    def _pure_python(self, s1, s2):
+        if numpy:
+            d = numpy.zeros(len(s1) + 1, len(s2) + 1)
+        else:
+            d = {}
 
         # matrix
         for i in range(-1, len(s1) + 1):
@@ -137,6 +135,14 @@ class DamerauLevenshtein(_Base):
                 )
 
         return d[len(s1) - 1, len(s2) - 1]
+
+    def __call__(self, s1, s2):
+        s1, s2 = self._get_sequences(s1, s2)
+        result = self.quick_answer(s1, s2)
+        if result is not None:
+            return result
+        
+        return self._pure_python(s1, s2)
 
 
 class JaroWinkler(_BaseSimilarity):

@@ -42,6 +42,7 @@ algos = [
 #    textdistance.zlib_ncd,
 ]
 
+
 class CommonTest(unittest.TestCase):
     def test_similar_distance(self):
         for alg in algos:

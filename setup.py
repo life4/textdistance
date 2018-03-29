@@ -14,7 +14,9 @@ def get_extras():
     with open(libs_file, 'r') as f:
         data = json.load(f)
     # get only fastest lib for all algorithms
-    return {k: [v[0][0]] for k, v in data.items()}
+    extras = {k: [v[0][0]] for k, v in data.items()}
+    extras['all'] = list(set(v[0] for v in extras.values()))
+    return extras
 
 
 if 'show_extras' in sys.argv:
