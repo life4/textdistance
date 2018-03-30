@@ -31,21 +31,10 @@ class Base(object):
         return 1 - self.normalized_distance(*sequences)
 
     def external_answer(self, *sequences):
-        # external libs can compare only 2 strings
-        if len(sequences) != 2:
-            return
-
-        # external libs can compare only by letters
-        if getattr(self, 'qval', 0) != 1:
-            return
-
-        # convert list of letters to string
-        if isinstance(sequences[0], (tuple, list)):
-            sequences = list(map(lambda x: u''.join(x), sequences))
-
-        func = libraries.get_function(self)
-        if func:
-            return func(*sequences)
+        lib = libraries.get_lib(self, *sequences)
+        if lib:
+            sequences = lib.prepare(*sequences)
+            return lib.func(*sequences)
 
     def quick_answer(self, *sequences):
         if not sequences:

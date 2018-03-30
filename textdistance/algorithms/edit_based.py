@@ -18,7 +18,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 __all__ = [
     'Hamming', 'MLIPNS',
     'Levenshtein', 'DamerauLevenshtein',
-    'JaroWinkler', 'StrCmp95',
+    'Jaro', 'JaroWinkler', 'StrCmp95',
     'NeedlemanWunsch', 'Gotoh', 'SmithWaterman',
 
     'hamming', 'mlipns',
@@ -116,7 +116,7 @@ class Levenshtein(_Base):
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
-        
+
         return self._cicled(s1, s2)
 
 
@@ -209,7 +209,7 @@ class DamerauLevenshtein(_Base):
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
-        
+
         # if numpy:
         #     return self._numpy(s1, s2)
         # else:
@@ -315,6 +315,15 @@ class JaroWinkler(_BaseSimilarity):
         tmp = float(common_chars - i - 1) / (s1_len + s2_len - i * 2 + 2)
         weight += (1.0 - weight) * tmp
         return weight
+
+
+class Jaro(JaroWinkler):
+    def __init__(self, long_tolerance=False, qval=1, external=True):
+        super(Jaro, self).__init__(
+            long_tolerance=long_tolerance,
+            winklerize=False,
+            qval=qval,
+            external=external)
 
 
 class NeedlemanWunsch(_BaseSimilarity):
@@ -681,8 +690,8 @@ class MLIPNS(_BaseSimilarity):
 hamming = Hamming()
 levenshtein = Levenshtein()
 damerau = damerau_levenshtein = DamerauLevenshtein()
-jaro = JaroWinkler(winklerize=False)
-jaro_winkler = JaroWinkler(winklerize=True)
+jaro = Jaro()
+jaro_winkler = JaroWinkler()
 needleman_wunsch = NeedlemanWunsch()
 smith_waterman = SmithWaterman()
 gotoh = Gotoh()
