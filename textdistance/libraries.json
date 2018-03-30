@@ -7,10 +7,6 @@
     [
       "pyxdameraulevenshtein",
       "damerau_levenshtein_distance"
-    ],
-    [
-      "abydos.distance",
-      "damerau_levenshtein"
     ]
   ],
   "Hamming": [
@@ -23,18 +19,20 @@
       "hamming"
     ]
   ],
-  "JaroWinkler": [
+  "Jaro": [
     [
       "jellyfish",
       "jaro_distance"
     ],
     [
-      "jellyfish",
-      "jaro_winkler"
-    ],
-    [
       "py_stringmatching.similarity_measure.jaro",
       "jaro"
+    ]
+  ],
+  "JaroWinkler": [
+    [
+      "jellyfish",
+      "jaro_winkler"
     ]
   ],
   "Levenshtein": [
@@ -44,10 +42,6 @@
     ],
     [
       "py_stringmatching.similarity_measure.levenshtein",
-      "levenshtein"
-    ],
-    [
-      "abydos.distance",
       "levenshtein"
     ]
   ]

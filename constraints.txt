@@ -4,3 +4,4 @@ jellyfish
 pyxDamerauLevenshtein
 abydos
 py_stringmatching
+python-Levenshtein

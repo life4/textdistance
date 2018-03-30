@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from __main__ import unittest, textdistance
+from __main__ import unittest, textdistance, libraries
 
 
 class ExternalTest(unittest.TestCase):
@@ -11,9 +11,8 @@ class ExternalTest(unittest.TestCase):
     )
 
     def test_compare(self):
-        libs = textdistance.libraries.libraries
-        for alg in libs.get_algorithms():
-            for lib in libs.get_libs(alg):
+        for alg in libraries.get_algorithms():
+            for lib in libraries.get_libs(alg):
                 conditions = lib.conditions or {}
                 internal_func = getattr(textdistance, alg)(external=False, **conditions)
                 external_func = lib.get_function()
@@ -26,9 +25,8 @@ class ExternalTest(unittest.TestCase):
                         self.assertAlmostEqual(int_result, ext_result)
 
     def test_qval(self):
-        libs = textdistance.libraries.libraries
-        for alg in libs.get_algorithms():
-            for lib in libs.get_libs(alg):
+        for alg in libraries.get_algorithms():
+            for lib in libraries.get_libs(alg):
                 conditions = lib.conditions or {}
                 internal_func = getattr(textdistance, alg)(external=False, **conditions)
                 external_func = lib.get_function()

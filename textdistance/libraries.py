@@ -2,6 +2,7 @@ import json
 import os
 import os.path
 from collections import defaultdict
+from copy import deepcopy
 from importlib import import_module
 
 
@@ -71,16 +72,18 @@ class LibraryBase(object):
             try:
                 module = import_module(self.module_name)
             except ImportError:
+                self.func = None
                 return
 
             # get object from module
             obj = getattr(module, self.func_name)
-
             # init class
-            if obj is not None and self.presets is not None:
-                self.func = obj(**self.presets)
-            else:
-                self.func = obj
+            if self.presets is not None:
+                obj = obj(**self.presets)
+            # get needed attribute
+            if self.attr:
+                obj = getattr(obj, self.attr)
+            self.func = obj
 
         return self.func
 
@@ -98,20 +101,34 @@ class TextLibrary(LibraryBase):
         # convert list of letters to string
         if isinstance(sequences[0], (tuple, list)):
             sequences = list(map(lambda x: u''.join(x), sequences))
+
+        # convert to unicode for python2
+        try:
+            sequences = list(map(unicode, sequences))
+        except NameError:
+            pass
+
         return sequences
 
 
 libraries = LibrariesManager()
 
 libraries.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'damerau_levenshtein'))
-libraries.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
 libraries.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
+libraries.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
 libraries.register('Hamming', LibraryBase('abydos.distance', 'hamming'))
 libraries.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
+# libraries.register('Hamming', TextLibrary('Levenshtein', 'hamming'))
 libraries.register('Jaro', TextLibrary('jellyfish', 'jaro_distance'))
 libraries.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
+# libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
 libraries.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler'))
-libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
+# libraries.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler'))
 libraries.register('Levenshtein', LibraryBase('abydos.distance', 'levenshtein'))
 libraries.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))
+# libraries.register('Levenshtein', TextLibrary('Levenshtein', 'distance'))
 libraries.register('Levenshtein', TextLibrary('py_stringmatching.similarity_measure.levenshtein', 'levenshtein'))
+
+
+not_optimized_libraries = LibrariesManager()
+not_optimized_libraries.libs = deepcopy(libraries.libs)

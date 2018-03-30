@@ -6,7 +6,7 @@ except ImportError:
     import unittest
 
 import textdistance
-import textdistance.libraries
+from textdistance.libraries import not_optimized_libraries as libraries
 
 
 # CONSTRAINTS = os.getenv('WITH_CONSTRAINTS', 'yes') == 'yes'

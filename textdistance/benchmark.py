@@ -4,7 +4,8 @@ from timeit import timeit
 
 from tabulate import tabulate
 
-from .libraries import libraries, LIBRARIES_FILE
+from .libraries import not_optimized_libraries as libraries
+from .libraries import LIBRARIES_FILE
 
 
 # python3 -m textdistance.benchmark
@@ -29,10 +30,10 @@ STMT = """
 func('text', 'test')
 func('test', 'testit')
 # func('a' * 30, 'a' * 30)
-# func('a' * 30, 'b' * 30)
+# func('a' * 15, 'b' * 15)
 """
 
-RUNS = 500
+RUNS = 1000
 
 
 class Benchmark(object):
