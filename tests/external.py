@@ -44,6 +44,7 @@ class ExternalTest(unittest.TestCase):
                         # test
                         with self.subTest(alg=alg, lib=lib.module_name, s1=s1, s2=s2, qval=qval):
                             int_result = internal_func(s1, s2)
+                            s1, s2 = internal_func._get_sequences(s1, s2)
                             s1, s2 = lib.prepare(s1, s2)
                             ext_result = external_func(s1, s2)
                             self.assertAlmostEqual(int_result, ext_result)
