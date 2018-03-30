@@ -103,6 +103,7 @@ class Benchmark(object):
     def run(cls):
         print('# Installed libraries:\n')
         installed = list(cls.get_installed())
+        installed.sort()
         print(cls.get_table(installed))
 
         print('# Benchmarks (with textdistance):\n')

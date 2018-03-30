@@ -31,11 +31,19 @@
   ],
   "JaroWinkler": [
     [
+      "Levenshtein",
+      "jaro_winkler"
+    ],
+    [
       "jellyfish",
       "jaro_winkler"
     ]
   ],
   "Levenshtein": [
+    [
+      "Levenshtein",
+      "distance"
+    ],
     [
       "jellyfish",
       "levenshtein_distance"

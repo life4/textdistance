@@ -123,10 +123,10 @@ libraries.register('Jaro', TextLibrary('jellyfish', 'jaro_distance'))
 libraries.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
 # libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
 libraries.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler'))
-# libraries.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler'))
+libraries.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler'))
 libraries.register('Levenshtein', LibraryBase('abydos.distance', 'levenshtein'))
 libraries.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))
-# libraries.register('Levenshtein', TextLibrary('Levenshtein', 'distance'))
+libraries.register('Levenshtein', TextLibrary('Levenshtein', 'distance'))
 libraries.register('Levenshtein', TextLibrary('py_stringmatching.similarity_measure.levenshtein', 'levenshtein'))
 
 
