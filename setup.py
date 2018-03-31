@@ -56,7 +56,7 @@ extras['benchmarks'] = extras['benchmark']
 
 setup(
     name='textdistance',
-    version='3.0.1',
+    version='3.0.2',
 
     author='orsinium',
     author_email='master_fess@mail.ru',

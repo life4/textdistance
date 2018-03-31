@@ -8,7 +8,7 @@ TextDistance
 
 |Build Status| |PyPI version| |Status| |Code size| |License|
 
-**TextDistance** -- python library for compare distance between two or
+**TextDistance** -- python library for comparing distance between two or
 more sequences by many algorithms.
 
 Features:
@@ -88,7 +88,7 @@ Compression based
 ~~~~~~~~~~~~~~~~~
 
 Work in progress. Now all algorithms compare two strings as array of
-bits, not by chars.
+bits.
 
 ``NCD`` - normalized compression distance.
 
@@ -141,19 +141,20 @@ Only pure python implementation:
 
     pip install textdistance
 
-With common side libraries for maximum speed:
+With extra libraries for maximum speed:
 
 .. code:: bash
 
-    pip install textdistance[common]
+    pip install textdistance[extras]
 
-With all libraries (required for `benchmarking <#benchmarks>`__):
+With all libraries (required for `benchmarking <#benchmarks>`__ and
+`testing <#test>`__):
 
 .. code:: bash
 
-    pip install textdistance[all]
+    pip install textdistance[benchmark]
 
-With extras only for some algorithm:
+With algorithm specific extras:
 
 .. code:: bash
 
@@ -176,7 +177,7 @@ Or clone repo and install with some extras:
 .. code:: bash
 
     git clone https://github.com/orsinium/textdistance.git
-    pip install -e .[all]
+    pip install -e .[benchmark]
 
 Usage
 -----
@@ -243,14 +244,13 @@ distance <https://en.wikipedia.org/wiki/Hamming_distance>`__:
 
 Any other algorithms have same interface.
 
-Side libraries
---------------
+Extra libraries
+---------------
 
 For main algorithms textdistance try to call known external libraries
 (fastest first) if available (installed in your system) and possible
-(this implementation can compare this sequences).
-`Install <#installation>`__ textdistance with common extras for this
-feature.
+(this implementation can compare this type of sequences).
+`Install <#installation>`__ textdistance with extras for this feature.
 
 You can disable this by passing ``external=False`` argument on init:
 
@@ -282,101 +282,104 @@ Algorithms:
 Benchmarks
 ----------
 
-For textdistance without extra requirements:
+Without extras installation:
 
 +--------------+------------+-------------+---------+
 | algorithm    | library    | function    | time    |
 +==============+============+=============+=========+
-| DamerauLeven | jellyfish  | damerau\_le | 0.01043 |
-| shtein       |            | venshtein\_ | 39      |
+| DamerauLeven | jellyfish  | damerau\_le | 0.00965 |
+| shtein       |            | venshtein\_ | 294     |
 |              |            | distance    |         |
 +--------------+------------+-------------+---------+
-| DamerauLeven | pyxdamerau | damerau\_le | 0.15075 |
-| shtein       | levenshtei | venshtein\_ |         |
+| DamerauLeven | pyxdamerau | damerau\_le | 0.15137 |
+| shtein       | levenshtei | venshtein\_ | 8       |
 |              | n          | distance    |         |
 +--------------+------------+-------------+---------+
-| DamerauLeven | **textdist | DamerauLeve | 0.30708 |
-| shtein       | ance**     | nshtein     | 3       |
+| DamerauLeven | pylev      | damerau\_le | 0.76646 |
+| shtein       |            | venshtein   | 1       |
 +--------------+------------+-------------+---------+
-| DamerauLeven | pylev      | damerau\_le | 0.76065 |
-| shtein       |            | venshtein   | 5       |
+| DamerauLeven | **textdist | DamerauLeve | 4.13463 |
+| shtein       | ance**     | nshtein     |         |
 +--------------+------------+-------------+---------+
-| DamerauLeven | abydos     | damerau\_le | 4.59495 |
+| DamerauLeven | abydos     | damerau\_le | 4.3831  |
 | shtein       |            | venshtein   |         |
 +--------------+------------+-------------+---------+
-| Hamming      | Levenshtei | hamming     | 0.00145 |
-|              | n          |             | 914     |
+| Hamming      | Levenshtei | hamming     | 0.00144 |
+|              | n          |             | 28      |
 +--------------+------------+-------------+---------+
-| Hamming      | jellyfish  | hamming\_di | 0.00230 |
-|              |            | stance      | 915     |
+| Hamming      | jellyfish  | hamming\_di | 0.00240 |
+|              |            | stance      | 262     |
 +--------------+------------+-------------+---------+
-| Hamming      | distance   | hamming     | 0.03575 |
-|              |            |             | 62      |
+| Hamming      | distance   | hamming     | 0.03625 |
+|              |            |             | 3       |
 +--------------+------------+-------------+---------+
-| Hamming      | abydos     | hamming     | 0.03984 |
-|              |            |             | 52      |
+| Hamming      | abydos     | hamming     | 0.03839 |
+|              |            |             | 33      |
 +--------------+------------+-------------+---------+
-| Hamming      | **textdist | Hamming     | 0.13997 |
-|              | ance**     |             |         |
+| Hamming      | **textdist | Hamming     | 0.17678 |
+|              | ance**     |             | 1       |
 +--------------+------------+-------------+---------+
-| Jaro         | Levenshtei | jaro        | 0.00312 |
-|              | n          |             | 573     |
+| Jaro         | Levenshtei | jaro        | 0.00313 |
+|              | n          |             | 561     |
 +--------------+------------+-------------+---------+
-| Jaro         | jellyfish  | jaro\_dista | 0.00522 |
-|              |            | nce         | 548     |
+| Jaro         | jellyfish  | jaro\_dista | 0.00518 |
+|              |            | nce         | 85      |
 +--------------+------------+-------------+---------+
-| Jaro         | py\_string | jaro        | 0.17990 |
+| Jaro         | py\_string | jaro        | 0.18062 |
+|              | matching   |             | 8       |
++--------------+------------+-------------+---------+
+| Jaro         | **textdist | Jaro        | 0.27891 |
+|              | ance**     |             | 7       |
++--------------+------------+-------------+---------+
+| JaroWinkler  | Levenshtei | jaro\_winkl | 0.00319 |
+|              | n          | er          | 735     |
++--------------+------------+-------------+---------+
+| JaroWinkler  | jellyfish  | jaro\_winkl | 0.00540 |
+|              |            | er          | 443     |
++--------------+------------+-------------+---------+
+| JaroWinkler  | **textdist | JaroWinkler | 0.28962 |
+|              | ance**     |             | 6       |
++--------------+------------+-------------+---------+
+| Levenshtein  | Levenshtei | distance    | 0.00414 |
+|              | n          |             | 404     |
++--------------+------------+-------------+---------+
+| Levenshtein  | jellyfish  | levenshtein | 0.00601 |
+|              |            | \_distance  | 647     |
++--------------+------------+-------------+---------+
+| Levenshtein  | py\_string | levenshtein | 0.25290 |
 |              | matching   |             | 1       |
 +--------------+------------+-------------+---------+
-| Jaro         | **textdist | Jaro        | 0.26922 |
-|              | ance**     |             | 9       |
+| Levenshtein  | pylev      | levenshtein | 0.56918 |
+|              |            |             | 2       |
 +--------------+------------+-------------+---------+
-| JaroWinkler  | Levenshtei | jaro\_winkl | 0.00330 |
-|              | n          | er          | 839     |
+| Levenshtein  | distance   | levenshtein | 1.15726 |
 +--------------+------------+-------------+---------+
-| JaroWinkler  | jellyfish  | jaro\_winkl | 0.00537 |
-|              |            | er          | 344     |
+| Levenshtein  | abydos     | levenshtein | 3.68451 |
 +--------------+------------+-------------+---------+
-| JaroWinkler  | **textdist | JaroWinkler | 0.28676 |
-|              | ance**     |             | 3       |
-+--------------+------------+-------------+---------+
-| Levenshtein  | Levenshtei | distance    | 0.00410 |
-|              | n          |             | 18      |
-+--------------+------------+-------------+---------+
-| Levenshtein  | jellyfish  | levenshtein | 0.00618 |
-|              |            | \_distance  | 915     |
-+--------------+------------+-------------+---------+
-| Levenshtein  | **textdist | Levenshtein | 0.17044 |
-|              | ance**     |             | 3       |
-+--------------+------------+-------------+---------+
-| Levenshtein  | py\_string | levenshtein | 0.25270 |
-|              | matching   |             | 9       |
-+--------------+------------+-------------+---------+
-| Levenshtein  | pylev      | levenshtein | 0.56995 |
-|              |            |             | 7       |
-+--------------+------------+-------------+---------+
-| Levenshtein  | distance   | levenshtein | 1.13711 |
-+--------------+------------+-------------+---------+
-| Levenshtein  | abydos     | levenshtein | 3.68653 |
+| Levenshtein  | **textdist | Levenshtein | 8.63674 |
+|              | ance**     |             |         |
 +--------------+------------+-------------+---------+
 
 Total: 24 libs.
 
-Textdistance use benchmark's results for algorithm's optimization and
-try call fastest external libs first (if possible).
+Yeah, so slow. Use TextDistance on production only with extras.
 
-If you want you can run benchmark manually on youre system:
+Textdistance use benchmark's results for algorithm's optimization and
+try to call fastest external lib first (if possible).
+
+You can run benchmark manually on your system:
 
 .. code:: bash
 
-    pip install textdistance[all]
+    pip install textdistance[benchmark]
     python3 -m textdistance.benchmark
 
-Consequently textdistance show benchmarks results table for your system
-and save libraries priorities into
-`libraries.json <textdistance/libraries.json>`__ file in textdistance's
+TextDistance show benchmarks results table for your system and save
+libraries priorities into ``libraries.json`` file in TextDistance's
 folder. This file will be used by textdistance for calling fastest
-algorithm implementation first.
+algorithm implementation. Default
+`libraries.json <textdistance/libraries.json>`__ already included in
+package.
 
 Test
 ----
