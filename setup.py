@@ -4,8 +4,8 @@ from setuptools import setup
 
 
 setup(
-    name     = 'textdistance',
-    version  = '2.0.4',
+    name='textdistance',
+    version='3.0.0',
 
     author='orsinium',
     author_email='master_fess@mail.ru',
