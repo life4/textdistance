@@ -1,27 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from setuptools import setup
-import os
-import os.path
-import json
-import sys
-
-
-def get_extras():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    libs_file = os.path.join(current_dir, 'textdistance', 'libraries.json')
-    with open(libs_file, 'r') as f:
-        data = json.load(f)
-    # get only fastest lib for all algorithms
-    extras = {k: [v[0][0]] for k, v in data.items()}
-    extras['all'] = list(set(v[0] for v in extras.values()))
-    return extras
-
-
-if 'show_extras' in sys.argv:
-    print(json.dumps(get_extras(), indent=2))
-    exit()
 
 
 setup(
@@ -38,7 +17,45 @@ setup(
     packages=['textdistance', 'textdistance.algorithms'],
     package_data={'': ['*.json']},
     requires=['python (>= 2.7)'],
-    extras_require=get_extras(),
+    extras_require={
+        'common': [  # enough for simple usage
+            'abydos',
+            'jellyfish',                # for DamerauLevenshtein
+            'numpy',                    # for SmithWaterman and other
+            'python-Levenshtein',       # for Jaro and Levenshtein
+            'pyxDamerauLevenshtein',    # for DamerauLevenshtein
+        ],
+        'all': [  # needed for benchmarking, optimization and testing
+            'abydos',                   # from common
+            'jellyfish',                # from common
+            'numpy',                    # from common
+            'py_stringmatching',        # maybe will be faster on your system :)
+            'python-Levenshtein',       # from common
+            'pyxDamerauLevenshtein',    # from common
+            'tabulate',                 # for benchmark's tables
+        ],
+        # for algos, from fastest to slowest, only faster than textdistance:
+        'DamerauLevenshtein': [
+            'jellyfish',                # only for text
+            'pyxdameraulevenshtein',    # for any iterators
+        ],
+        'Hamming': [
+            'Levenshtein',  # only same length and strings
+            'jellyfish',    # only strings, any length
+            'distance',     # only same length, any iterators
+            'abydos',       # any iterators
+        ],
+        'Jaro': [
+            'Levenshtein',  # only text
+        ],
+        'JaroWinkler': [
+            'Levenshtein',  # only text
+        ],
+        'Levenshtein': [
+            'Levenshtein',  # only text
+            # yeah, other libs slower than textdistance
+        ],
+    },
 
     url='https://github.com/orsinium/textdistance',
     download_url='https://github.com/orsinium/textdistance/tarball/master',

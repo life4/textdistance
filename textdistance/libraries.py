@@ -111,20 +111,43 @@ class TextLibrary(LibraryBase):
         return sequences
 
 
+class SameLengthLibrary(LibraryBase):
+    def check_conditions(self, obj, *sequences):
+        if not super(SameLengthLibrary, self).check_conditions(obj, *sequences):
+            return False
+        # compare only same length iterators
+        if min(map(len, sequences)) != max(map(len, sequences)):
+            return False
+        return True
+
+
+class SameLengthTextLibrary(SameLengthLibrary, TextLibrary):
+    pass
+
+
 libraries = LibrariesManager()
 
 libraries.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'damerau_levenshtein'))
+libraries.register('DamerauLevenshtein', LibraryBase('pylev', 'damerau_levenshtein'))
 libraries.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 libraries.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
+
 libraries.register('Hamming', LibraryBase('abydos.distance', 'hamming'))
+libraries.register('Hamming', SameLengthLibrary('distance', 'hamming'))
+libraries.register('Hamming', SameLengthTextLibrary('Levenshtein', 'hamming'))
 libraries.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
-# libraries.register('Hamming', TextLibrary('Levenshtein', 'hamming'))
+
 libraries.register('Jaro', TextLibrary('jellyfish', 'jaro_distance'))
+libraries.register('Jaro', TextLibrary('Levenshtein', 'jaro'))
 libraries.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
+
 # libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
 libraries.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler'))
 libraries.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler'))
+
 libraries.register('Levenshtein', LibraryBase('abydos.distance', 'levenshtein'))
+libraries.register('Levenshtein', LibraryBase('distance', 'levenshtein'))
+libraries.register('Levenshtein', LibraryBase('pylev', 'levenshtein'))
 libraries.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))
 libraries.register('Levenshtein', TextLibrary('Levenshtein', 'distance'))
 libraries.register('Levenshtein', TextLibrary('py_stringmatching.similarity_measure.levenshtein', 'levenshtein'))

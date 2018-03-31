@@ -11,8 +11,16 @@
   ],
   "Hamming": [
     [
+      "Levenshtein",
+      "hamming"
+    ],
+    [
       "jellyfish",
       "hamming_distance"
+    ],
+    [
+      "distance",
+      "hamming"
     ],
     [
       "abydos.distance",
@@ -20,6 +28,10 @@
     ]
   ],
   "Jaro": [
+    [
+      "Levenshtein",
+      "jaro"
+    ],
     [
       "jellyfish",
       "jaro_distance"
@@ -47,10 +59,6 @@
     [
       "jellyfish",
       "levenshtein_distance"
-    ],
-    [
-      "py_stringmatching.similarity_measure.levenshtein",
-      "levenshtein"
     ]
   ]
 }

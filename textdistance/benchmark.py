@@ -28,12 +28,11 @@ func = cls(external=False)
 
 STMT = """
 func('text', 'test')
-func('test', 'testit')
-# func('a' * 30, 'a' * 30)
-# func('a' * 15, 'b' * 15)
+func('qwer', 'asdf')
+func('a' * 15, 'b' * 15)
 """
 
-RUNS = 1000
+RUNS = 2000
 
 
 class Benchmark(object):
@@ -67,7 +66,7 @@ class Benchmark(object):
         for alg in libraries.get_algorithms():
             yield Lib(
                 algorithm=alg,
-                library='textdistance',
+                library='**textdistance**',
                 function=alg,
                 time=timeit(
                     stmt=STMT,

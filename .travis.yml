@@ -11,5 +11,7 @@ env:
 install:
   - pip install unittest2
   - if [[ $WITH_CONSTRAINTS == 'yes' ]]; then pip install -r constraints.txt; fi
+  - if [[ $WITH_NUMPY == 'yes' ]]; then pip install numpy; fi
 script:
   - python run_tests.py
+
