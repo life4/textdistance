@@ -200,6 +200,17 @@ hamming('text', 'testit')
 # 3
 ```
 
+Supported libraries:
+
+1. [abydos](https://github.com/chrislit/abydos)
+1. [Distance](https://github.com/doukremt/distance)
+1. [jellyfish](https://github.com/jamesturk/jellyfish)
+1. [py_stringmatching](https://github.com/anhaidgroup/py_stringmatching)
+1. [pylev](https://github.com/toastdriven/pylev)
+1. [python-Levenshtein](https://github.com/ztane/python-Levenshtein)
+1. [pyxDamerauLevenshtein](https://github.com/gfairchild/pyxDamerauLevenshtein)
+
+
 # Benchmarks
 
 For textdistance without extra requirements:
@@ -218,7 +229,7 @@ For textdistance without extra requirements:
 | Hamming | **textdistance** | Hamming | 0.13997 |
 | Jaro | Levenshtein | jaro | 0.00312573 |
 | Jaro | jellyfish | jaro_distance | 0.00522548 |
-| Jaro | py_stringmatching.similarity_measure.jaro | jaro | 0.179901 |
+| Jaro | py_stringmatching | jaro | 0.179901 |
 | Jaro | **textdistance** | Jaro | 0.269229 |
 | JaroWinkler | Levenshtein | jaro_winkler | 0.00330839 |
 | JaroWinkler | jellyfish | jaro_winkler | 0.00537344 |
@@ -226,7 +237,7 @@ For textdistance without extra requirements:
 | Levenshtein | Levenshtein | distance | 0.0041018 |
 | Levenshtein | jellyfish | levenshtein_distance | 0.00618915 |
 | Levenshtein | **textdistance** | Levenshtein | 0.170443 |
-| Levenshtein | py_stringmatching.similarity_measure.levenshtein | levenshtein | 0.252709 |
+| Levenshtein | py_stringmatching | levenshtein | 0.252709 |
 | Levenshtein | pylev | levenshtein | 0.569957 |
 | Levenshtein | distance | levenshtein | 1.13711 |
 | Levenshtein | abydos | levenshtein | 3.68653 |
