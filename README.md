@@ -95,13 +95,13 @@ Only pure python implementation:
 pip install textdistance
 ```
 
-Extra libraries for maximum speed:
+With extra libraries for maximum speed:
 
 ```bash
-pip install textdistance[common]
+pip install textdistance[extras]
 ```
 
-With all libraries (required for [benchmarking](#benchmarks)):
+With all libraries (required for [benchmarking](#benchmarks) and [testing](#test)):
 
 ```bash
 pip install textdistance[benchmark]
@@ -261,7 +261,8 @@ pip install textdistance[benchmark]
 python3 -m textdistance.benchmark
 ```
 
-Consequently textdistance show benchmarks results table for your system and save libraries priorities into [libraries.json](textdistance/libraries.json) file in textdistance's folder. This file will be used by textdistance for calling fastest algorithm implementation.
+TextDistance show benchmarks results table for your system and save libraries priorities into `libraries.json` file in TextDistance's folder. This file will be used by textdistance for calling fastest algorithm implementation. Default [libraries.json](textdistance/libraries.json) already included in package.
+
 
 ## Test
 
