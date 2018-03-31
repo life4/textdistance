@@ -4,10 +4,14 @@ python:
   - "3.4"
   - "3.6"
 env:
-  - WITH_CONSTRAINTS=yes
-  - WITH_CONSTRAINTS=no
+  - WITH_CONSTRAINTS=yes WITH_NUMPY=yes
+  - WITH_CONSTRAINTS=yes WITH_NUMPY=no
+  - WITH_CONSTRAINTS=no  WITH_NUMPY=yes
+  - WITH_CONSTRAINTS=no  WITH_NUMPY=no
 install:
   - pip install unittest2
   - if [[ $WITH_CONSTRAINTS == 'yes' ]]; then pip install -r constraints.txt; fi
+  - if [[ $WITH_NUMPY == 'yes' ]]; then pip install numpy; fi
 script:
   - python run_tests.py
+

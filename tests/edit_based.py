@@ -1,7 +1,7 @@
-from __main__ import unittest, textdistance
+from __main__ import unittest, textdistance, NUMPY
 
 class HammingTest(unittest.TestCase):
-    alg = textdistance.hamming
+    alg = textdistance.Hamming(external=False)
 
     def test_common(self):
         self.assertEqual(self.alg.distance('test', 'text'), 1)
@@ -13,7 +13,7 @@ class HammingTest(unittest.TestCase):
 
 
 class LevenshteinTest(unittest.TestCase):
-    alg = textdistance.levenshtein
+    alg = textdistance.Levenshtein(external=False)
 
     def test_common(self):
         self.assertEqual(self.alg.distance('test', 'text'), 1)
@@ -25,7 +25,7 @@ class LevenshteinTest(unittest.TestCase):
 
 
 class DamerauLevenshteinTest(unittest.TestCase):
-    alg = textdistance.damerau_levenshtein
+    alg = textdistance.DamerauLevenshtein(external=False)
 
     def test_common(self):
         self.assertEqual(self.alg.distance('test', 'text'), 1)
@@ -37,7 +37,7 @@ class DamerauLevenshteinTest(unittest.TestCase):
 
 
 class JaroTest(unittest.TestCase):
-    alg = textdistance.jaro
+    alg = textdistance.JaroWinkler(winklerize=False, external=False)
 
     def test_common(self):
         self.assertAlmostEqual(self.alg.similarity('hello', 'haloa'), 0.73333333)
@@ -50,7 +50,7 @@ class JaroTest(unittest.TestCase):
 
 
 class JaroWinklerTest(unittest.TestCase):
-    alg = textdistance.jaro_winkler
+    alg = textdistance.JaroWinkler(external=False)
 
     def test_common(self):
         self.assertAlmostEqual(self.alg.similarity('elephant', 'hippo'), 0.44166666)
@@ -89,96 +89,97 @@ class MatrixTest(unittest.TestCase):
         self.assertEqual(alg('C', 'T'), 0)
 
 
-class NeedlemanWunschTest(unittest.TestCase):
-    alg = textdistance.NeedlemanWunsch
+if NUMPY:
+    class NeedlemanWunschTest(unittest.TestCase):
+        alg = textdistance.NeedlemanWunsch
 
-    def test_common(self):
-        # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
-        nw_matrix = {
-            ('A', 'A'): 10,
-            ('G', 'G'): 7,
-            ('C', 'C'): 9,
-            ('T', 'T'): 8,
-            ('A', 'G'): -1,
-            ('A', 'C'): -3,
-            ('A', 'T'): -4,
-            ('G', 'C'): -5,
-            ('G', 'T'): -3,
-            ('C', 'T'): 0,
-        }
-        sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
-        alg = self.alg(gap_cost=5, sim_func=sim_matrix)
-        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 16)
+        def test_common(self):
+            # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
+            nw_matrix = {
+                ('A', 'A'): 10,
+                ('G', 'G'): 7,
+                ('C', 'C'): 9,
+                ('T', 'T'): 8,
+                ('A', 'G'): -1,
+                ('A', 'C'): -3,
+                ('A', 'T'): -4,
+                ('G', 'C'): -5,
+                ('G', 'T'): -3,
+                ('C', 'T'): 0,
+            }
+            sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
+            alg = self.alg(gap_cost=5, sim_func=sim_matrix)
+            self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 16)
 
-        sim_ident = lambda x, y: 2 * int(x == y) - 1
-        alg = self.alg(sim_func=sim_ident)
-        self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
-        alg = self.alg(gap_cost=5, sim_func=sim_ident)
-        self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), -5)
-        self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), -7)
-        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
-
-
-class SmithWatermanTest(unittest.TestCase):
-    alg = textdistance.SmithWaterman
-
-    def test_common(self):
-        # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
-        nw_matrix = {
-            ('A', 'A'): 10,
-            ('G', 'G'): 7,
-            ('C', 'C'): 9,
-            ('T', 'T'): 8,
-            ('A', 'G'): -1,
-            ('A', 'C'): -3,
-            ('A', 'T'): -4,
-            ('G', 'C'): -5,
-            ('G', 'T'): -3,
-            ('C', 'T'): 0,
-        }
-        sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
-        alg = self.alg(gap_cost=5, sim_func=sim_matrix)
-        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
-
-        sim_ident = lambda x, y: 2 * int(x == y) - 1
-        alg = self.alg(sim_func=sim_ident)
-        self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
-        alg = self.alg(gap_cost=5, sim_func=sim_ident)
-        self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), 0)
-        self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), 1)
-        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 0)
+            sim_ident = lambda x, y: 2 * int(x == y) - 1
+            alg = self.alg(sim_func=sim_ident)
+            self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
+            alg = self.alg(gap_cost=5, sim_func=sim_ident)
+            self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), -5)
+            self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), -7)
+            self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
 
 
-class GotohTest(unittest.TestCase):
-    alg = textdistance.Gotoh
+    class SmithWatermanTest(unittest.TestCase):
+        alg = textdistance.SmithWaterman
 
-    def test_common(self):
-        # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
-        nw_matrix = {
-            ('A', 'A'): 10,
-            ('G', 'G'): 7,
-            ('C', 'C'): 9,
-            ('T', 'T'): 8,
-            ('A', 'G'): -1,
-            ('A', 'C'): -3,
-            ('A', 'T'): -4,
-            ('G', 'C'): -5,
-            ('G', 'T'): -3,
-            ('C', 'T'): 0,
-        }
-        sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
-        alg = self.alg(sim_func=sim_matrix)
-        #self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
+        def test_common(self):
+            # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
+            nw_matrix = {
+                ('A', 'A'): 10,
+                ('G', 'G'): 7,
+                ('C', 'C'): 9,
+                ('T', 'T'): 8,
+                ('A', 'G'): -1,
+                ('A', 'C'): -3,
+                ('A', 'T'): -4,
+                ('G', 'C'): -5,
+                ('G', 'T'): -3,
+                ('C', 'T'): 0,
+            }
+            sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
+            alg = self.alg(gap_cost=5, sim_func=sim_matrix)
+            self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
 
-        sim_ident = lambda x, y: 2 * int(x == y) - 1
-        alg = self.alg(gap_open=1, gap_ext=1, sim_func=sim_ident)
-        self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
-        alg = self.alg(gap_open=1, gap_ext=.5, sim_func=sim_ident)
-        self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
-        self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), 1.5)
-        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 1)
-        alg = self.alg(gap_open=5, gap_ext=5, sim_func=sim_ident)
-        self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
+            sim_ident = lambda x, y: 2 * int(x == y) - 1
+            alg = self.alg(sim_func=sim_ident)
+            self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
+            alg = self.alg(gap_cost=5, sim_func=sim_ident)
+            self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), 0)
+            self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), 1)
+            self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 0)
+
+
+    class GotohTest(unittest.TestCase):
+        alg = textdistance.Gotoh
+
+        def test_common(self):
+            # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
+            nw_matrix = {
+                ('A', 'A'): 10,
+                ('G', 'G'): 7,
+                ('C', 'C'): 9,
+                ('T', 'T'): 8,
+                ('A', 'G'): -1,
+                ('A', 'C'): -3,
+                ('A', 'T'): -4,
+                ('G', 'C'): -5,
+                ('G', 'T'): -3,
+                ('C', 'T'): 0,
+            }
+            sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
+            alg = self.alg(sim_func=sim_matrix)
+            #self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
+
+            sim_ident = lambda x, y: 2 * int(x == y) - 1
+            alg = self.alg(gap_open=1, gap_ext=1, sim_func=sim_ident)
+            self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
+            alg = self.alg(gap_open=1, gap_ext=.5, sim_func=sim_ident)
+            self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
+            self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), 1.5)
+            self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 1)
+            alg = self.alg(gap_open=5, gap_ext=5, sim_func=sim_ident)
+            self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
 
 
 class StrCmp95Test(unittest.TestCase):
@@ -208,26 +209,27 @@ class MLIPNSTest(unittest.TestCase):
         self.assertEqual(self.alg('ato', 'Tam'), 1)
 
 
-class EditexTest(unittest.TestCase):
-    alg = textdistance.editex
+if NUMPY:
+    class EditexTest(unittest.TestCase):
+        alg = textdistance.editex
 
-    def test_common(self):
-        self.assertEqual(self.alg('', ''), 0)
-        self.assertEqual(self.alg('nelson', ''), 12)
-        self.assertEqual(self.alg('', 'neilsen'), 14)
-        self.assertEqual(self.alg('ab', 'a'), 2)
-        self.assertEqual(self.alg('ab', 'c'), 4)
+        def test_common(self):
+            self.assertEqual(self.alg('', ''), 0)
+            self.assertEqual(self.alg('nelson', ''), 12)
+            self.assertEqual(self.alg('', 'neilsen'), 14)
+            self.assertEqual(self.alg('ab', 'a'), 2)
+            self.assertEqual(self.alg('ab', 'c'), 4)
 
-        alg = textdistance.Editex(match_cost=2)
-        self.assertEqual(alg('MARTHA', 'MARHTA'), 12)
-        alg = textdistance.Editex(match_cost=4)
-        self.assertEqual(alg('MARTHA', 'MARHTA'), 14)
-        alg = textdistance.Editex(group_cost=1, local=True)
-        self.assertEqual(alg('MARTHA', 'MARHTA'), 3)
-        alg = textdistance.Editex(group_cost=2, local=True)
-        self.assertEqual(alg('MARTHA', 'MARHTA'), 4)
-        alg = textdistance.Editex(mismatch_cost=4, local=True)
-        self.assertEqual(alg('MARTHA', 'MARHTA'), 5)
+            alg = textdistance.Editex(match_cost=2)
+            self.assertEqual(alg('MARTHA', 'MARHTA'), 12)
+            alg = textdistance.Editex(match_cost=4)
+            self.assertEqual(alg('MARTHA', 'MARHTA'), 14)
+            alg = textdistance.Editex(group_cost=1, local=True)
+            self.assertEqual(alg('MARTHA', 'MARHTA'), 3)
+            alg = textdistance.Editex(group_cost=2, local=True)
+            self.assertEqual(alg('MARTHA', 'MARHTA'), 4)
+            alg = textdistance.Editex(mismatch_cost=4, local=True)
+            self.assertEqual(alg('MARTHA', 'MARHTA'), 5)
 
-        self.assertEqual(self.alg('ALIE', 'ALI'), 1)
-        self.assertEqual(self.alg('', 'MARTHA'), 12)
+            self.assertEqual(self.alg('ALIE', 'ALI'), 1)
+            self.assertEqual(self.alg('', 'MARTHA'), 12)

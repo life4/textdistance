@@ -53,6 +53,7 @@ class MongeElkanTest(unittest.TestCase):
         alg = textdistance.MongeElkan(qval=2, symmetric=True).normalized_distance
         self.assertAlmostEqual(alg('text', 'test'), 2.0 / 3)
 
+
 class BagTest(unittest.TestCase):
     alg = textdistance.bag
 
@@ -94,6 +95,7 @@ class CompareTest(unittest.TestCase):
                     textdistance.Jaccard(as_set=True).distance(s1, s2),
                     textdistance.Tversky(as_set=True, ks=[1, 1]).distance(s1, s2),
                 )
+
     def test_sorensen_tversky_as_set(self):
         for s1, s2 in self.test_cases:
             with self.subTest(s1=s1, s2=s2):

@@ -87,16 +87,47 @@ Functions:
 
 ## Installation
 
-Stable:
+### Stable
+
+Only pure python implementation:
 
 ```bash
 pip install textdistance
 ```
 
-Dev:
+With common side libraries for maximum speed:
+
+```bash
+pip install textdistance[common]
+```
+
+With all libraries (required for [benchmarking](#benchmarks)):
+
+```bash
+pip install textdistance[all]
+```
+
+With extras only for some algorithm:
+
+```bash
+pip install textdistance[Hamming]
+```
+
+Algorithms with available extras: `DamerauLevenshtein`, `Hamming`, `Jaro`, `JaroWinkler`, `Levenshtein`.
+
+### Dev
+
+Via pip:
 
 ```bash
 pip install -e git+https://github.com/orsinium/textdistance.git#egg=textdistance
+```
+
+Or clone repo and install with some extras:
+
+```bash
+git clone https://github.com/orsinium/textdistance.git
+pip install -e .[all]
 ```
 
 
@@ -154,3 +185,82 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 ```
 
 Any other algorithms have same interface.
+
+
+## Side libraries
+
+For main algorithms textdistance try to call known external libraries (fastest first) if available (installed in your system) and possible (this implementation can compare this sequences). [Install](#installation) textdistance with common extras for this feature.
+
+You can disable this by passing `external=False` argument on init:
+
+```python3
+import textdistance
+hamming = textdistance.Hamming(external=False)
+hamming('text', 'testit')
+# 3
+```
+
+Supported libraries:
+
+1. [abydos](https://github.com/chrislit/abydos)
+1. [Distance](https://github.com/doukremt/distance)
+1. [jellyfish](https://github.com/jamesturk/jellyfish)
+1. [py_stringmatching](https://github.com/anhaidgroup/py_stringmatching)
+1. [pylev](https://github.com/toastdriven/pylev)
+1. [python-Levenshtein](https://github.com/ztane/python-Levenshtein)
+1. [pyxDamerauLevenshtein](https://github.com/gfairchild/pyxDamerauLevenshtein)
+
+
+## Benchmarks
+
+For textdistance without extra requirements:
+
+| algorithm | library | function | time |
+|-----------|---------|----------|------|
+| DamerauLevenshtein | jellyfish | damerau_levenshtein_distance | 0.0104339 |
+| DamerauLevenshtein | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.15075 |
+| DamerauLevenshtein | **textdistance** | DamerauLevenshtein | 0.307083 |
+| DamerauLevenshtein | pylev | damerau_levenshtein | 0.760655 |
+| DamerauLevenshtein | abydos | damerau_levenshtein | 4.59495 |
+| Hamming | Levenshtein | hamming | 0.00145914 |
+| Hamming | jellyfish | hamming_distance | 0.00230915 |
+| Hamming | distance | hamming | 0.0357562 |
+| Hamming | abydos | hamming | 0.0398452 |
+| Hamming | **textdistance** | Hamming | 0.13997 |
+| Jaro | Levenshtein | jaro | 0.00312573 |
+| Jaro | jellyfish | jaro_distance | 0.00522548 |
+| Jaro | py_stringmatching | jaro | 0.179901 |
+| Jaro | **textdistance** | Jaro | 0.269229 |
+| JaroWinkler | Levenshtein | jaro_winkler | 0.00330839 |
+| JaroWinkler | jellyfish | jaro_winkler | 0.00537344 |
+| JaroWinkler | **textdistance** | JaroWinkler | 0.286763 |
+| Levenshtein | Levenshtein | distance | 0.0041018 |
+| Levenshtein | jellyfish | levenshtein_distance | 0.00618915 |
+| Levenshtein | **textdistance** | Levenshtein | 0.170443 |
+| Levenshtein | py_stringmatching | levenshtein | 0.252709 |
+| Levenshtein | pylev | levenshtein | 0.569957 |
+| Levenshtein | distance | levenshtein | 1.13711 |
+| Levenshtein | abydos | levenshtein | 3.68653 |
+
+Total: 24 libs.
+
+Textdistance use benchmark's results for algorithm's optimization and try call fastest external libs first (if possible).
+
+If you want you can run benchmark manually on youre system:
+
+```bash
+pip install textdistance[all]
+python3 -m textdistance.benchmark
+```
+
+Consequently textdistance show benchmarks results table for your system and save libraries priorities into [libraries.json](textdistance/libraries.json) file in textdistance's folder. This file will be used by textdistance for calling fastest algorithm implementation first.
+
+## Test
+
+You can run tests via [tox](https://tox.readthedocs.io/en/latest/):
+
+```bash
+sudo pip3 install tox
+tox
+```
+

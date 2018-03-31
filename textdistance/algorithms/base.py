@@ -1,36 +1,81 @@
 from collections import Counter
-from textdistance.utils import find_ngrams
+from ..utils import find_ngrams
+from ..libraries import libraries
 
-# python3
-try:
-    from functools import reduce
-except ImportError:
-    pass
+
+libraries.optimize()
 
 
 class Base(object):
-    def __init__(self, qval=1):
+    def __init__(self, qval=1, external=True):
         self.qval = qval
+        self.external = external
 
     def __call__(self, *sequences):
         raise NotImplementedError
 
-    def maximum(self, *sequences):
+    @staticmethod
+    def maximum(*sequences):
+        """Get maximum possible value
+        """
         return max(map(len, sequences))
 
     def distance(self, *sequences):
+        """Get distance between sequences
+        """
         return self(*sequences)
 
     def similarity(self, *sequences):
+        """Get sequences similarity.
+        
+        similarity = maximum - distance
+        """
         return self.maximum(*sequences) - self.distance(*sequences)
 
     def normalized_distance(self, *sequences):
+        """Get distance from 0 to 1
+        """
         return self.distance(*sequences) / self.maximum(*sequences)
 
     def normalized_similarity(self, *sequences):
+        """Get similarity from 0 to 1
+
+        normalized_similarity = 1 - normalized_distance
+        """
         return 1 - self.normalized_distance(*sequences)
 
+    def external_answer(self, *sequences):
+        """Try to get answer from known external libraries.
+        """
+        # all external libs doesn't support test_func
+        if hasattr(self, 'test_func') and self.test_func is not self._ident:
+            return
+        # try to get external libs for algorithm
+        libs = libraries.get_libs(self.__class__.__name__)
+        if not libs:
+            return
+        for lib in libs:
+            # if conditions not satisfied
+            if not lib.check_conditions(self, *sequences):
+                continue
+            # if library is not installed yet
+            if not lib.get_function():
+                continue
+
+            prepared_sequences = lib.prepare(*sequences)
+            # fail side libraries silently and try next libs
+            try:
+                return lib.func(*prepared_sequences)
+            except:
+                pass
+
     def quick_answer(self, *sequences):
+        """Try to get answer quick without main implementation calling.
+        
+        If no sequences, 1 sequence or all sequences are equal then return 0.
+        If any sequence are empty then return maximum.
+        And in finish try to get external answer.
+        """
         if not sequences:
             return 0
         if len(sequences) == 1:
@@ -39,8 +84,15 @@ class Base(object):
             return 0
         if not all(sequences):
             return self.maximum(*sequences)
+        # try get answer from external libs
+        answer = self.external_answer(*sequences)
+        if answer is not None:
+            return answer
 
-    def _ident(self, *elements):
+    @staticmethod
+    def _ident(*elements):
+        """Return True if all sequences are equal.
+        """
         try:
             # for hashable elements
             return len(set(elements)) == 1
@@ -52,6 +104,12 @@ class Base(object):
             return True
 
     def _get_sequences(self, *sequences):
+        """Prepare sequences.
+        
+        qval=None: split text by words
+        qval=1: do not split sequences. For text this is mean comparing by letters.
+        qval>1: split sequences by q-grams
+        """
         # by words
         if not self.qval:
             return [s.split() for s in sequences]
@@ -62,6 +120,8 @@ class Base(object):
         return [find_ngrams(s, self.qval) for s in sequences]
 
     def _get_counters(self, *sequences):
+        """Prepare sequences and convert it to Counters.
+        """
         # already Counters
         if all(isinstance(s, Counter) for s in sequences):
             return sequences
@@ -80,6 +140,8 @@ class Base(object):
         return union
 
     def _count_counters(self, counter):
+        """Return all elements count from Counter
+        """
         if getattr(self, 'as_set', False):
             return len(set(counter))
         else:
@@ -102,3 +164,7 @@ class BaseSimilarity(Base):
             return self.maximum(*sequences)
         if not all(sequences):
             return 0
+        # try get answer from external libs
+        answer = self.external_answer(*sequences)
+        if answer is not None:
+            return answer

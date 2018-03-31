@@ -1,4 +1,4 @@
-from __main__ import unittest, textdistance
+from __main__ import unittest, textdistance, NUMPY
 
 
 algos = [
@@ -9,11 +9,7 @@ algos = [
     textdistance.damerau_levenshtein,
     textdistance.jaro,
     textdistance.jaro_winkler,
-    textdistance.needleman_wunsch,
-    textdistance.gotoh,
-    textdistance.smith_waterman,
     textdistance.mlipns,
-    textdistance.editex,
 
     textdistance.lcsseq,
     textdistance.lcsstr,
@@ -41,6 +37,15 @@ algos = [
 #    textdistance.bwtrle_ncd,
 #    textdistance.zlib_ncd,
 ]
+
+if NUMPY:
+    algos.extend([
+        textdistance.gotoh,
+        textdistance.needleman_wunsch,
+        textdistance.smith_waterman,
+        textdistance.editex,
+    ])
+
 
 class CommonTest(unittest.TestCase):
     def test_similar_distance(self):

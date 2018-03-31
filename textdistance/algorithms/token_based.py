@@ -28,9 +28,10 @@ class Jaccard(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Jaccard_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaccard.js
     '''
-    def __init__(self, qval=1, as_set=False):
+    def __init__(self, qval=1, as_set=False, external=True):
         self.qval = qval
         self.as_set = as_set
+        self.external = external
 
     def maximum(self, *sequences):
         return 1
@@ -83,11 +84,12 @@ class Tversky(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Tversky_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/tversky.js
     """
-    def __init__(self, qval=1, ks=None, bias=None, as_set=False):
+    def __init__(self, qval=1, ks=None, bias=None, as_set=False, external=True):
         self.qval = qval
         self.ks = ks or repeat(1)
         self.bias = bias
         self.as_set = as_set
+        self.external = external
 
     def maximum(self, *sequences):
         return 1
@@ -124,9 +126,10 @@ class Overlap(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Overlap_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/overlap.js
     """
-    def __init__(self, qval=1, as_set=False):
+    def __init__(self, qval=1, as_set=False, external=True):
         self.qval = qval
         self.as_set = as_set
+        self.external = external
 
     def maximum(self, *sequences):
         return 1

@@ -56,7 +56,6 @@ class MRA(_BaseSimilarity):
             for chars in zip(*sequences):
                 if not self._ident(*chars):
                     new_sequences.append(chars)
-            #import pdb; pdb.set_trace()
             new_sequences = map(list, zip(*new_sequences))
             # update sequences
             ss = zip_longest(new_sequences, sequences, fillvalue=list())

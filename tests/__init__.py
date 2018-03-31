@@ -1,3 +1,9 @@
-from .common import *
-from .edit_based import *
-from .token_based import *
+from .common import *  # noQA
+from .edit_based import *  # noQA
+from .token_based import *  # noQA
+
+
+from __main__ import CONSTRAINTS
+
+if CONSTRAINTS:
+    from .external import *  # noQA
