@@ -187,7 +187,7 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 Any other algorithms have same interface.
 
 
-# Side libraries usage
+## Side libraries
 
 For main algorithms textdistance try to call known external libraries (fastest first) if available (installed in your system) and possible (this implementation can compare this sequences). [Install](#installation) textdistance with common extras for this feature.
 
@@ -211,7 +211,7 @@ Supported libraries:
 1. [pyxDamerauLevenshtein](https://github.com/gfairchild/pyxDamerauLevenshtein)
 
 
-# Benchmarks
+## Benchmarks
 
 For textdistance without extra requirements:
 
@@ -244,7 +244,7 @@ For textdistance without extra requirements:
 
 Total: 24 libs.
 
-Textdistance use benchmark's results for algorithm's optimization and try call fastest libs first (if available). 
+Textdistance use benchmark's results for algorithm's optimization and try call fastest external libs first (if possible).
 
 If you want you can run benchmark manually on youre system:
 
@@ -253,4 +253,14 @@ pip install textdistance[all]
 python3 -m textdistance.benchmark
 ```
 
-Consequently textdistance show benchmarks results table for your system and save libraries priorities into `libraries.json` file in textdistance's folder. This file will be used by textdistance for calling fastest algorithm implementation first.
+Consequently textdistance show benchmarks results table for your system and save libraries priorities into [libraries.json](textdistance/libraries.json) file in textdistance's folder. This file will be used by textdistance for calling fastest algorithm implementation first.
+
+## Test
+
+You can run tests via [tox](https://tox.readthedocs.io/en/latest/):
+
+```bash
+sudo pip3 install tox
+tox
+```
+
