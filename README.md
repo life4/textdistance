@@ -224,7 +224,7 @@ Algorithms:
 Without extras installation:
 
 | algorithm | library | function | time |
-|-----------+---------+----------+------|
+|-----------|---------|----------|------|
 | DamerauLevenshtein | jellyfish | damerau_levenshtein_distance | 0.00965294 |
 | DamerauLevenshtein | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.151378 |
 | DamerauLevenshtein | pylev | damerau_levenshtein | 0.766461 |
