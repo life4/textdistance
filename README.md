@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.org/orsinium/textdistance.svg?branch=master)](https://travis-ci.org/orsinium/textdistance) [![PyPI version](https://img.shields.io/pypi/v/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Status](https://img.shields.io/pypi/status/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Code size](https://img.shields.io/github/languages/code-size/orsinium/textdistance.svg)](https://github.com/orsinium/textdistance) [![License](https://img.shields.io/pypi/l/textdistance.svg)](LICENSE)
 
-**TextDistance** -- python library for compare distance between two or more sequences by many algorithms.
+**TextDistance** -- python library for comparing distance between two or more sequences by many algorithms.
 
 Features:
 
@@ -54,7 +54,7 @@ Features:
 
 ### Compression based
 
-Work in progress. Now all algorithms compare two strings as array of bits, not by chars.
+Work in progress. Now all algorithms compare two strings as array of bits.
 
 `NCD` - normalized compression distance.
 
@@ -95,7 +95,7 @@ Only pure python implementation:
 pip install textdistance
 ```
 
-With common side libraries for maximum speed:
+Extra libraries for maximum speed:
 
 ```bash
 pip install textdistance[common]
@@ -104,10 +104,10 @@ pip install textdistance[common]
 With all libraries (required for [benchmarking](#benchmarks)):
 
 ```bash
-pip install textdistance[all]
+pip install textdistance[benchmark]
 ```
 
-With extras only for some algorithm:
+With algorithm specific extras:
 
 ```bash
 pip install textdistance[Hamming]
@@ -127,7 +127,7 @@ Or clone repo and install with some extras:
 
 ```bash
 git clone https://github.com/orsinium/textdistance.git
-pip install -e .[all]
+pip install -e .[benchmark]
 ```
 
 
@@ -187,9 +187,9 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 Any other algorithms have same interface.
 
 
-## Side libraries
+## Extra libraries
 
-For main algorithms textdistance try to call known external libraries (fastest first) if available (installed in your system) and possible (this implementation can compare this sequences). [Install](#installation) textdistance with common extras for this feature.
+For main algorithms textdistance try to call known external libraries (fastest first) if available (installed in your system) and possible (this implementation can compare this type of sequences). [Install](#installation) textdistance with extras for this feature.
 
 You can disable this by passing `external=False` argument on init:
 
@@ -252,16 +252,16 @@ For textdistance without extra requirements:
 
 Total: 24 libs.
 
-Textdistance use benchmark's results for algorithm's optimization and try call fastest external libs first (if possible).
+Textdistance use benchmark's results for algorithm's optimization and try to call fastest external lib first (if possible).
 
-If you want you can run benchmark manually on youre system:
+You can run benchmark manually on your system:
 
 ```bash
-pip install textdistance[all]
+pip install textdistance[benchmark]
 python3 -m textdistance.benchmark
 ```
 
-Consequently textdistance show benchmarks results table for your system and save libraries priorities into [libraries.json](textdistance/libraries.json) file in textdistance's folder. This file will be used by textdistance for calling fastest algorithm implementation first.
+Consequently textdistance show benchmarks results table for your system and save libraries priorities into [libraries.json](textdistance/libraries.json) file in textdistance's folder. This file will be used by textdistance for calling fastest algorithm implementation.
 
 ## Test
 
