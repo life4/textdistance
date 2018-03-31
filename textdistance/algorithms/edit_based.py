@@ -96,7 +96,7 @@ class Levenshtein(_Base):
         cols = len(s2) + 1
         prev = None
         if numpy:
-            cur = numpy.arange(10)
+            cur = numpy.arange(cols)
         else:
             cur = range(cols)
 

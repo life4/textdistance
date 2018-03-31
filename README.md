@@ -221,36 +221,38 @@ Algorithms:
 
 ## Benchmarks
 
-For textdistance without extra requirements:
+Without extras installation:
 
 | algorithm | library | function | time |
-|-----------|---------|----------|------|
-| DamerauLevenshtein | jellyfish | damerau_levenshtein_distance | 0.0104339 |
-| DamerauLevenshtein | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.15075 |
-| DamerauLevenshtein | **textdistance** | DamerauLevenshtein | 0.307083 |
-| DamerauLevenshtein | pylev | damerau_levenshtein | 0.760655 |
-| DamerauLevenshtein | abydos | damerau_levenshtein | 4.59495 |
-| Hamming | Levenshtein | hamming | 0.00145914 |
-| Hamming | jellyfish | hamming_distance | 0.00230915 |
-| Hamming | distance | hamming | 0.0357562 |
-| Hamming | abydos | hamming | 0.0398452 |
-| Hamming | **textdistance** | Hamming | 0.13997 |
-| Jaro | Levenshtein | jaro | 0.00312573 |
-| Jaro | jellyfish | jaro_distance | 0.00522548 |
-| Jaro | py_stringmatching | jaro | 0.179901 |
-| Jaro | **textdistance** | Jaro | 0.269229 |
-| JaroWinkler | Levenshtein | jaro_winkler | 0.00330839 |
-| JaroWinkler | jellyfish | jaro_winkler | 0.00537344 |
-| JaroWinkler | **textdistance** | JaroWinkler | 0.286763 |
-| Levenshtein | Levenshtein | distance | 0.0041018 |
-| Levenshtein | jellyfish | levenshtein_distance | 0.00618915 |
-| Levenshtein | **textdistance** | Levenshtein | 0.170443 |
-| Levenshtein | py_stringmatching | levenshtein | 0.252709 |
-| Levenshtein | pylev | levenshtein | 0.569957 |
-| Levenshtein | distance | levenshtein | 1.13711 |
-| Levenshtein | abydos | levenshtein | 3.68653 |
+|-----------+---------+----------+------|
+| DamerauLevenshtein | jellyfish | damerau_levenshtein_distance | 0.00965294 |
+| DamerauLevenshtein | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.151378 |
+| DamerauLevenshtein | pylev | damerau_levenshtein | 0.766461 |
+| DamerauLevenshtein | **textdistance** | DamerauLevenshtein | 4.13463 |
+| DamerauLevenshtein | abydos | damerau_levenshtein | 4.3831 |
+| Hamming | Levenshtein | hamming | 0.0014428 |
+| Hamming | jellyfish | hamming_distance | 0.00240262 |
+| Hamming | distance | hamming | 0.036253 |
+| Hamming | abydos | hamming | 0.0383933 |
+| Hamming | **textdistance** | Hamming | 0.176781 |
+| Jaro | Levenshtein | jaro | 0.00313561 |
+| Jaro | jellyfish | jaro_distance | 0.0051885 |
+| Jaro | py_stringmatching | jaro | 0.180628 |
+| Jaro | **textdistance** | Jaro | 0.278917 |
+| JaroWinkler | Levenshtein | jaro_winkler | 0.00319735 |
+| JaroWinkler | jellyfish | jaro_winkler | 0.00540443 |
+| JaroWinkler | **textdistance** | JaroWinkler | 0.289626 |
+| Levenshtein | Levenshtein | distance | 0.00414404 |
+| Levenshtein | jellyfish | levenshtein_distance | 0.00601647 |
+| Levenshtein | py_stringmatching | levenshtein | 0.252901 |
+| Levenshtein | pylev | levenshtein | 0.569182 |
+| Levenshtein | distance | levenshtein | 1.15726 |
+| Levenshtein | abydos | levenshtein | 3.68451 |
+| Levenshtein | **textdistance** | Levenshtein | 8.63674 |
 
 Total: 24 libs.
+
+Yeah, so slow. Use TextDistance on production only with extras.
 
 Textdistance use benchmark's results for algorithm's optimization and try to call fastest external lib first (if possible).
 

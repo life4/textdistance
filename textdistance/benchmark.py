@@ -86,6 +86,7 @@ class Benchmark(object):
         table = tabulate(
             [tuple(i[:-1]) for i in data],
             headers=['algorithm', 'library', 'function', 'time'],
+            tablefmt='orgtbl',
         )
         table += '\nTotal: {} libs.\n\n'.format(len(data))
         return table

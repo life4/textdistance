@@ -47,6 +47,9 @@ class Base(object):
     def external_answer(self, *sequences):
         """Try to get answer from known external libraries.
         """
+        # if this feature disabled
+        if not getattr(self, 'external', False):
+            return
         # all external libs doesn't support test_func
         if hasattr(self, 'test_func') and self.test_func is not self._ident:
             return

@@ -7,6 +7,10 @@
     [
       "pyxdameraulevenshtein",
       "damerau_levenshtein_distance"
+    ],
+    [
+      "pylev",
+      "damerau_levenshtein"
     ]
   ],
   "Hamming": [
@@ -59,6 +63,22 @@
     [
       "jellyfish",
       "levenshtein_distance"
+    ],
+    [
+      "py_stringmatching.similarity_measure.levenshtein",
+      "levenshtein"
+    ],
+    [
+      "pylev",
+      "levenshtein"
+    ],
+    [
+      "distance",
+      "levenshtein"
+    ],
+    [
+      "abydos.distance",
+      "levenshtein"
     ]
   ]
 }
