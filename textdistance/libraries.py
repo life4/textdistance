@@ -30,15 +30,9 @@ class LibrariesManager(object):
         return list(self.libs.keys())
 
     def get_libs(self, alg):
-        return self.libs[alg]
-
-    def get_lib(self, obj, *sequences):
-        alg = obj.__class__.__name__
         if alg not in self.libs:
             return
-        for lib in self.libs[alg]:
-            if lib.check_conditions(obj, *sequences) and lib.get_function():
-                return lib
+        return self.libs[alg]
 
 
 class LibraryBase(object):
