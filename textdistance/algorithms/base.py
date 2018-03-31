@@ -48,12 +48,15 @@ class Base(object):
         """Try to get answer from known external libraries.
         """
         # all external libs doesn't support test_func
-        if hasattr(self, 'test_func') and self.test_func is not selt._ident:
+        if hasattr(self, 'test_func') and self.test_func is not self._ident:
             return
-
-        for lib in libraries.get_libs(obj.__class__.__name__):
+        # try to get external libs for algorithm
+        libs = libraries.get_libs(self.__class__.__name__)
+        if not libs:
+            return
+        for lib in libs:
             # if conditions not satisfied
-            if not lib.check_conditions(obj, *sequences):
+            if not lib.check_conditions(self, *sequences):
                 continue
             # if library is not installed yet
             if not lib.get_function():
