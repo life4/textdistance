@@ -271,6 +271,14 @@ Supported libraries:
 6. `python-Levenshtein <https://github.com/ztane/python-Levenshtein>`__
 7. `pyxDamerauLevenshtein <https://github.com/gfairchild/pyxDamerauLevenshtein>`__
 
+Algorithms:
+
+1. DamerauLevenshtein
+2. Hamming
+3. Jaro
+4. JaroWinkler
+5. Levenshtein
+
 Benchmarks
 ----------
 
