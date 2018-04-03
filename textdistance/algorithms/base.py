@@ -27,7 +27,7 @@ class Base(object):
 
     def similarity(self, *sequences):
         """Get sequences similarity.
-        
+
         similarity = maximum - distance
         """
         return self.maximum(*sequences) - self.distance(*sequences)
@@ -35,7 +35,7 @@ class Base(object):
     def normalized_distance(self, *sequences):
         """Get distance from 0 to 1
         """
-        return self.distance(*sequences) / self.maximum(*sequences)
+        return float(self.distance(*sequences)) / self.maximum(*sequences)
 
     def normalized_similarity(self, *sequences):
         """Get similarity from 0 to 1
@@ -74,7 +74,7 @@ class Base(object):
 
     def quick_answer(self, *sequences):
         """Try to get answer quick without main implementation calling.
-        
+
         If no sequences, 1 sequence or all sequences are equal then return 0.
         If any sequence are empty then return maximum.
         And in finish try to get external answer.
@@ -108,7 +108,7 @@ class Base(object):
 
     def _get_sequences(self, *sequences):
         """Prepare sequences.
-        
+
         qval=None: split text by words
         qval=1: do not split sequences. For text this is mean comparing by letters.
         qval>1: split sequences by q-grams
