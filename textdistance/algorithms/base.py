@@ -1,8 +1,9 @@
 from collections import Counter
 from ..utils import find_ngrams
-from ..libraries import libraries
+from ..libraries import prototype
 
 
+libraries = prototype.clone()
 libraries.optimize()
 
 
@@ -55,8 +56,6 @@ class Base(object):
             return
         # try to get external libs for algorithm
         libs = libraries.get_libs(self.__class__.__name__)
-        if not libs:
-            return
         for lib in libs:
             # if conditions not satisfied
             if not lib.check_conditions(self, *sequences):

@@ -4,13 +4,14 @@ from timeit import timeit
 
 from tabulate import tabulate
 
-from .libraries import not_optimized_libraries as libraries
+from .libraries import prototype
 from .libraries import LIBRARIES_FILE
 
 
 # python3 -m textdistance.benchmark
 
 
+libraries = prototype.clone()
 Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'presets'])
 
 

@@ -6,9 +6,10 @@ except ImportError:
     import unittest
 
 import textdistance
-from textdistance.libraries import not_optimized_libraries as libraries
+from textdistance.libraries import prototype
 
 
+libraries = prototype.clone()
 # CONSTRAINTS = os.getenv('WITH_CONSTRAINTS', 'yes') == 'yes'
 # NUMPY = os.getenv('WITH_NUMPY', 'yes') == 'yes'
 CONSTRAINTS = os.environ['WITH_CONSTRAINTS'] == 'yes'
