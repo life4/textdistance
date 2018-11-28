@@ -62,7 +62,7 @@ setup(
     author_email='master_fess@mail.ru',
 
     description='Compute distance between the two texts.',
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst', encoding='utf-8').read(),
     keywords='distance between text strings sequences iterators',
 
     packages=['textdistance', 'textdistance.algorithms'],
