@@ -2,6 +2,12 @@ from difflib import SequenceMatcher as _SequenceMatcher
 from .base import BaseSimilarity as _BaseSimilarity
 from textdistance.utils import find_ngrams
 
+try:
+    import numpy
+except ImportError:
+    from array import array
+    numpy = None
+
 
 __all__ = [
     'lcsseq', 'lcsstr', 'ratcliff_obershelp',
@@ -18,7 +24,41 @@ class LCSSeq(_BaseSimilarity):
         self.qval = qval
         self.test_func = test_func or self._ident
 
-    def _find(self, *sequences):
+    def _dynamic(self, seq1, seq2):
+        """
+        https://github.com/chrislit/abydos/blob/v0.2.0/abydos/distance.py#L1055
+        http://www.dis.uniroma1.it/~bonifaci/algo/LCSSEQ.py
+        http://rosettacode.org/wiki/Longest_common_subsequence#Dynamic_Programming_8
+        """
+        if numpy:
+            lengths = numpy.zeros((len(seq1) + 1, len(seq2) + 1), dtype=numpy.int)
+        else:
+            lengths = [array('L', [0] * (len(seq2) + 1)) for _ in range(len(seq1) + 1)]
+
+        # row 0 and column 0 are initialized to 0 already
+        for i, char1 in enumerate(seq1):
+            for j, char2 in enumerate(seq2):
+                if char1 == char2:
+                    lengths[i + 1][j + 1] = lengths[i][j] + 1
+                else:
+                    lengths[i + 1][j + 1] = max(lengths[i + 1][j], lengths[i][j + 1])
+
+        # read the substring out from the matrix
+        result = ""
+        i, j = len(seq1), len(seq2)
+        while i != 0 and j != 0:
+            if lengths[i][j] == lengths[i - 1][j]:
+                i -= 1
+            elif lengths[i][j] == lengths[i][j - 1]:
+                j -= 1
+            else:
+                assert seq1[i - 1] == seq2[j - 1]
+                result = seq1[i - 1] + result
+                i -= 1
+                j -= 1
+        return result
+
+    def _recursive(self, *sequences):
         if not all(sequences):
             return type(sequences[0])()  # empty sequence
         if self.test_func(*[s[-1] for s in sequences]):
@@ -35,7 +75,10 @@ class LCSSeq(_BaseSimilarity):
         if not sequences:
             return ''
         sequences = self._get_sequences(*sequences)
-        return self._find(*sequences)
+        if len(sequences) == 2:
+            return self._dynamic(*sequences)
+        else:
+            return self._recursive(*sequences)
 
     def similarity(self, *sequences):
         return len(self(*sequences))
