@@ -65,7 +65,7 @@ except TypeError:
 
 setup(
     name='textdistance',
-    version='3.0.3',
+    version='3.1.0',
 
     author='orsinium',
     author_email='master_fess@mail.ru',
