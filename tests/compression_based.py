@@ -12,6 +12,11 @@ class ArithNCDTest(unittest.TestCase):
         self.assertEqual(probs['a'][1], Fraction(1, 7))
 
     def test_arith_output(self):
-        probs = self.alg._make_probs('BANA', 'NA')
+        probs = self.alg._make_probs('BANANA')
         numerator = self.alg._compress('BANANA', probs=probs)
         self.assertEqual(int(numerator, 2), 1525)
+
+    def test_arith_distance(self):
+        similar = self.alg('test', 'text')
+        diffirent = self.alg('test', 'nani')
+        self.assertLess(similar, diffirent)
