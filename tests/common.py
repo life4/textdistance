@@ -32,7 +32,7 @@ algos = [
     #
     # textdistance.bz2_ncd,
     # textdistance.lzma_ncd,
-    #  textdistance.arith_ncd,
+    # textdistance.arith_ncd,
     # textdistance.rle_ncd,
     # textdistance.bwtrle_ncd,
     # textdistance.zlib_ncd,

@@ -67,26 +67,25 @@ class NCD(_Base):
         return prob_pairs
 
     def _arith(self, data, probs):
+        # get fraction range
         if '\x00' in data:
-            data = data.replace('\x00', ' ')
-        minval = 0.0
-        maxval = 1.0
+            data = data.replace('\x00', '')
+        start = Fraction(0, 1)
+        width = Fraction(1, 1)
         for char in data + '\x00':
-            prob_start, prob_end = probs[char]
-            delta = maxval - minval
-            minval = minval + prob_start * delta
-            maxval = minval + prob_end * delta
+            prob_start, prob_width = probs[char]
+            start += prob_start * width
+            width *= prob_width
+        end = start + width
 
-        # I tried without the /2 just to check.  Doesn't work.
-        # Keep scaling up until the error range is >= 1.  That
-        # gives me the minimum number of bits needed to resolve
-        # down to the end-of-data character.
-        delta = (maxval - minval) / 2
-        nbits = 0
-        while delta < 1:
-            nbits = nbits + 1
-            delta <<= 1
-        return nbits
+        # find binary fraction in the range
+        output_fraction = Fraction(0, 1)
+        output_denominator = 1
+        while not (start <= output_fraction < end):
+            output_numerator = 1 + ((start.numerator * output_denominator) // start.denominator)
+            output_fraction = Fraction(output_numerator, output_denominator)
+            output_denominator *= 2
+        return bin(output_fraction.numerator)[2:]
 
     def _rle(self, data):
         new_data = []
