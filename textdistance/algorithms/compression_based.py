@@ -1,6 +1,7 @@
 import codecs
 from itertools import groupby, permutations
 from fractions import Fraction
+import math
 
 try:
     import lzma
@@ -32,6 +33,9 @@ class _NCDBase(_Base):
     def maximum(self, *sequences):
         return 1
 
+    def _get_size(self, data):
+        return len(self._compress(data))
+
     def __call__(self, *sequences):
         if not sequences:
             return 0
@@ -39,15 +43,18 @@ class _NCDBase(_Base):
         if isinstance(sequences[0], string_types) and not isinstance(self.empty, string_types):
             sequences = [s.encode('utf-8') for s in sequences]
 
-        compressed_lengths = [len(self._compress(s)) for s in sequences]
+        compressed_lengths = [self._get_size(s) for s in sequences]
         concat_length = float('Inf')
         for data in permutations(sequences):
             data = self.empty.join(data)
-            concat_length = min(concat_length, len(self._compress(data)))
+            concat_length = min(concat_length, self._get_size(data))
         return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
 
 
 class ArithNCD(_NCDBase):
+    def __init__(self, base=2):
+        self.base = base
+
     def _make_probs(self, *sequences):
         """
         https://github.com/gw-c/arith/blob/master/arith.py
@@ -90,7 +97,11 @@ class ArithNCD(_NCDBase):
             output_numerator = 1 + ((start.numerator * output_denominator) // start.denominator)
             output_fraction = Fraction(output_numerator, output_denominator)
             output_denominator *= 2
-        return bin(output_fraction.numerator)[2:]
+        return output_fraction
+
+    def _get_size(self, data):
+        numerator = self._compress(data).numerator
+        return math.ceil(math.log(numerator, self.base))
 
 
 class RLENCD(_NCDBase):
