@@ -87,19 +87,31 @@ Sequence based
 Compression based
 ~~~~~~~~~~~~~~~~~
 
-Work in progress. Now all algorithms compare two strings as array of
-bits.
+`Normalized compression
+distance <https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance>`__
+with different compression algorithms.
 
-``NCD`` - normalized compression distance.
++---------------------------------------------------------------------------------+-----------------+------------------+
+| Algorithm                                                                       | Class           | Function         |
++=================================================================================+=================+==================+
+| `Arithmetic coding <https://en.wikipedia.org/wiki/Arithmetic_coding>`__         | ``ArithNCD``    | ``arith_ncd``    |
++---------------------------------------------------------------------------------+-----------------+------------------+
+| `RLE <https://en.wikipedia.org/wiki/Run-length_encoding>`__                     | ``RLENCD``      | ``rle_ncd``      |
++---------------------------------------------------------------------------------+-----------------+------------------+
+| `BWT RLE <https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform>`__   | ``BWTRLENCD``   | ``bwtrle_ncd``   |
++---------------------------------------------------------------------------------+-----------------+------------------+
 
-Functions:
+Work in progress algorithms that compare two strings as array of bits:
 
-1. ``bz2_ncd``
-2. ``lzma_ncd``
-3. ``arith_ncd``
-4. ``rle_ncd``
-5. ``bwtrle_ncd``
-6. ``zlib_ncd``
++-------------------------------------------------+---------------+----------------+
+| Algorithm                                       | Class         | Function       |
++=================================================+===============+================+
+| `BZ2 <https://en.wikipedia.org/wiki/Bzip2>`__   | ``BZ2NCD``    | ``bz2_ncd``    |
++-------------------------------------------------+---------------+----------------+
+| `LZMA <https://en.wikipedia.org/wiki/LZMA>`__   | ``LZMANCD``   | ``lzma_ncd``   |
++-------------------------------------------------+---------------+----------------+
+| `ZLib <https://en.wikipedia.org/wiki/Zlib>`__   | ``ZLIBNCD``   | ``zlib_ncd``   |
++-------------------------------------------------+---------------+----------------+
 
 Phonetic
 ~~~~~~~~
