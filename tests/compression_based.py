@@ -3,7 +3,7 @@ from fractions import Fraction
 
 
 class ArithNCDTest(unittest.TestCase):
-    alg = textdistance.arith_ncd
+    alg = textdistance.ArithNCD(terminator='\x00')
 
     def test_make_probs(self):
         probs = self.alg._make_probs('lol', 'lal')

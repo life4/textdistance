@@ -12,6 +12,9 @@ from .base import Base as _Base
 
 
 __all__ = [
+    'ArithNCD', 'LZMANCD', 'BZ2NCD',
+    'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
+
     'bz2_ncd', 'lzma_ncd', 'arith_ncd',
     'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
 ]
@@ -52,8 +55,9 @@ class _NCDBase(_Base):
 
 
 class ArithNCD(_NCDBase):
-    def __init__(self, base=2):
+    def __init__(self, base=2, terminator=None):
         self.base = base
+        self.terminator = terminator
 
     def _make_probs(self, *sequences):
         """
@@ -61,7 +65,8 @@ class ArithNCD(_NCDBase):
         """
         sequences = self._get_counters(*sequences)
         counts = self._sum_counters(*sequences)
-        counts['\x00'] = 1
+        if self.terminator is not None:
+            counts[self.terminator] = 1
         total_letters = sum(counts.values())
 
         prob_pairs = {}
@@ -76,13 +81,15 @@ class ArithNCD(_NCDBase):
         assert cumulative_count == total_letters
         return prob_pairs
 
-    @staticmethod
-    def _get_range(data, probs):
-        if '\x00' in data:
-            data = data.replace('\x00', '')
+    def _get_range(self, data, probs):
+        if self.terminator is not None:
+            if self.terminator in data:
+                data = data.replace(self.terminator, '')
+            data += self.terminator
+
         start = Fraction(0, 1)
         width = Fraction(1, 1)
-        for char in data + '\x00':
+        for char in data:
             prob_start, prob_width = probs[char]
             start += prob_start * width
             width *= prob_width
