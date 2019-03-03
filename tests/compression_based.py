@@ -13,5 +13,5 @@ class ArithNCDTest(unittest.TestCase):
 
     def test_arith_output(self):
         probs = self.alg._make_probs('BANA', 'NA')
-        numerator = self.alg._arith('BANANA', probs)
+        numerator = self.alg._compress('BANANA', probs=probs)
         self.assertEqual(int(numerator, 2), 1525)

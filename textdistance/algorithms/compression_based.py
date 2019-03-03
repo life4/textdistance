@@ -1,5 +1,4 @@
 import codecs
-from functools import partial
 from itertools import groupby, permutations
 from fractions import Fraction
 
@@ -23,28 +22,36 @@ except NameError:
     string_types = (str, )
 
 
-class NCD(_Base):
+class _NCDBase(_Base):
     """normalized compression distance (NCD)
     https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance
     """
     qval = 1
-
-    def __init__(self, compressor='bz2', probs=None, bwt_terminator='\0'):
-        self.compressor = compressor
-        self.probs = probs
-        self.bwt_terminator = bwt_terminator
+    empty = ''
 
     def maximum(self, *sequences):
         return 1
 
-    def _bz2(self, data):
-        return codecs.encode(data, 'bz2_codec')[15:]
+    def _get_context(self, *sequences):
+        return dict()
 
-    def _lzma(self, data):
-        if not lzma:
-            raise ImportError('Please, install the PylibLZMA module')
-        return lzma.compress(data)[14:]
+    def __call__(self, *sequences):
+        if not sequences:
+            return 0
 
+        if isinstance(sequences[0], string_types) and not isinstance(self.empty, string_types):
+            sequences = [s.encode('utf-8') for s in sequences]
+
+        context = self._get_context(*sequences)
+        compressed_lengths = [len(self._compress(s, **context)) for s in sequences]
+        concat_length = float('Inf')
+        for data in permutations(sequences):
+            data = self.empty.join(data)
+            concat_length = min(concat_length, len(self._compress(data, **context)))
+        return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
+
+
+class ArithNCD(_NCDBase):
     def _make_probs(self, *sequences):
         """
         https://github.com/gw-c/arith/blob/master/arith.py
@@ -66,7 +73,10 @@ class NCD(_Base):
         assert cumulative_count == total_letters
         return prob_pairs
 
-    def _arith(self, data, probs):
+    def _get_context(self, *sequences):
+        return dict(probs=self._make_probs(*sequences))
+
+    def _compress(self, data, probs):
         # get fraction range
         if '\x00' in data:
             data = data.replace('\x00', '')
@@ -87,7 +97,9 @@ class NCD(_Base):
             output_denominator *= 2
         return bin(output_fraction.numerator)[2:]
 
-    def _rle(self, data):
+
+class RLENCD(_NCDBase):
+    def _compress(self, data):
         new_data = []
         for k, g in groupby(data):
             n = len(list(g))
@@ -99,49 +111,47 @@ class NCD(_Base):
                 new_data.append(2 * k)
         return ''.join(new_data)
 
-    def _bwtrle(self, data):
-        if not data:
-            data = self.bwt_terminator
-        elif self.bwt_terminator not in data:
-            data += self.bwt_terminator
-            modified = sorted(data[i:] + data[:i] for i in range(len(data)))
-            data = ''.join([subdata[-1] for subdata in modified])
-        return self._rle(data)
 
-    def _zlib(self, data):
+class BZ2NCD(_NCDBase):
+    empty = b''
+
+    def _compress(self, data):
+        return codecs.encode(data, 'bz2_codec')[15:]
+
+
+class LZMANCD(_NCDBase):
+    empty = b''
+
+    def _compress(self, data):
+        if not lzma:
+            raise ImportError('Please, install the PylibLZMA module')
+        return lzma.compress(data)[14:]
+
+
+class ZLIBNCD(_NCDBase):
+    empty = b''
+
+    def _compress(self, data):
         return codecs.encode(data, 'zlib_codec')[2:]
 
-    def __call__(self, *sequences):
-        if not sequences:
-            return 0
 
-        empty = b''
-        if isinstance(sequences[0], string_types):
-            if self.compressor in ('arith', 'rle', 'bwtrle'):
-                empty = ''
-            else:
-                sequences = [s.encode('utf-8') for s in sequences]
+class BWTRLENCD(RLENCD):
+    def __init__(self, terminator='\0'):
+        self.terminator = terminator
 
-        if self.compressor == 'arith':
-            probs = self.probs or self._make_probs(*sequences)
-            compressor = partial(self._arith, probs=probs)
-        else:
-            try:
-                compressor = getattr(self, '_' + self.compressor)
-            except AttributeError:
-                raise KeyError('Invalid compressor')
-
-        compressed_lengths = [len(compressor(s)) for s in sequences]
-        concat_length = float('Inf')
-        for data in permutations(sequences):
-            data = empty.join(data)
-            concat_length = min(concat_length, len(compressor(data)))
-        return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
+    def _compress(self, data):
+        if not data:
+            data = self.terminator
+        elif self.terminator not in data:
+            data += self.terminator
+            modified = sorted(data[i:] + data[:i] for i in range(len(data)))
+            data = ''.join([subdata[-1] for subdata in modified])
+        return super(BWTRLENCD, self)._compress(data)
 
 
-bz2_ncd = NCD(compressor='bz2')
-lzma_ncd = NCD(compressor='lzma')
-arith_ncd = NCD(compressor='arith')
-rle_ncd = NCD(compressor='rle')
-bwtrle_ncd = NCD(compressor='bwtrle')
-zlib_ncd = NCD(compressor='zlib')
+arith_ncd = ArithNCD()
+bwtrle_ncd = BWTRLENCD()
+bz2_ncd = BZ2NCD()
+lzma_ncd = LZMANCD()
+rle_ncd = RLENCD()
+zlib_ncd = ZLIBNCD()
