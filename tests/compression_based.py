@@ -21,3 +21,37 @@ class ArithNCDTest(unittest.TestCase):
         diffirent = self.alg('test', 'nani')
         self.assertLess(same, similar)
         self.assertLess(similar, diffirent)
+
+
+class NCNCDTest(unittest.TestCase):
+    alg = textdistance.nc_ncd
+
+    def test_simmetry_compressor(self):
+        self.assertEqual(self.alg._compress('ab'), self.alg._compress('ba'))
+
+    def test_idempotency_compressor(self):
+        # I've modified idempotency to some kind of distributivity for constant.
+        # Now it indicates that compressor really compress.
+        self.assertLess(self.alg._get_size('aa'), self.alg._get_size('a') * 2)
+
+    def test_monotonicity_compressor(self):
+        self.assertLess(self.alg._get_size('ab'), self.alg._get_size('abc'))
+
+    def test_distributivity_compressor(self):
+        self.assertLess(
+            self.alg._get_size('ab') + self.alg._get_size('c'),
+            self.alg._get_size('ac') + self.alg._get_size('bc'),
+        )
+
+    def test_distance(self):
+        same = self.alg('test', 'test')
+        similar = self.alg('test', 'text')
+        diffirent = self.alg('test', 'nani')
+        self.assertLess(same, similar)
+        self.assertLess(similar, diffirent)
+
+    def test_simmetry_distance(self):
+        self.assertEqual(self.alg('aab', 'aab'), self.alg('abb', 'abb'))
+        self.assertEqual(self.alg('aab', 'abb'), self.alg('abb', 'aab'))
+        self.assertEqual(self.alg('a', 'b'), self.alg('b', 'a'))
+        self.assertEqual(self.alg('ab', 'ba'), self.alg('ba', 'ab'))

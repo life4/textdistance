@@ -12,11 +12,11 @@ from .base import Base as _Base
 
 
 __all__ = [
-    'ArithNCD', 'LZMANCD', 'BZ2NCD',
-    'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
+    'ArithNCD', 'LZMANCD', 'BZ2NCD', 'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
+    'NCNCD',
 
-    'bz2_ncd', 'lzma_ncd', 'arith_ncd',
-    'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
+    'bz2_ncd', 'lzma_ncd', 'arith_ncd', 'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
+    'nc_ncd',
 ]
 
 
@@ -174,9 +174,19 @@ class BWTRLENCD(RLENCD):
         return super(BWTRLENCD, self)._compress(data)
 
 
+class NCNCD(_NCDBase):
+    def _compress(self, data):
+        counter = self._get_counters(data)[0]
+        return {element: math.sqrt(count) for element, count in counter.items()}
+
+    def _get_size(self, data):
+        return sum(self._compress(data).values())
+
+
 arith_ncd = ArithNCD()
 bwtrle_ncd = BWTRLENCD()
 bz2_ncd = BZ2NCD()
 lzma_ncd = LZMANCD()
 rle_ncd = RLENCD()
 zlib_ncd = ZLIBNCD()
+nc_ncd = NCNCD()
