@@ -136,10 +136,16 @@ class Base(object):
         return intersection
 
     def _union_counters(self, *sequences):
-        union = sequences[0]
+        union = sequences[0].copy()
         for s in sequences[1:]:
             union |= s
         return union
+
+    def _sum_counters(self, *sequences):
+        result = sequences[0].copy()
+        for s in sequences[1:]:
+            result += s
+        return result
 
     def _count_counters(self, counter):
         """Return all elements count from Counter

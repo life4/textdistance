@@ -28,14 +28,14 @@ algos = [
     textdistance.prefix,
     textdistance.postfix,
     textdistance.identity,
-#    textdistance.length,
-
-#    textdistance.bz2_ncd,
-#    textdistance.lzma_ncd,
-#    textdistance.arith_ncd,
-#    textdistance.rle_ncd,
-#    textdistance.bwtrle_ncd,
-#    textdistance.zlib_ncd,
+    # textdistance.length,
+    #
+    # textdistance.bz2_ncd,
+    # textdistance.lzma_ncd,
+    # textdistance.arith_ncd,
+    # textdistance.rle_ncd,
+    # textdistance.bwtrle_ncd,
+    # textdistance.zlib_ncd,
 ]
 
 if NUMPY:
@@ -59,6 +59,7 @@ class CommonTest(unittest.TestCase):
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
                 s = alg.similarity('spam', 'qwer')
                 self.assertEqual(s, 0)
+
 
 class EmptyTest(unittest.TestCase):
     def test_equal_distance(self):
@@ -87,6 +88,7 @@ class NormalizationTest(unittest.TestCase):
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
                 s = alg.normalized_distance('spam', 'qwer')
                 self.assertEqual(s, 1)
+
 
 class CompareTest(unittest.TestCase):
     def test_absolute(self):
