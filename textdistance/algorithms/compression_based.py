@@ -32,9 +32,6 @@ class _NCDBase(_Base):
     def maximum(self, *sequences):
         return 1
 
-    def _get_context(self, *sequences):
-        return dict()
-
     def __call__(self, *sequences):
         if not sequences:
             return 0
@@ -42,12 +39,11 @@ class _NCDBase(_Base):
         if isinstance(sequences[0], string_types) and not isinstance(self.empty, string_types):
             sequences = [s.encode('utf-8') for s in sequences]
 
-        context = self._get_context(*sequences)
-        compressed_lengths = [len(self._compress(s, **context)) for s in sequences]
+        compressed_lengths = [len(self._compress(s)) for s in sequences]
         concat_length = float('Inf')
         for data in permutations(sequences):
             data = self.empty.join(data)
-            concat_length = min(concat_length, len(self._compress(data, **context)))
+            concat_length = min(concat_length, len(self._compress(data)))
         return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
 
 
@@ -73,11 +69,8 @@ class ArithNCD(_NCDBase):
         assert cumulative_count == total_letters
         return prob_pairs
 
-    def _get_context(self, *sequences):
-        return dict(probs=self._make_probs(*sequences))
-
-    def _compress(self, data, probs):
-        # get fraction range
+    @staticmethod
+    def _get_range(data, probs):
         if '\x00' in data:
             data = data.replace('\x00', '')
         start = Fraction(0, 1)
@@ -86,9 +79,11 @@ class ArithNCD(_NCDBase):
             prob_start, prob_width = probs[char]
             start += prob_start * width
             width *= prob_width
-        end = start + width
+        return start, start + width
 
-        # find binary fraction in the range
+    def _compress(self, data):
+        probs = self._make_probs(data)
+        start, end = self._get_range(data=data, probs=probs)
         output_fraction = Fraction(0, 1)
         output_denominator = 1
         while not (start <= output_fraction < end):
