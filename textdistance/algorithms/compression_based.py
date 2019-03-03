@@ -1,6 +1,7 @@
 import codecs
 from functools import partial
 from itertools import groupby, permutations
+from fractions import Fraction
 
 try:
     import lzma
@@ -44,24 +45,26 @@ class NCD(_Base):
             raise ImportError('Please, install the PylibLZMA module')
         return lzma.compress(data)[14:]
 
-    def make_probs(self, *sequences):
+    def _make_probs(self, *sequences):
+        """
+        https://github.com/gw-c/arith/blob/master/arith.py
+        """
         sequences = self._get_counters(*sequences)
-        counts = self._intersect_counters(sequences)
+        counts = self._sum_counters(*sequences)
         counts['\x00'] = 1
         total_letters = sum(counts.values())
 
-        total = 0
-        prob_range = {}
-        prev = 0.0
+        prob_pairs = {}
+        cumulative_count = 0
         counts = sorted(counts.items(), key=lambda x: (x[1], x[0]), reverse=True)
-        for char, count in counts:
-            current = float(total + count) / total_letters
-            prob_range[char] = (prev, current)
-            prev = current
-            total = total + count
-
-        assert total == total_letters
-        return prob_range
+        for char, current_count in counts:
+            prob_pairs[char] = (
+                Fraction(cumulative_count, total_letters),
+                Fraction(current_count, total_letters),
+            )
+            cumulative_count += current_count
+        assert cumulative_count == total_letters
+        return prob_pairs
 
     def _arith(self, data, probs):
         if '\x00' in data:
@@ -69,10 +72,10 @@ class NCD(_Base):
         minval = 0.0
         maxval = 1.0
         for char in data + '\x00':
-            prob_range = probs[char]
+            prob_start, prob_end = probs[char]
             delta = maxval - minval
-            minval = minval + prob_range[0] * delta
-            maxval = minval + prob_range[1] * delta
+            minval = minval + prob_start * delta
+            maxval = minval + prob_end * delta
 
         # I tried without the /2 just to check.  Doesn't work.
         # Keep scaling up until the error range is >= 1.  That
@@ -119,12 +122,9 @@ class NCD(_Base):
                 empty = ''
             else:
                 sequences = [s.encode('utf-8') for s in sequences]
-        
+
         if self.compressor == 'arith':
-            if self.probs:
-                probs = self.probs
-            else:
-                probs = self.make_probs(*sequences)
+            probs = self.probs or self._make_probs(*sequences)
             compressor = partial(self._arith, probs=probs)
         else:
             try:
