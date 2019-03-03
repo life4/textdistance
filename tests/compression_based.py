@@ -2,6 +2,64 @@ from __main__ import unittest, textdistance
 from fractions import Fraction
 
 
+class CommonNCDTest(unittest.TestCase):
+    def test_monotonicity(self):
+        algos = (
+            textdistance.arith_ncd,
+            # textdistance.bwtrle_ncd,
+            textdistance.bz2_ncd,
+            # textdistance.lzma_ncd,
+            # textdistance.rle_ncd,
+            # textdistance.zlib_ncd,
+            textdistance.nc_ncd,
+            textdistance.redundancy_ncd,
+        )
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                same = alg('test', 'test')
+                similar = alg('test', 'text')
+                diffirent = alg('test', 'nani')
+                self.assertLess(same, similar)
+                self.assertLess(similar, diffirent)
+
+    def test_monotonicity2(self):
+        algos = (
+            textdistance.arith_ncd,
+            textdistance.bwtrle_ncd,
+            textdistance.bz2_ncd,
+            textdistance.lzma_ncd,
+            textdistance.rle_ncd,
+            textdistance.zlib_ncd,
+            textdistance.nc_ncd,
+            textdistance.redundancy_ncd,
+        )
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                same = alg('test', 'test')
+                similar = alg('test', 'text')
+                diffirent = alg('test', 'nani')
+                self.assertLessEqual(same, similar)
+                self.assertLessEqual(similar, diffirent)
+
+    def test_symmetry(self):
+        algos = (
+            # textdistance.arith_ncd,
+            # textdistance.bwtrle_ncd,
+            textdistance.bz2_ncd,
+            textdistance.lzma_ncd,
+            textdistance.rle_ncd,
+            textdistance.zlib_ncd,
+            textdistance.nc_ncd,
+            textdistance.redundancy_ncd,
+        )
+        for alg in algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                self.assertEqual(alg('aab', 'aab'), alg('abb', 'abb'))
+                self.assertEqual(alg('aab', 'abb'), alg('abb', 'aab'))
+                self.assertEqual(alg('a', 'b'), alg('b', 'a'))
+                self.assertEqual(alg('ab', 'ba'), alg('ba', 'ab'))
+
+
 class ArithNCDTest(unittest.TestCase):
     alg = textdistance.ArithNCD(terminator='\x00')
 
