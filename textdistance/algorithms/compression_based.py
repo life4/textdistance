@@ -55,6 +55,13 @@ class _NCDBase(_Base):
 
 
 class ArithNCD(_NCDBase):
+    """Arithmetic coding
+
+    https://github.com/gw-c/arith
+    http://www.drdobbs.com/cpp/data-compression-with-arithmetic-encodin/240169251
+    https://en.wikipedia.org/wiki/Arithmetic_coding
+    """
+
     def __init__(self, base=2, terminator=None):
         self.base = base
         self.terminator = terminator
@@ -112,6 +119,11 @@ class ArithNCD(_NCDBase):
 
 
 class RLENCD(_NCDBase):
+    """Run-length encoding
+
+    https://en.wikipedia.org/wiki/Run-length_encoding
+    """
+
     def _compress(self, data):
         new_data = []
         for k, g in groupby(data):
