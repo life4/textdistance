@@ -176,8 +176,12 @@ class BWTRLENCD(RLENCD):
 
 
 class SqrtNCD(_NCDBase):
+    def __init__(self, qval=1):
+        self.qval = qval
+
     def _compress(self, data):
-        return {element: math.sqrt(count) for element, count in Counter(data).items()}
+        counter = Counter(self._get_sequences(data)[0])
+        return {element: math.sqrt(count) for element, count in counter.items()}
 
     def _get_size(self, data):
         return sum(self._compress(data).values())
@@ -187,8 +191,11 @@ class EntropyNCD(_NCDBase):
     """
     https://en.wikipedia.org/wiki/Redundancy_(information_theory)
     """
+    def __init__(self, qval=1):
+        self.qval = qval
+
     def _compress(self, data):
-        counter = Counter(data)
+        counter = Counter(self._get_sequences(data)[0])
         total_count = len(data)
         entropy = 0.0
         for element_count in counter.values():
