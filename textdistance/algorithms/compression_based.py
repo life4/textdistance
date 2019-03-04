@@ -1,11 +1,9 @@
 # built-in
 import codecs
 import math
+from collections import Counter
 from fractions import Fraction
 from itertools import groupby, permutations
-from fractions import Fraction
-from collections import Counter
-import math
 
 # app
 from .base import Base as _Base
