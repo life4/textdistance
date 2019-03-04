@@ -31,7 +31,8 @@ except NameError:
 
 
 class _NCDBase(_Base):
-    """normalized compression distance (NCD)
+    """Normalized compression distance (NCD)
+
     https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance
     """
     qval = 1
@@ -160,6 +161,72 @@ class RLENCD(_NCDBase):
         return ''.join(new_data)
 
 
+class BWTRLENCD(RLENCD):
+    """
+    https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
+    https://en.wikipedia.org/wiki/Run-length_encoding
+    """
+    def __init__(self, terminator='\0'):
+        self.terminator = terminator
+
+    def _compress(self, data):
+        if not data:
+            data = self.terminator
+        elif self.terminator not in data:
+            data += self.terminator
+            modified = sorted(data[i:] + data[:i] for i in range(len(data)))
+            data = ''.join([subdata[-1] for subdata in modified])
+        return super(BWTRLENCD, self)._compress(data)
+
+
+# -- NORMAL COMPRESSORS -- #
+
+
+class SqrtNCD(_NCDBase):
+    """Square Root based NCD
+
+    Size of compressed data equals to sum of square roots of counts of every
+    element in the input sequence.
+    """
+    def __init__(self, qval=1):
+        self.qval = qval
+
+    def _compress(self, data):
+        return {element: math.sqrt(count) for element, count in Counter(data).items()}
+
+    def _get_size(self, data):
+        return sum(self._compress(data).values())
+
+
+class EntropyNCD(_NCDBase):
+    """Information entropy based NCD
+
+    https://en.wikipedia.org/wiki/Entropy_(information_theory)
+    """
+    def __init__(self, qval=1):
+        self.qval = qval
+
+    def _compress(self, data):
+        total_count = len(data)
+        entropy = 0.0
+        for element_count in Counter(data).values():
+            p = element_count / total_count
+            entropy -= p * math.log(p, 2)
+        assert entropy >= 0
+        return entropy
+
+        # # redundancy:
+        # unique_count = len(counter)
+        # absolute_entropy = math.log(unique_count, 2) / unique_count
+        # return absolute_entropy - entropy / unique_count
+
+    def _get_size(self, data):
+        return 1 + self._compress(data)
+
+
+# -- BINARY COMPRESSORS -- #
+
+
 class BZ2NCD(_BinaryNCDBase):
     def _compress(self, data):
         return codecs.encode(data, 'bz2_codec')[15:]
@@ -175,58 +242,6 @@ class LZMANCD(_BinaryNCDBase):
 class ZLIBNCD(_BinaryNCDBase):
     def _compress(self, data):
         return codecs.encode(data, 'zlib_codec')[2:]
-
-
-class BWTRLENCD(RLENCD):
-    def __init__(self, terminator='\0'):
-        self.terminator = terminator
-
-    def _compress(self, data):
-        if not data:
-            data = self.terminator
-        elif self.terminator not in data:
-            data += self.terminator
-            modified = sorted(data[i:] + data[:i] for i in range(len(data)))
-            data = ''.join([subdata[-1] for subdata in modified])
-        return super(BWTRLENCD, self)._compress(data)
-
-
-class SqrtNCD(_NCDBase):
-    def __init__(self, qval=1):
-        self.qval = qval
-
-    def _compress(self, data):
-        counter = Counter(self._get_sequences(data)[0])
-        return {element: math.sqrt(count) for element, count in counter.items()}
-
-    def _get_size(self, data):
-        return sum(self._compress(data).values())
-
-
-class EntropyNCD(_NCDBase):
-    """
-    https://en.wikipedia.org/wiki/Redundancy_(information_theory)
-    """
-    def __init__(self, qval=1):
-        self.qval = qval
-
-    def _compress(self, data):
-        counter = Counter(self._get_sequences(data)[0])
-        total_count = len(data)
-        entropy = 0.0
-        for element_count in counter.values():
-            p = element_count / total_count
-            entropy -= p * math.log(p, 2)
-        assert entropy >= 0
-        return entropy
-
-        # # redundancy:
-        # unique_count = len(counter)
-        # absolute_entropy = math.log(unique_count, 2) / unique_count
-        # return absolute_entropy - entropy / unique_count
-
-    def _get_size(self, data):
-        return 1 + self._compress(data)
 
 
 arith_ncd = ArithNCD()
