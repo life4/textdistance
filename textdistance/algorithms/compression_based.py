@@ -32,7 +32,9 @@ class _NCDBase(_Base):
     https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance
     """
     qval = 1
-    empty = ''
+
+    def __init__(self, qval=1):
+        self.qval = qval
 
     def maximum(self, *sequences):
         return 1
@@ -43,16 +45,32 @@ class _NCDBase(_Base):
     def __call__(self, *sequences):
         if not sequences:
             return 0
+        sequences = self._get_sequences(*sequences)
 
-        if isinstance(sequences[0], string_types) and not isinstance(self.empty, string_types):
-            sequences = [s.encode('utf-8') for s in sequences]
+        concat_length = float('Inf')
+        empty = type(sequences[0])()
+        for data in permutations(sequences):
+            if isinstance(empty, (str, bytes)):
+                data = empty.join(data)
+            else:
+                data = sum(data, empty)
+            concat_length = min(concat_length, self._get_size(data))
 
         compressed_lengths = [self._get_size(s) for s in sequences]
-        concat_length = float('Inf')
-        for data in permutations(sequences):
-            data = self.empty.join(data)
-            concat_length = min(concat_length, self._get_size(data))
         return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
+
+
+class _BinaryNCDBase(_NCDBase):
+
+    def __init__(self):
+        pass
+
+    def __call__(self, *sequences):
+        if not sequences:
+            return 0
+        if isinstance(sequences[0], string_types):
+            sequences = [s.encode('utf-8') for s in sequences]
+        return super(_BinaryNCDBase, self).__call__(*sequences)
 
 
 class ArithNCD(_NCDBase):
@@ -63,9 +81,10 @@ class ArithNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Arithmetic_coding
     """
 
-    def __init__(self, base=2, terminator=None):
+    def __init__(self, base=2, terminator=None, qval=1):
         self.base = base
         self.terminator = terminator
+        self.qval = qval
 
     def _make_probs(self, *sequences):
         """
@@ -138,25 +157,19 @@ class RLENCD(_NCDBase):
         return ''.join(new_data)
 
 
-class BZ2NCD(_NCDBase):
-    empty = b''
-
+class BZ2NCD(_BinaryNCDBase):
     def _compress(self, data):
         return codecs.encode(data, 'bz2_codec')[15:]
 
 
-class LZMANCD(_NCDBase):
-    empty = b''
-
+class LZMANCD(_BinaryNCDBase):
     def _compress(self, data):
         if not lzma:
             raise ImportError('Please, install the PylibLZMA module')
         return lzma.compress(data)[14:]
 
 
-class ZLIBNCD(_NCDBase):
-    empty = b''
-
+class ZLIBNCD(_BinaryNCDBase):
     def _compress(self, data):
         return codecs.encode(data, 'zlib_codec')[2:]
 
