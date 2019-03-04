@@ -235,17 +235,19 @@ class Bag(_Base):
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
-        sequences = (self._count_counters(s - intersection) for s in sequences)
+        sequences = (self._count_counters(sequence - intersection) for sequence in sequences)
         # ^ ints
         return max(sequences)
 
 
-jaccard = Jaccard()
-sorensen_dice = dice = sorensen = Sorensen()
-tversky = Tversky()
-# sorensen_dice = Tversky(ks=[.5, .5])
-overlap = Overlap()
-cosine = Cosine()
-tanimoto = Tanimoto()
-monge_elkan = MongeElkan()
 bag = Bag()
+cosine = Cosine()
+dice = Sorensen()
+jaccard = Jaccard()
+monge_elkan = MongeElkan()
+overlap = Overlap()
+sorensen = Sorensen()
+sorensen_dice = Sorensen()
+# sorensen_dice = Tversky(ks=[.5, .5])
+tanimoto = Tanimoto()
+tversky = Tversky()
