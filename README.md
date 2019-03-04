@@ -56,11 +56,20 @@ Features:
 
 [Normalized compression distance](https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance) with different compression algorithms.
 
+Classic compression algorithms:
+
 | Algorithm                                                                  | Class       | Function     |
 |----------------------------------------------------------------------------|-------------|--------------|
 | [Arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding)       | `ArithNCD`  | `arith_ncd`  |
 | [RLE](https://en.wikipedia.org/wiki/Run-length_encoding)                   | `RLENCD`    | `rle_ncd`    |
 | [BWT RLE](https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform) | `BWTRLENCD` | `bwtrle_ncd` |
+
+Normal compression algorithms:
+
+| Algorithm                                                                  | Class       | Function     |
+|----------------------------------------------------------------------------|-------------|--------------|
+| Square Root                                                                | `SqrtNCD` | `sqrt_ncd` |
+| [Entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory))      | `EntropyNCD` | `entropy_ncd` |
 
 
 Work in progress algorithms that compare two strings as array of bits:

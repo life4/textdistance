@@ -199,9 +199,12 @@ class SqrtNCD(_NCDBase):
 
 
 class EntropyNCD(_NCDBase):
-    """Information entropy based NCD
+    """Entropy based NCD
+
+    Get Entropy of input secueance as a size of compressed data.
 
     https://en.wikipedia.org/wiki/Entropy_(information_theory)
+    https://en.wikipedia.org/wiki/Entropy_encoding
     """
     def __init__(self, qval=1):
         self.qval = qval
@@ -228,11 +231,17 @@ class EntropyNCD(_NCDBase):
 
 
 class BZ2NCD(_BinaryNCDBase):
+    """
+    https://en.wikipedia.org/wiki/Bzip2
+    """
     def _compress(self, data):
         return codecs.encode(data, 'bz2_codec')[15:]
 
 
 class LZMANCD(_BinaryNCDBase):
+    """
+    https://en.wikipedia.org/wiki/LZMA
+    """
     def _compress(self, data):
         if not lzma:
             raise ImportError('Please, install the PylibLZMA module')
@@ -240,6 +249,9 @@ class LZMANCD(_BinaryNCDBase):
 
 
 class ZLIBNCD(_BinaryNCDBase):
+    """
+    https://en.wikipedia.org/wiki/Zlib
+    """
     def _compress(self, data):
         return codecs.encode(data, 'zlib_codec')[2:]
 
