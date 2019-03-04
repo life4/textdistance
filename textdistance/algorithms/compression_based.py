@@ -193,13 +193,13 @@ class EntropyNCD(_NCDBase):
         entropy = 0.0
         for element_count in counter.values():
             p = element_count / total_count
-            entropy -= p * math.log2(p)
+            entropy -= p * math.log(p, 2)
         assert entropy >= 0
         return entropy
 
         # # redundancy:
         # unique_count = len(counter)
-        # absolute_entropy = math.log2(unique_count) / unique_count
+        # absolute_entropy = math.log(unique_count, 2) / unique_count
         # return absolute_entropy - entropy / unique_count
 
     def _get_size(self, data):
