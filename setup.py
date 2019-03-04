@@ -87,7 +87,7 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Plugins',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Topic :: Scientific/Engineering :: Human Machine Interfaces',
     ],
