@@ -29,12 +29,12 @@ __all__ = [
 
 
 class Hamming(_Base):
-    '''
+    """
     Compute the Hamming distance between the two or more sequences.
     The Hamming distance is the number of differing items in ordered sequences.
 
     https://en.wikipedia.org/wiki/Hamming_distance
-    '''
+    """
     def __init__(self, qval=1, test_func=None, truncate=False, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
@@ -53,7 +53,7 @@ class Hamming(_Base):
 
 
 class Levenshtein(_Base):
-    '''
+    """
     Compute the absolute Levenshtein distance between the two sequences.
     The Levenshtein distance is the minimum number of edit operations necessary
     for transforming one sequence into the other. The edit operations allowed are:
@@ -64,7 +64,7 @@ class Levenshtein(_Base):
 
     https://en.wikipedia.org/wiki/Levenshtein_distance
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
-    '''
+    """
     def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
@@ -121,7 +121,7 @@ class Levenshtein(_Base):
 
 
 class DamerauLevenshtein(_Base):
-    '''
+    """
     Compute the absolute Damerau-Levenshtein distance between the two sequences.
     The Damerau-Levenshtein distance is the minimum number of edit operations necessary
     for transforming one sequence into the other. The edit operations allowed are:
@@ -132,7 +132,7 @@ class DamerauLevenshtein(_Base):
         * transposition: ABC -> ACB, BAC
 
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
-    '''
+    """
     def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident

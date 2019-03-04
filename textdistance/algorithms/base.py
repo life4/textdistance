@@ -68,7 +68,7 @@ class Base(object):
             # fail side libraries silently and try next libs
             try:
                 return lib.func(*prepared_sequences)
-            except:
+            except Exception:
                 pass
 
     def quick_answer(self, *sequences):

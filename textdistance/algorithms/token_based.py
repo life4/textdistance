@@ -19,7 +19,7 @@ __all__ = [
 
 
 class Jaccard(_BaseSimilarity):
-    '''
+    """
     Compute the Jaccard distance between the two sequences.
     They should contain hashable items.
     The return value is a float between 0 and 1, where 0 means equal,
@@ -27,7 +27,7 @@ class Jaccard(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Jaccard_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaccard.js
-    '''
+    """
     def __init__(self, qval=1, as_set=False, external=True):
         self.qval = qval
         self.as_set = as_set
@@ -50,7 +50,7 @@ class Jaccard(_BaseSimilarity):
 
 
 class Sorensen(_BaseSimilarity):
-    '''
+    """
     Compute the Sorensen distance between the two sequences.
     They should contain hashable items.
     The return value is a float between 0 and 1, where 0 means equal,
@@ -58,7 +58,7 @@ class Sorensen(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/dice.js
-    '''
+    """
     def __init__(self, qval=1, as_set=False):
         self.qval = qval
         self.as_set = as_set
