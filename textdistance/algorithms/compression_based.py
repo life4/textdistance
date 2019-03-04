@@ -14,7 +14,6 @@ except ImportError:
     lzma = None
 
 
-
 __all__ = [
     'ArithNCD', 'LZMANCD', 'BZ2NCD',
     'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
