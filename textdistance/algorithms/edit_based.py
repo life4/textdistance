@@ -1,18 +1,20 @@
 # built-in
 from collections import defaultdict
+
+# app
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+
+
 try:
     # python3
     from itertools import zip_longest
 except ImportError:
     # python2
     from itertools import izip_longest as zip_longest
-# external
 try:
     import numpy
 except ImportError:
     numpy = None
-# project
-from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = [
@@ -29,12 +31,12 @@ __all__ = [
 
 
 class Hamming(_Base):
-    '''
+    """
     Compute the Hamming distance between the two or more sequences.
     The Hamming distance is the number of differing items in ordered sequences.
 
     https://en.wikipedia.org/wiki/Hamming_distance
-    '''
+    """
     def __init__(self, qval=1, test_func=None, truncate=False, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
@@ -53,7 +55,7 @@ class Hamming(_Base):
 
 
 class Levenshtein(_Base):
-    '''
+    """
     Compute the absolute Levenshtein distance between the two sequences.
     The Levenshtein distance is the minimum number of edit operations necessary
     for transforming one sequence into the other. The edit operations allowed are:
@@ -64,7 +66,7 @@ class Levenshtein(_Base):
 
     https://en.wikipedia.org/wiki/Levenshtein_distance
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
-    '''
+    """
     def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
@@ -104,7 +106,7 @@ class Levenshtein(_Base):
             prev, cur = cur, [r] + [0] * (cols - 1)
             for c in range(1, cols):
                 deletion = prev[c] + 1
-                insertion = cur[c-1] + 1
+                insertion = cur[c - 1] + 1
                 dist = self.test_func(s1[r - 1], s2[c - 1])
                 edit = prev[c - 1] + (not dist)
                 cur[c] = min(edit, deletion, insertion)
@@ -121,7 +123,7 @@ class Levenshtein(_Base):
 
 
 class DamerauLevenshtein(_Base):
-    '''
+    """
     Compute the absolute Damerau-Levenshtein distance between the two sequences.
     The Damerau-Levenshtein distance is the minimum number of edit operations necessary
     for transforming one sequence into the other. The edit operations allowed are:
@@ -132,7 +134,7 @@ class DamerauLevenshtein(_Base):
         * transposition: ABC -> ACB, BAC
 
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
-    '''
+    """
     def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
@@ -262,7 +264,7 @@ class JaroWinkler(_BaseSimilarity):
         for i, s1_ch in enumerate(s1):
             low = i - search_range if i > search_range else 0
             hi = i + search_range if i + search_range < s2_len else s2_len - 1
-            for j in range(low, hi+1):
+            for j in range(low, hi + 1):
                 if not s2_flags[j] and s2[j] == s1_ch:
                     s1_flags[i] = s2_flags[j] = True
                     common_chars += 1
@@ -414,10 +416,9 @@ class SmithWaterman(_BaseSimilarity):
             (len(s1) + 1, len(s2) + 1),
             dtype=numpy.float,
         )
-        max_value = 0
         for i, sc1 in enumerate(s1, start=1):
             for j, sc2 in enumerate(s2, start=1):
-                # The score for substituting the letter a[i-1] for b[j-1].
+                # The score for substituting the letter a[i - 1] for b[j - 1].
                 # Generally low for mismatch, high for match.
                 match = dist_mat[i - 1, j - 1] + self.sim_func(sc1, sc2)
                 # The scores for for introducing extra letters in one of the strings
@@ -425,7 +426,7 @@ class SmithWaterman(_BaseSimilarity):
                 delete = dist_mat[i - 1, j] - self.gap_cost
                 insert = dist_mat[i, j - 1] - self.gap_cost
                 dist_mat[i, j] = max(0, match, delete, insert)
-        return dist_mat[dist_mat.shape[0]-1, dist_mat.shape[1]-1]
+        return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
 
 
 class Gotoh(_BaseSimilarity):
@@ -481,17 +482,17 @@ class Gotoh(_BaseSimilarity):
             for j, sc2 in enumerate(s2, start=1):
                 sim_val = self.sim_func(sc1, sc2)
                 d_mat[i, j] = max(
-                    d_mat[i-1, j-1] + sim_val,
-                    p_mat[i-1, j-1] + sim_val,
-                    q_mat[i-1, j-1] + sim_val,
+                    d_mat[i - 1, j - 1] + sim_val,
+                    p_mat[i - 1, j - 1] + sim_val,
+                    q_mat[i - 1, j - 1] + sim_val,
                 )
                 p_mat[i, j] = max(
-                    d_mat[i-1, j] - self.gap_open,
-                    p_mat[i-1, j] - self.gap_ext,
+                    d_mat[i - 1, j] - self.gap_open,
+                    p_mat[i - 1, j] - self.gap_ext,
                 )
                 q_mat[i, j] = max(
-                    d_mat[i, j-1] - self.gap_open,
-                    q_mat[i, j-1] - self.gap_ext,
+                    d_mat[i, j - 1] - self.gap_open,
+                    q_mat[i, j - 1] - self.gap_ext,
                 )
 
         i, j = (n - 1 for n in d_mat.shape)
@@ -509,7 +510,7 @@ class StrCmp95(_BaseSimilarity):
         ('E', 'Y'), ('C', 'G'), ('E', 'F'), ('W', 'U'), ('W', 'V'), ('X', 'K'),
         ('S', 'Z'), ('X', 'S'), ('Q', 'C'), ('U', 'V'), ('M', 'N'), ('L', 'I'),
         ('Q', 'O'), ('P', 'R'), ('I', 'J'), ('2', 'Z'), ('5', 'S'), ('8', 'B'),
-        ('1', 'I'), ('1', 'L'), ('0', 'O'), ('0', 'Q'), ('C', 'K'), ('G', 'J')
+        ('1', 'I'), ('1', 'L'), ('0', 'O'), ('0', 'Q'), ('C', 'K'), ('G', 'J'),
     )
 
     def __init__(self, long_strings=False, external=True):
@@ -641,7 +642,7 @@ class StrCmp95(_BaseSimilarity):
             return weight
         if s1[0].isdigit():
             return weight
-        res = (num_com-i-1) / (len_s1+len_s2-i*2+2)
+        res = (num_com - i - 1) / (len_s1 + len_s2 - i * 2 + 2)
         weight += (1.0 - weight) * res
         return weight
 

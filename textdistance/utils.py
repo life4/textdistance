@@ -1,4 +1,5 @@
-from itertools import product, permutations
+# built-in
+from itertools import permutations, product
 
 
 __all__ = ['words_combinations', 'find_ngrams']

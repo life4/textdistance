@@ -1,5 +1,9 @@
+# built-in
 from itertools import takewhile
+
+# app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+
 
 __all__ = [
     'Prefix', 'Postfix', 'Length', 'Identity', 'Matrix',

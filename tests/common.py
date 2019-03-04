@@ -1,4 +1,5 @@
-from __main__ import unittest, textdistance, NUMPY
+# project
+from __main__ import NUMPY, textdistance, unittest
 
 
 algos = [

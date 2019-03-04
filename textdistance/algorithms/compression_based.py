@@ -1,15 +1,20 @@
+# built-in
 import codecs
+import math
+from fractions import Fraction
 from itertools import groupby, permutations
 from fractions import Fraction
 from collections import Counter
 import math
 
+# app
+from .base import Base as _Base
+
+
 try:
     import lzma
 except ImportError:
     lzma = None
-
-from .base import Base as _Base
 
 
 __all__ = [
