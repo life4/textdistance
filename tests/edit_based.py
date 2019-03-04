@@ -1,5 +1,6 @@
 from __main__ import unittest, textdistance, NUMPY
 
+
 class HammingTest(unittest.TestCase):
     alg = textdistance.Hamming(external=False)
 
@@ -89,6 +90,13 @@ class MatrixTest(unittest.TestCase):
         self.assertEqual(alg('C', 'T'), 0)
 
 
+def sim_ident(x, y):
+    if x == y:
+        return 1
+    else:
+        return -1
+
+
 if NUMPY:
     class NeedlemanWunschTest(unittest.TestCase):
         alg = textdistance.NeedlemanWunsch
@@ -111,14 +119,12 @@ if NUMPY:
             alg = self.alg(gap_cost=5, sim_func=sim_matrix)
             self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 16)
 
-            sim_ident = lambda x, y: 2 * int(x == y) - 1
             alg = self.alg(sim_func=sim_ident)
             self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
             alg = self.alg(gap_cost=5, sim_func=sim_ident)
             self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), -5)
             self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), -7)
             self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), -15)
-
 
     class SmithWatermanTest(unittest.TestCase):
         alg = textdistance.SmithWaterman
@@ -141,14 +147,12 @@ if NUMPY:
             alg = self.alg(gap_cost=5, sim_func=sim_matrix)
             self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
 
-            sim_ident = lambda x, y: 2 * int(x == y) - 1
             alg = self.alg(sim_func=sim_ident)
             self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
             alg = self.alg(gap_cost=5, sim_func=sim_ident)
             self.assertEqual(alg('CGATATCAG', 'TGACGSTGC'), 0)
             self.assertEqual(alg('AGACTAGTTAC', 'TGACGSTGC'), 1)
             self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 0)
-
 
     class GotohTest(unittest.TestCase):
         alg = textdistance.Gotoh
@@ -169,9 +173,8 @@ if NUMPY:
             }
             sim_matrix = textdistance.Matrix(nw_matrix, symmetric=True)
             alg = self.alg(sim_func=sim_matrix)
-            #self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
+            # self.assertEqual(alg('AGACTAGTTAC', 'CGAGACGT'), 26)
 
-            sim_ident = lambda x, y: 2 * int(x == y) - 1
             alg = self.alg(gap_open=1, gap_ext=1, sim_func=sim_ident)
             self.assertEqual(alg('GATTACA', 'GCATGCU'), 0)
             alg = self.alg(gap_open=1, gap_ext=.5, sim_func=sim_ident)
