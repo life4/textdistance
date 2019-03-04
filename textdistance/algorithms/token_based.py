@@ -1,12 +1,17 @@
+# built-in
+from itertools import islice, permutations, repeat
 from math import log
-from itertools import repeat, islice, permutations
+
+# app
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+from .edit_based import DamerauLevenshtein
+
+
 # python3
 try:
     from functools import reduce
 except ImportError:
     pass
-from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
-from .edit_based import DamerauLevenshtein
 
 
 __all__ = [
@@ -19,7 +24,7 @@ __all__ = [
 
 
 class Jaccard(_BaseSimilarity):
-    '''
+    """
     Compute the Jaccard distance between the two sequences.
     They should contain hashable items.
     The return value is a float between 0 and 1, where 0 means equal,
@@ -27,7 +32,7 @@ class Jaccard(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Jaccard_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaccard.js
-    '''
+    """
     def __init__(self, qval=1, as_set=False, external=True):
         self.qval = qval
         self.as_set = as_set
@@ -50,7 +55,7 @@ class Jaccard(_BaseSimilarity):
 
 
 class Sorensen(_BaseSimilarity):
-    '''
+    """
     Compute the Sorensen distance between the two sequences.
     They should contain hashable items.
     The return value is a float between 0 and 1, where 0 means equal,
@@ -58,7 +63,7 @@ class Sorensen(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/dice.js
-    '''
+    """
     def __init__(self, qval=1, as_set=False):
         self.qval = qval
         self.as_set = as_set
@@ -139,10 +144,10 @@ class Overlap(_BaseSimilarity):
         if result is not None:
             return result
 
-        sequences = self._get_counters(*sequences)               # sets
-        intersection = self._intersect_counters(*sequences)      # set
-        intersection = self._count_counters(intersection)        # int
-        sequences = [self._count_counters(s) for s in sequences] # ints
+        sequences = self._get_counters(*sequences)                  # sets
+        intersection = self._intersect_counters(*sequences)         # set
+        intersection = self._count_counters(intersection)           # int
+        sequences = [self._count_counters(s) for s in sequences]    # ints
 
         return float(intersection) / min(sequences)
 
@@ -165,10 +170,10 @@ class Cosine(_BaseSimilarity):
         if result is not None:
             return result
 
-        sequences = self._get_counters(*sequences)               # sets
-        intersection = self._intersect_counters(*sequences)      # set
-        intersection = self._count_counters(intersection)        # int
-        sequences = [self._count_counters(s) for s in sequences] # ints
+        sequences = self._get_counters(*sequences)                  # sets
+        intersection = self._intersect_counters(*sequences)         # set
+        intersection = self._count_counters(intersection)           # int
+        sequences = [self._count_counters(s) for s in sequences]    # ints
         prod = reduce(lambda x, y: x * y, sequences)
 
         return intersection / pow(prod, 1.0 / len(sequences))
@@ -193,7 +198,9 @@ class MongeElkan(_BaseSimilarity):
     http://www.cs.cmu.edu/~wcohen/postscript/kdd-2003-match-ws.pdf
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/monge-elkan.js
     """
-    def __init__(self, algorithm=DamerauLevenshtein(), symmetric=False, qval=1):
+    _damerau_levenshtein = DamerauLevenshtein()
+
+    def __init__(self, algorithm=_damerau_levenshtein, symmetric=False, qval=1):
         self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval
@@ -233,17 +240,19 @@ class Bag(_Base):
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
-        sequences = (self._count_counters(s - intersection) for s in sequences)
+        sequences = (self._count_counters(sequence - intersection) for sequence in sequences)
         # ^ ints
         return max(sequences)
 
 
-jaccard = Jaccard()
-sorensen_dice = dice = sorensen = Sorensen()
-tversky = Tversky()
-# sorensen_dice = Tversky(ks=[.5, .5])
-overlap = Overlap()
-cosine = Cosine()
-tanimoto = Tanimoto()
-monge_elkan = MongeElkan()
 bag = Bag()
+cosine = Cosine()
+dice = Sorensen()
+jaccard = Jaccard()
+monge_elkan = MongeElkan()
+overlap = Overlap()
+sorensen = Sorensen()
+sorensen_dice = Sorensen()
+# sorensen_dice = Tversky(ks=[.5, .5])
+tanimoto = Tanimoto()
+tversky = Tversky()

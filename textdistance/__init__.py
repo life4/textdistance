@@ -1,7 +1,7 @@
 """
 TextDistance.
 Compute distance between sequences.
-30+ algorithms, pure python implementation, common interface. 
+30+ algorithms, pure python implementation, common interface.
 """
 
 # main package info
@@ -15,7 +15,6 @@ __license__ = 'LGPL 3.0'
 VERSION = __version__
 
 
-# facade
-from .interfaces import distance    # noQA
-from .utils import *                # noQA
-from .algorithms import *           # noQA
+# app
+from .algorithms import *  # noQA
+from .utils import *  # noQA

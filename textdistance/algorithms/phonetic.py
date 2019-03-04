@@ -1,16 +1,18 @@
 # built-in
 from itertools import groupby
+
+# app
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+
+
 try:
     from itertools import zip_longest
 except ImportError:
     from itertools import izip_longest as zip_longest
-# external
 try:
     import numpy
 except ImportError:
     numpy = None
-# project
-from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = [

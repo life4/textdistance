@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
-from __main__ import unittest, textdistance, libraries
+
+# project
+from __main__ import libraries, textdistance, unittest
 
 
 class ExternalTest(unittest.TestCase):

@@ -1,0 +1,34 @@
+flake8
+
+flake8-bugbear
+# ^ https://github.com/PyCQA/flake8-bugbear
+
+pep8-naming
+# ^ https://github.com/PyCQA/pep8-naming
+
+flake8-commas
+# ^ https://github.com/PyCQA/flake8-commas
+
+flake8-quotes
+# ^ https://github.com/zheller/flake8-quotes
+
+flake8-blind-except
+# ^ https://github.com/elijahandrews/flake8-blind-except
+
+flake8-logging-format
+# ^ https://github.com/globality-corp/flake8-logging-format
+
+flake8-pep3101
+# ^ https://github.com/gforcada/flake8-pep3101
+
+flake8-string-format
+# ^ https://github.com/xZise/flake8-string-format
+
+flake8-mutable
+# ^ https://github.com/ebeweber/flake8-mutable
+
+flake8-tidy-imports
+# ^ https://github.com/adamchainz/flake8-tidy-imports
+
+pep8-naming
+# ^ https://github.com/PyCQA/pep8-naming
