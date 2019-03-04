@@ -10,6 +10,7 @@ try:
     from functools import reduce
 except ImportError:
     pass
+# app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 

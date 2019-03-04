@@ -1,11 +1,13 @@
+# built-in
 import json
 from collections import defaultdict, namedtuple
 from timeit import timeit
 
+# project
 from tabulate import tabulate
 
-from .libraries import prototype
-from .libraries import LIBRARIES_FILE
+# app
+from .libraries import LIBRARIES_FILE, prototype
 
 
 # python3 -m textdistance.benchmark

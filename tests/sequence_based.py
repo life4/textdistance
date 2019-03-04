@@ -1,4 +1,5 @@
-from __main__ import unittest, textdistance
+# project
+from __main__ import textdistance, unittest
 
 
 class LCSSeqTest(unittest.TestCase):

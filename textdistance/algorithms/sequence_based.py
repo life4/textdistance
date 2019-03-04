@@ -1,6 +1,10 @@
+# built-in
 from difflib import SequenceMatcher as _SequenceMatcher
+
+# app
 from .base import BaseSimilarity as _BaseSimilarity
-from textdistance.utils import find_ngrams
+from ..utils import find_ngrams
+
 
 try:
     import numpy

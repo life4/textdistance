@@ -1,12 +1,17 @@
+# built-in
+from itertools import islice, permutations, repeat
 from math import log
-from itertools import repeat, islice, permutations
+
+# app
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+from .edit_based import DamerauLevenshtein
+
+
 # python3
 try:
     from functools import reduce
 except ImportError:
     pass
-from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
-from .edit_based import DamerauLevenshtein
 
 
 __all__ = [

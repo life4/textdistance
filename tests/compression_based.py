@@ -1,5 +1,8 @@
-from __main__ import unittest, textdistance
+# built-in
 from fractions import Fraction
+
+# project
+from __main__ import textdistance, unittest
 
 
 class ArithNCDTest(unittest.TestCase):

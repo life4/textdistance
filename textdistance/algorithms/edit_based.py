@@ -1,18 +1,20 @@
 # built-in
 from collections import defaultdict
+
+# app
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+
+
 try:
     # python3
     from itertools import zip_longest
 except ImportError:
     # python2
     from itertools import izip_longest as zip_longest
-# external
 try:
     import numpy
 except ImportError:
     numpy = None
-# project
-from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 __all__ = [

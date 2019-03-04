@@ -15,6 +15,6 @@ __license__ = 'LGPL 3.0'
 VERSION = __version__
 
 
-# facade
-from .utils import *                # noQA
-from .algorithms import *           # noQA
+# app
+from .algorithms import *  # noQA
+from .utils import *  # noQA
