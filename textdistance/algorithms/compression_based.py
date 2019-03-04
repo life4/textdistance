@@ -14,10 +14,10 @@ from .base import Base as _Base
 
 __all__ = [
     'ArithNCD', 'LZMANCD', 'BZ2NCD', 'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
-    'NCNCD', 'RedundancyNCD',
+    'SqrtNCD', 'EntropyNCD',
 
     'bz2_ncd', 'lzma_ncd', 'arith_ncd', 'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
-    'nc_ncd', 'redundancy_ncd',
+    'sqrt_ncd', 'entropy_ncd',
 ]
 
 
@@ -175,7 +175,7 @@ class BWTRLENCD(RLENCD):
         return super(BWTRLENCD, self)._compress(data)
 
 
-class NCNCD(_NCDBase):
+class SqrtNCD(_NCDBase):
     def _compress(self, data):
         return {element: math.sqrt(count) for element, count in Counter(data).items()}
 
@@ -183,7 +183,7 @@ class NCNCD(_NCDBase):
         return sum(self._compress(data).values())
 
 
-class RedundancyNCD(_NCDBase):
+class EntropyNCD(_NCDBase):
     """
     https://en.wikipedia.org/wiki/Redundancy_(information_theory)
     """
@@ -195,14 +195,15 @@ class RedundancyNCD(_NCDBase):
             p = element_count / total_count
             entropy -= p * math.log2(p)
         assert entropy >= 0
-        return 1 + entropy
+        return entropy
 
+        # # redundancy:
         # unique_count = len(counter)
         # absolute_entropy = math.log2(unique_count) / unique_count
         # return absolute_entropy - entropy / unique_count
 
     def _get_size(self, data):
-        return self._compress(data)
+        return 1 + self._compress(data)
 
 
 arith_ncd = ArithNCD()
@@ -211,5 +212,5 @@ bz2_ncd = BZ2NCD()
 lzma_ncd = LZMANCD()
 rle_ncd = RLENCD()
 zlib_ncd = ZLIBNCD()
-nc_ncd = NCNCD()
-redundancy_ncd = RedundancyNCD()
+sqrt_ncd = SqrtNCD()
+entropy_ncd = EntropyNCD()

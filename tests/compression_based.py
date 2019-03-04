@@ -11,8 +11,8 @@ class CommonNCDTest(unittest.TestCase):
             # textdistance.lzma_ncd,
             # textdistance.rle_ncd,
             # textdistance.zlib_ncd,
-            textdistance.nc_ncd,
-            textdistance.redundancy_ncd,
+            textdistance.sqrt_ncd,
+            textdistance.entropy_ncd,
         )
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
@@ -30,8 +30,8 @@ class CommonNCDTest(unittest.TestCase):
             textdistance.lzma_ncd,
             textdistance.rle_ncd,
             textdistance.zlib_ncd,
-            textdistance.nc_ncd,
-            textdistance.redundancy_ncd,
+            textdistance.sqrt_ncd,
+            textdistance.entropy_ncd,
         )
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
@@ -49,8 +49,8 @@ class CommonNCDTest(unittest.TestCase):
             textdistance.lzma_ncd,
             textdistance.rle_ncd,
             textdistance.zlib_ncd,
-            textdistance.nc_ncd,
-            textdistance.redundancy_ncd,
+            textdistance.sqrt_ncd,
+            textdistance.entropy_ncd,
         )
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
@@ -81,35 +81,50 @@ class ArithNCDTest(unittest.TestCase):
         self.assertLess(similar, diffirent)
 
 
-class NCNCDTest(unittest.TestCase):
-    alg = textdistance.nc_ncd
+class NormalCompressorsNCDTest(unittest.TestCase):
+    algos = (
+        textdistance.sqrt_ncd,
+        textdistance.entropy_ncd,
+    )
 
     def test_simmetry_compressor(self):
-        self.assertEqual(self.alg._compress('ab'), self.alg._compress('ba'))
+        for alg in self.algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                self.assertEqual(alg._compress('ab'), alg._compress('ba'))
 
     def test_idempotency_compressor(self):
         # I've modified idempotency to some kind of distributivity for constant.
         # Now it indicates that compressor really compress.
-        self.assertLess(self.alg._get_size('aa'), self.alg._get_size('a') * 2)
+        for alg in self.algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                self.assertLess(alg._get_size('aa'), alg._get_size('a') * 2)
 
     def test_monotonicity_compressor(self):
-        self.assertLess(self.alg._get_size('ab'), self.alg._get_size('abc'))
+        for alg in self.algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                self.assertLess(alg._get_size('ab'), alg._get_size('abc'))
 
     def test_distributivity_compressor(self):
-        self.assertLess(
-            self.alg._get_size('ab') + self.alg._get_size('c'),
-            self.alg._get_size('ac') + self.alg._get_size('bc'),
-        )
+        for alg in self.algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                self.assertLess(
+                    alg._get_size('ab') + alg._get_size('c'),
+                    alg._get_size('ac') + alg._get_size('bc'),
+                )
 
     def test_distance(self):
-        same = self.alg('test', 'test')
-        similar = self.alg('test', 'text')
-        diffirent = self.alg('test', 'nani')
-        self.assertLess(same, similar)
-        self.assertLess(similar, diffirent)
+        for alg in self.algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                same = alg('test', 'test')
+                similar = alg('test', 'text')
+                diffirent = alg('test', 'nani')
+                self.assertLess(same, similar)
+                self.assertLess(similar, diffirent)
 
     def test_simmetry_distance(self):
-        self.assertEqual(self.alg('aab', 'aab'), self.alg('abb', 'abb'))
-        self.assertEqual(self.alg('aab', 'abb'), self.alg('abb', 'aab'))
-        self.assertEqual(self.alg('a', 'b'), self.alg('b', 'a'))
-        self.assertEqual(self.alg('ab', 'ba'), self.alg('ba', 'ab'))
+        for alg in self.algos:
+            with self.subTest(algorithm=alg.__class__.__name__, func=alg):
+                self.assertEqual(alg('aab', 'aab'), alg('abb', 'abb'))
+                self.assertEqual(alg('aab', 'abb'), alg('abb', 'aab'))
+                self.assertEqual(alg('a', 'b'), alg('b', 'a'))
+                self.assertEqual(alg('ab', 'ba'), alg('ba', 'ab'))
