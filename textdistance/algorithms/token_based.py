@@ -139,10 +139,10 @@ class Overlap(_BaseSimilarity):
         if result is not None:
             return result
 
-        sequences = self._get_counters(*sequences)               # sets
-        intersection = self._intersect_counters(*sequences)      # set
-        intersection = self._count_counters(intersection)        # int
-        sequences = [self._count_counters(s) for s in sequences] # ints
+        sequences = self._get_counters(*sequences)                  # sets
+        intersection = self._intersect_counters(*sequences)         # set
+        intersection = self._count_counters(intersection)           # int
+        sequences = [self._count_counters(s) for s in sequences]    # ints
 
         return float(intersection) / min(sequences)
 
@@ -165,10 +165,10 @@ class Cosine(_BaseSimilarity):
         if result is not None:
             return result
 
-        sequences = self._get_counters(*sequences)               # sets
-        intersection = self._intersect_counters(*sequences)      # set
-        intersection = self._count_counters(intersection)        # int
-        sequences = [self._count_counters(s) for s in sequences] # ints
+        sequences = self._get_counters(*sequences)                  # sets
+        intersection = self._intersect_counters(*sequences)         # set
+        intersection = self._count_counters(intersection)           # int
+        sequences = [self._count_counters(s) for s in sequences]    # ints
         prod = reduce(lambda x, y: x * y, sequences)
 
         return intersection / pow(prod, 1.0 / len(sequences))
@@ -193,7 +193,9 @@ class MongeElkan(_BaseSimilarity):
     http://www.cs.cmu.edu/~wcohen/postscript/kdd-2003-match-ws.pdf
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/monge-elkan.js
     """
-    def __init__(self, algorithm=DamerauLevenshtein(), symmetric=False, qval=1):
+    _damerau_levenshtein = DamerauLevenshtein()
+
+    def __init__(self, algorithm=_damerau_levenshtein, symmetric=False, qval=1):
         self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval

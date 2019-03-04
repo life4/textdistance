@@ -31,7 +31,7 @@ class Chebyshev(_Base):
 class Minkowski(_Base):
     def __init__(self, p=1, weight=1):
         if p < 1:
-            raise ValueError("p must be at least 1")
+            raise ValueError('p must be at least 1')
         self.p = p
         self.weight = weight
 

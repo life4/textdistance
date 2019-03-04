@@ -44,7 +44,7 @@ class LCSSeq(_BaseSimilarity):
                     lengths[i + 1][j + 1] = max(lengths[i + 1][j], lengths[i][j + 1])
 
         # read the substring out from the matrix
-        result = ""
+        result = ''
         i, j = len(seq1), len(seq2)
         while i != 0 and j != 0:
             if lengths[i][j] == lengths[i - 1][j]:
