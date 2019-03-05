@@ -213,7 +213,7 @@ class EntropyNCD(_NCDBase):
         total_count = len(data)
         entropy = 0.0
         for element_count in Counter(data).values():
-            p = element_count / total_count
+            p = float(element_count) / total_count
             entropy -= p * math.log(p, 2)
         assert entropy >= 0
         return entropy
