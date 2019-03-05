@@ -1,17 +1,33 @@
 language: python
-python:
-  - "2.7"
-  - "3.4"
-  - "3.6"
-env:
-  - WITH_CONSTRAINTS=yes WITH_NUMPY=yes
-  - WITH_CONSTRAINTS=yes WITH_NUMPY=no
-  - WITH_CONSTRAINTS=no  WITH_NUMPY=yes
-  - WITH_CONSTRAINTS=no  WITH_NUMPY=no
-install:
-  - pip install unittest2
-  - if [[ $WITH_CONSTRAINTS == 'yes' ]]; then pip install -r constraints.txt; fi
-  - if [[ $WITH_NUMPY == 'yes' ]]; then pip install numpy; fi
-script:
-  - python run_tests.py
+matrix:
+  include:
+    - python: "2.7"
+      env: TOXENV=py2-CONS-NUMPY
+    - python: "3.5"
+      env: TOXENV=py35-CONS-NUMPY
 
+    - python: "2.7"
+      env: TOXENV=py2-NOCONS-NUMPY
+    - python: "3.5"
+      env: TOXENV=py35-NOCONS-NUMPY
+
+    - python: "2.7"
+      env: TOXENV=py2-CONS-NONUMPY
+    - python: "3.5"
+      env: TOXENV=py35-CONS-NONUMPY
+
+    - python: "2.7"
+      env: TOXENV=py2-NOCONS-NONUMPY
+    - python: "3.5"
+      env: TOXENV=py35-NOCONS-NONUMPY
+    - python: "3.7-dev"
+      env: TOXENV=py37-NOCONS-NONUMPY
+    - python: pypy
+      env: TOXENV=pypy-NOCONS-NONUMPY
+
+    - python: "3.7-dev"
+      env: TOXENV=flake8
+install:
+  - pip install tox
+script:
+  - tox
