@@ -206,15 +206,17 @@ class EntropyNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Entropy_(information_theory)
     https://en.wikipedia.org/wiki/Entropy_encoding
     """
-    def __init__(self, qval=1):
+    def __init__(self, qval=1, coef=1, base=2):
         self.qval = qval
+        self.coef = coef
+        self.base = base
 
     def _compress(self, data):
         total_count = len(data)
         entropy = 0.0
         for element_count in Counter(data).values():
             p = float(element_count) / total_count
-            entropy -= p * math.log(p, 2)
+            entropy -= p * math.log(p, self.base)
         assert entropy >= 0
         return entropy
 
@@ -224,7 +226,7 @@ class EntropyNCD(_NCDBase):
         # return absolute_entropy - entropy / unique_count
 
     def _get_size(self, data):
-        return 1 + self._compress(data)
+        return self.coef + self._compress(data)
 
 
 # -- BINARY COMPRESSORS -- #
