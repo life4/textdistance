@@ -91,6 +91,8 @@ Compression based
 distance <https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance>`__
 with different compression algorithms.
 
+Classic compression algorithms:
+
 +---------------------------------------------------------------------------------+-----------------+------------------+
 | Algorithm                                                                       | Class           | Function         |
 +=================================================================================+=================+==================+
@@ -100,6 +102,16 @@ with different compression algorithms.
 +---------------------------------------------------------------------------------+-----------------+------------------+
 | `BWT RLE <https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform>`__   | ``BWTRLENCD``   | ``bwtrle_ncd``   |
 +---------------------------------------------------------------------------------+-----------------+------------------+
+
+Normal compression algorithms:
+
++----------------------------------------------------------------------------+------------------+-------------------+
+| Algorithm                                                                  | Class            | Function          |
++============================================================================+==================+===================+
+| Square Root                                                                | ``SqrtNCD``      | ``sqrt_ncd``      |
++----------------------------------------------------------------------------+------------------+-------------------+
+| `Entropy <https://en.wikipedia.org/wiki/Entropy_(information_theory)>`__   | ``EntropyNCD``   | ``entropy_ncd``   |
++----------------------------------------------------------------------------+------------------+-------------------+
 
 Work in progress algorithms that compare two strings as array of bits:
 
@@ -112,6 +124,9 @@ Work in progress algorithms that compare two strings as array of bits:
 +-------------------------------------------------+---------------+----------------+
 | `ZLib <https://en.wikipedia.org/wiki/Zlib>`__   | ``ZLIBNCD``   | ``zlib_ncd``   |
 +-------------------------------------------------+---------------+----------------+
+
+See `blog post <https://articles.life4web.ru/eng/ncd/>`__ for more
+details about NCD.
 
 Phonetic
 ~~~~~~~~
