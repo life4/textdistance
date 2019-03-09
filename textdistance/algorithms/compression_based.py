@@ -51,17 +51,17 @@ class _NCDBase(_Base):
             return 0
         sequences = self._get_sequences(*sequences)
 
-        concat_length = float('Inf')
+        concat_len = float('Inf')
         empty = type(sequences[0])()
         for data in permutations(sequences):
             if isinstance(empty, (str, bytes)):
                 data = empty.join(data)
             else:
                 data = sum(data, empty)
-            concat_length = min(concat_length, self._get_size(data))
+            concat_len = min(concat_len, self._get_size(data))
 
-        compressed_lengths = [self._get_size(s) for s in sequences]
-        return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
+        compressed_lens = [self._get_size(s) for s in sequences]
+        return float(concat_len - min(compressed_lens) * (len(sequences) - 1)) / max(compressed_lens)
 
 
 class _BinaryNCDBase(_NCDBase):

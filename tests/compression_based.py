@@ -131,3 +131,11 @@ class NormalCompressorsNCDTest(unittest.TestCase):
                 self.assertEqual(alg('aab', 'abb'), alg('abb', 'aab'))
                 self.assertEqual(alg('a', 'b'), alg('b', 'a'))
                 self.assertEqual(alg('ab', 'ba'), alg('ba', 'ab'))
+
+
+class EntropyNCD(unittest.TestCase):
+    alg = textdistance.entropy_ncd
+
+    def test_normalization(self):
+        self.assertEqual(self.alg('test', 'test'), 0)
+        self.assertEqual(self.alg('aaa', 'bbb'), 1)
