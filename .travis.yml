@@ -22,7 +22,7 @@ matrix:
       env: TOXENV=py35-NOCONS-NONUMPY
     - python: "3.7-dev"
       env: TOXENV=py37-NOCONS-NONUMPY
-    - python: pypy
+    - python: pypy3.5
       env: TOXENV=pypy-NOCONS-NONUMPY
 
     - python: "3.7-dev"

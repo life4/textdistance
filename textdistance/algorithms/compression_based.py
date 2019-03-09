@@ -1,6 +1,7 @@
 # built-in
 import codecs
 import math
+from collections import Counter
 from fractions import Fraction
 from itertools import groupby, permutations
 
@@ -15,11 +16,11 @@ except ImportError:
 
 
 __all__ = [
-    'ArithNCD', 'LZMANCD', 'BZ2NCD',
-    'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
+    'ArithNCD', 'LZMANCD', 'BZ2NCD', 'RLENCD', 'BWTRLENCD', 'ZLIBNCD',
+    'SqrtNCD', 'EntropyNCD',
 
-    'bz2_ncd', 'lzma_ncd', 'arith_ncd',
-    'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
+    'bz2_ncd', 'lzma_ncd', 'arith_ncd', 'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
+    'sqrt_ncd', 'entropy_ncd',
 ]
 
 
@@ -30,11 +31,14 @@ except NameError:
 
 
 class _NCDBase(_Base):
-    """normalized compression distance (NCD)
+    """Normalized compression distance (NCD)
+
     https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance
     """
     qval = 1
-    empty = ''
+
+    def __init__(self, qval=1):
+        self.qval = qval
 
     def maximum(self, *sequences):
         return 1
@@ -45,16 +49,32 @@ class _NCDBase(_Base):
     def __call__(self, *sequences):
         if not sequences:
             return 0
+        sequences = self._get_sequences(*sequences)
 
-        if isinstance(sequences[0], string_types) and not isinstance(self.empty, string_types):
-            sequences = [s.encode('utf-8') for s in sequences]
-
-        compressed_lengths = [self._get_size(s) for s in sequences]
-        concat_length = float('Inf')
+        concat_len = float('Inf')
+        empty = type(sequences[0])()
         for data in permutations(sequences):
-            data = self.empty.join(data)
-            concat_length = min(concat_length, self._get_size(data))
-        return float(concat_length - min(compressed_lengths)) / max(compressed_lengths)
+            if isinstance(empty, (str, bytes)):
+                data = empty.join(data)
+            else:
+                data = sum(data, empty)
+            concat_len = min(concat_len, self._get_size(data))
+
+        compressed_lens = [self._get_size(s) for s in sequences]
+        return float(concat_len - min(compressed_lens) * (len(sequences) - 1)) / max(compressed_lens)
+
+
+class _BinaryNCDBase(_NCDBase):
+
+    def __init__(self):
+        pass
+
+    def __call__(self, *sequences):
+        if not sequences:
+            return 0
+        if isinstance(sequences[0], string_types):
+            sequences = [s.encode('utf-8') for s in sequences]
+        return super(_BinaryNCDBase, self).__call__(*sequences)
 
 
 class ArithNCD(_NCDBase):
@@ -65,9 +85,10 @@ class ArithNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Arithmetic_coding
     """
 
-    def __init__(self, base=2, terminator=None):
+    def __init__(self, base=2, terminator=None, qval=1):
         self.base = base
         self.terminator = terminator
+        self.qval = qval
 
     def _make_probs(self, *sequences):
         """
@@ -140,30 +161,11 @@ class RLENCD(_NCDBase):
         return ''.join(new_data)
 
 
-class BZ2NCD(_NCDBase):
-    empty = b''
-
-    def _compress(self, data):
-        return codecs.encode(data, 'bz2_codec')[15:]
-
-
-class LZMANCD(_NCDBase):
-    empty = b''
-
-    def _compress(self, data):
-        if not lzma:
-            raise ImportError('Please, install the PylibLZMA module')
-        return lzma.compress(data)[14:]
-
-
-class ZLIBNCD(_NCDBase):
-    empty = b''
-
-    def _compress(self, data):
-        return codecs.encode(data, 'zlib_codec')[2:]
-
-
 class BWTRLENCD(RLENCD):
+    """
+    https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
+    https://en.wikipedia.org/wiki/Run-length_encoding
+    """
     def __init__(self, terminator='\0'):
         self.terminator = terminator
 
@@ -177,9 +179,90 @@ class BWTRLENCD(RLENCD):
         return super(BWTRLENCD, self)._compress(data)
 
 
+# -- NORMAL COMPRESSORS -- #
+
+
+class SqrtNCD(_NCDBase):
+    """Square Root based NCD
+
+    Size of compressed data equals to sum of square roots of counts of every
+    element in the input sequence.
+    """
+    def __init__(self, qval=1):
+        self.qval = qval
+
+    def _compress(self, data):
+        return {element: math.sqrt(count) for element, count in Counter(data).items()}
+
+    def _get_size(self, data):
+        return sum(self._compress(data).values())
+
+
+class EntropyNCD(_NCDBase):
+    """Entropy based NCD
+
+    Get Entropy of input secueance as a size of compressed data.
+
+    https://en.wikipedia.org/wiki/Entropy_(information_theory)
+    https://en.wikipedia.org/wiki/Entropy_encoding
+    """
+    def __init__(self, qval=1, coef=1, base=2):
+        self.qval = qval
+        self.coef = coef
+        self.base = base
+
+    def _compress(self, data):
+        total_count = len(data)
+        entropy = 0.0
+        for element_count in Counter(data).values():
+            p = float(element_count) / total_count
+            entropy -= p * math.log(p, self.base)
+        assert entropy >= 0
+        return entropy
+
+        # # redundancy:
+        # unique_count = len(counter)
+        # absolute_entropy = math.log(unique_count, 2) / unique_count
+        # return absolute_entropy - entropy / unique_count
+
+    def _get_size(self, data):
+        return self.coef + self._compress(data)
+
+
+# -- BINARY COMPRESSORS -- #
+
+
+class BZ2NCD(_BinaryNCDBase):
+    """
+    https://en.wikipedia.org/wiki/Bzip2
+    """
+    def _compress(self, data):
+        return codecs.encode(data, 'bz2_codec')[15:]
+
+
+class LZMANCD(_BinaryNCDBase):
+    """
+    https://en.wikipedia.org/wiki/LZMA
+    """
+    def _compress(self, data):
+        if not lzma:
+            raise ImportError('Please, install the PylibLZMA module')
+        return lzma.compress(data)[14:]
+
+
+class ZLIBNCD(_BinaryNCDBase):
+    """
+    https://en.wikipedia.org/wiki/Zlib
+    """
+    def _compress(self, data):
+        return codecs.encode(data, 'zlib_codec')[2:]
+
+
 arith_ncd = ArithNCD()
 bwtrle_ncd = BWTRLENCD()
 bz2_ncd = BZ2NCD()
 lzma_ncd = LZMANCD()
 rle_ncd = RLENCD()
 zlib_ncd = ZLIBNCD()
+sqrt_ncd = SqrtNCD()
+entropy_ncd = EntropyNCD()
