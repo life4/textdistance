@@ -1,5 +1,5 @@
 # project
-from __main__ import textdistance, unittest, NUMPY
+from __main__ import textdistance, unittest
 
 
 class EditexTest(unittest.TestCase):
