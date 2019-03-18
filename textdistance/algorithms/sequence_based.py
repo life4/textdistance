@@ -30,7 +30,7 @@ class LCSSeq(_BaseSimilarity):
 
     def _dynamic(self, seq1, seq2):
         """
-        https://github.com/chrislit/abydos/blob/v0.2.0/abydos/distance.py#L1055
+        https://github.com/chrislit/abydos/blob/master/abydos/distance/_lcsseq.py
         http://www.dis.uniroma1.it/~bonifaci/algo/LCSSEQ.py
         http://rosettacode.org/wiki/Longest_common_subsequence#Dynamic_Programming_8
         """

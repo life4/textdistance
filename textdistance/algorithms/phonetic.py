@@ -73,6 +73,8 @@ class MRA(_BaseSimilarity):
 class Editex(_Base):
     """
     https://anhaidgroup.github.io/py_stringmatching/v0.3.x/Editex.html
+    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.18.2138&rep=rep1&type=pdf
+    https://github.com/chrislit/blob/master/abydos/distance/_editex.py
     """
     letter_groups = (
         frozenset('AEIOUY'),
@@ -98,6 +100,9 @@ class Editex(_Base):
         return max(map(len, sequences)) * self.mismatch_cost
 
     def r_cost(self, *sequences):
+        assert len(sequences[0]) == 1
+        assert len(sequences[1]) == 1
+
         if self._ident(*sequences):
             return self.match_cost
         if any(map(lambda x: x not in self.all_letters, sequences)):
@@ -108,6 +113,9 @@ class Editex(_Base):
         return self.mismatch_cost
 
     def d_cost(self, *sequences):
+        assert len(sequences[0]) == 1
+        assert len(sequences[1]) == 1
+
         if not self._ident(*sequences) and sequences[0] in 'HW':
             return self.group_cost
         return self.r_cost(*sequences)
@@ -122,8 +130,8 @@ class Editex(_Base):
         len_s1 = len(s1)
         len_s2 = len(s2)
         d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.int)
-        s1 = ' ' + s1
-        s2 = ' ' + s2
+        s1 = ' ' + s1.upper()
+        s2 = ' ' + s2.upper()
 
         if not self.local:
             for i in range(1, len_s1 + 1):
