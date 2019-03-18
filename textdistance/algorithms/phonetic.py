@@ -100,26 +100,20 @@ class Editex(_Base):
     def maximum(self, *sequences):
         return max(map(len, sequences)) * self.mismatch_cost
 
-    def r_cost(self, *sequences):
-        assert len(sequences[0]) == 1
-        assert len(sequences[1]) == 1
-
-        if self._ident(*sequences):
+    def r_cost(self, *elements):
+        if self._ident(*elements):
             return self.match_cost
-        if any(map(lambda x: x not in self.all_letters, sequences)):
+        if any(map(lambda x: x not in self.all_letters, elements)):
             return self.mismatch_cost
         for group in self.letter_groups:
-            if all(map(lambda x: x in group, sequences)):
+            if all(map(lambda x: x in group, elements)):
                 return self.group_cost
         return self.mismatch_cost
 
-    def d_cost(self, *sequences):
-        assert len(sequences[0]) == 1
-        assert len(sequences[1]) == 1
-
-        if not self._ident(*sequences) and sequences[0] in 'HW':
+    def d_cost(self, *elements):
+        if not self._ident(*elements) and elements[0] in 'HW':
             return self.group_cost
-        return self.r_cost(*sequences)
+        return self.r_cost(*elements)
 
     def __call__(self, s1, s2):
         result = self.quick_answer(s1, s2)
