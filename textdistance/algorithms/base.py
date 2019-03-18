@@ -108,6 +108,14 @@ class Base(object):
                     return False
             return True
 
+    @classmethod
+    def _get_dist_func(cls, test_func, dist_func):
+        if dist_func is not None:
+            return dist_func
+        if test_func is None:
+            test_func = cls._ident
+        return lambda *sequences: int(not test_func(*sequences))
+
     def _get_sequences(self, *sequences):
         """Prepare sequences.
 

@@ -64,20 +64,28 @@ class Levenshtein(_Base):
         * insertion:    ABC -> ABCD, EABC, AEBC..
         * substitution: ABC -> ABE, ADC, FBC..
 
+    Params:
+        dist_func: gets two elements from input sequences and returns distance for substitution.
+                    by default 0 for the same elements and 1 for different.
+        cost: distance for insertion or deletion.
+        qval: q value for splitting by q-grams. If None then compare strings by words.
+
     https://en.wikipedia.org/wiki/Levenshtein_distance
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
     """
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(self, qval=1, cost=1, test_func=None, dist_func=None, external=True):
         self.qval = qval
-        self.test_func = test_func or self._ident
+        self.cost = cost
         self.external = external
+        self.dist_func = self._get_dist_func(test_func=test_func, dist_func=dist_func)
 
     def _recursive(self, s1, s2):
         # TODO: more than 2 sequences support
         if not s1 or not s2:
             return len(s1) + len(s2)
 
-        if self.test_func(s1[-1], s2[-1]):
+        dist = self.dist_func(s1[-1], s2[-1])
+        if not dist:
             return self(s1[:-1], s2[:-1])
 
         # deletion/insertion
@@ -87,7 +95,7 @@ class Levenshtein(_Base):
         )
         # substitution
         s = self(s1[:-1], s2[:-1])
-        return min(d, s) + 1
+        return min(d + self.cost, s + dist)
 
     def _cicled(self, s1, s2):
         """
@@ -105,10 +113,10 @@ class Levenshtein(_Base):
         for r in range(1, rows):
             prev, cur = cur, [r] + [0] * (cols - 1)
             for c in range(1, cols):
-                deletion = prev[c] + 1
-                insertion = cur[c - 1] + 1
-                dist = self.test_func(s1[r - 1], s2[c - 1])
-                edit = prev[c - 1] + (not dist)
+                deletion = prev[c] + self.cost
+                insertion = cur[c - 1] + self.cost
+                dist = self.dist_func(s1[r - 1], s2[c - 1])
+                edit = prev[c - 1] + dist
                 cur[c] = min(edit, deletion, insertion)
         return cur[-1]
 
