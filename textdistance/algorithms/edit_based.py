@@ -37,11 +37,11 @@ class Hamming(_Base):
 
     https://en.wikipedia.org/wiki/Hamming_distance
     """
-    def __init__(self, qval=1, test_func=None, truncate=False, external=True):
+    def __init__(self, qval=1, test_func=None, dist_func=None, truncate=False, external=True):
         self.qval = qval
-        self.test_func = test_func or self._ident
         self.truncate = truncate
         self.external = external
+        self.dist_func = self._get_dist_func(test_func=test_func, dist_func=dist_func)
 
     def __call__(self, *sequences):
         sequences = self._get_sequences(*sequences)
@@ -51,7 +51,7 @@ class Hamming(_Base):
             return result
 
         _zip = zip if self.truncate else zip_longest
-        return sum([not self.test_func(*es) for es in _zip(*sequences)])
+        return sum(self.dist_func(*es) for es in _zip(*sequences))
 
 
 class Levenshtein(_Base):
@@ -143,13 +143,14 @@ class DamerauLevenshtein(_Base):
 
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     """
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(self, qval=1, cost=1, test_func=None, external=True, dist_func=None):
         self.qval = qval
-        self.test_func = test_func or self._ident
+        self.cost = cost
         self.external = external
+        self.dist_func = self._get_dist_func(test_func=test_func, dist_func=dist_func)
 
+    # TODO: doesn't pass tests, need improve
     def _numpy(self, s1, s2):
-        # TODO: doesn't pass tests, need improve
         d = numpy.zeros([len(s1) + 1, len(s2) + 1], dtype=numpy.int)
 
         # matrix
@@ -160,23 +161,21 @@ class DamerauLevenshtein(_Base):
 
         for i, cs1 in enumerate(s1):
             for j, cs2 in enumerate(s2):
-                cost = int(not self.test_func(cs1, cs2))
-                # ^ 0 if equal, 1 otherwise
-
+                dist = self.dist_func(cs1, cs2)
                 d[i][j] = min(
-                    d[i - 1][j] + 1,            # deletion
-                    d[i][j - 1] + 1,            # insertion
-                    d[i - 1][j - 1] + cost,     # substitution
+                    d[i - 1][j] + self.cost,    # deletion
+                    d[i][j - 1] + self.cost,    # insertion
+                    d[i - 1][j - 1] + dist,     # substitution
                 )
 
                 # transposition
                 if not i or not j:
                     continue
-                if not self.test_func(cs1, s2[j - 1]):
+                if self.dist_func(cs1, s2[j - 1]):
                     continue
                 d[i][j] = min(
                     d[i][j],
-                    d[i - 2][j - 2] + cost,
+                    d[i - 2][j - 2] + dist,
                 )
 
         return d[len(s1) - 1][len(s2) - 1]
@@ -192,23 +191,21 @@ class DamerauLevenshtein(_Base):
 
         for i, cs1 in enumerate(s1):
             for j, cs2 in enumerate(s2):
-                cost = int(not self.test_func(cs1, cs2))
-                # ^ 0 if equal, 1 otherwise
-
+                dist = self.dist_func(cs1, cs2)
                 d[i, j] = min(
-                    d[i - 1, j] + 1,            # deletion
-                    d[i, j - 1] + 1,            # insertion
-                    d[i - 1, j - 1] + cost,     # substitution
+                    d[i - 1, j] + self.cost,    # deletion
+                    d[i, j - 1] + self.cost,    # insertion
+                    d[i - 1, j - 1] + dist,     # substitution
                 )
 
                 # transposition
                 if not i or not j:
                     continue
-                if not self.test_func(cs1, s2[j - 1]):
+                if self.dist_func(cs1, s2[j - 1]):
                     continue
                 d[i, j] = min(
                     d[i, j],
-                    d[i - 2, j - 2] + cost,
+                    d[i - 2, j - 2] + dist,
                 )
 
         return d[len(s1) - 1, len(s2) - 1]
