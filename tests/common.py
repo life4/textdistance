@@ -44,7 +44,7 @@ if NUMPY:
         textdistance.gotoh,
         textdistance.needleman_wunsch,
         textdistance.smith_waterman,
-        textdistance.editex,
+        # textdistance.editex,
     ])
 
 
