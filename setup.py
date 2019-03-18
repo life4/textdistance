@@ -66,7 +66,7 @@ except TypeError:
 
 setup(
     name='textdistance',
-    version='4.1.0',
+    version='4.1.1',
 
     author='orsinium',
     author_email='master_fess@mail.ru',
@@ -83,7 +83,7 @@ setup(
     url='https://github.com/orsinium/textdistance',
     download_url='https://github.com/orsinium/textdistance/tarball/master',
 
-    license='GNU Lesser General Public License v3.0',
+    license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Plugins',
