@@ -1,4 +1,5 @@
 # built-in
+from collections import defaultdict
 from itertools import groupby
 
 # app
@@ -121,33 +122,34 @@ class Editex(_Base):
         return self.r_cost(*sequences)
 
     def __call__(self, s1, s2):
-        if not numpy:
-            raise ImportError('Please, install numpy for Editex measure')
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
 
         len_s1 = len(s1)
         len_s2 = len(s2)
-        d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.int)
+        if numpy:
+            d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.int)
+        else:
+            d_mat = defaultdict(lambda: defaultdict(int))
         s1 = ' ' + s1.upper()
         s2 = ' ' + s2.upper()
 
         if not self.local:
             for i in range(1, len_s1 + 1):
-                d_mat[i, 0] = d_mat[i - 1, 0] + self.d_cost(s1[i - 1], s1[i])
+                d_mat[i][0] = d_mat[i - 1][0] + self.d_cost(s1[i - 1], s1[i])
         for j in range(1, len_s2 + 1):
-            d_mat[0, j] = d_mat[0, j - 1] + self.d_cost(s2[j - 1], s2[j])
+            d_mat[0][j] = d_mat[0][j - 1] + self.d_cost(s2[j - 1], s2[j])
 
         for i, (cs1_prev, cs1_curr) in enumerate(zip(s1, s1[1:]), start=1):
             for j, (cs2_prev, cs2_curr) in enumerate(zip(s2, s2[1:]), start=1):
-                d_mat[i, j] = min(
-                    d_mat[i - 1, j] + self.d_cost(cs1_prev, cs1_curr),
-                    d_mat[i, j - 1] + self.d_cost(cs2_prev, cs2_curr),
-                    d_mat[i - 1, j - 1] + self.r_cost(cs1_curr, cs2_curr),
+                d_mat[i][j] = min(
+                    d_mat[i - 1][j] + self.d_cost(cs1_prev, cs1_curr),
+                    d_mat[i][j - 1] + self.d_cost(cs2_prev, cs2_curr),
+                    d_mat[i - 1][j - 1] + self.r_cost(cs1_curr, cs2_curr),
                 )
 
-        return d_mat[len_s1, len_s2]
+        return d_mat[len_s1][len_s2]
 
 
 mra = MRA()
