@@ -26,22 +26,22 @@ extras = {
     # for algos, from fastest to slowest, only faster than textdistance:
     'DamerauLevenshtein': [
         'jellyfish',                # only for text
-        'pyxdameraulevenshtein',    # for any iterators
+        'pyxDamerauLevenshtein',    # for any iterators
     ],
     'Hamming': [
-        'Levenshtein',  # only same length and strings
-        'jellyfish',    # only strings, any length
-        'distance',     # only same length, any iterators
-        'abydos',       # any iterators
+        'python-Levenshtein',   # only same length and strings
+        'jellyfish',            # only strings, any length
+        'distance',             # only same length, any iterators
+        'abydos',               # any iterators
     ],
     'Jaro': [
-        'Levenshtein',  # only text
+        'python-Levenshtein',   # only text
     ],
     'JaroWinkler': [
-        'Levenshtein',  # only text
+        'python-Levenshtein',   # only text
     ],
     'Levenshtein': [
-        'Levenshtein',  # only text
+        'python-Levenshtein',   # only text
         # yeah, other libs slower than textdistance
     ],
 }
@@ -66,7 +66,7 @@ except TypeError:
 
 setup(
     name='textdistance',
-    version='4.1.2',
+    version='4.1.3',
 
     author='orsinium',
     author_email='master_fess@mail.ru',
@@ -77,7 +77,7 @@ setup(
 
     packages=['textdistance', 'textdistance.algorithms'],
     package_data={'': ['*.json']},
-    requires=['python (>= 2.7)'],
+    python_requires='>=2.7',
     extras_require=extras,
 
     url='https://github.com/orsinium/textdistance',
