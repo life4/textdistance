@@ -340,6 +340,8 @@ class NeedlemanWunsch(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
     """
+    positive = False
+
     def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
         self.qval = qval
         self.gap_cost = gap_cost
@@ -350,7 +352,18 @@ class NeedlemanWunsch(_BaseSimilarity):
         self.external = external
 
     def maximum(self, *sequences):
-        return min(map(len, sequences))
+        return max(map(len, sequences))
+
+    def distance(self, *sequences):
+        """Get distance between sequences
+        """
+        return -1 * self.similarity(*sequences)
+
+    def normalized_distance(self, *sequences):
+        """Get distance from 0 to 1
+        """
+        maximum = self.maximum(*sequences)
+        return float(maximum + self.distance(*sequences)) / (2 * maximum)
 
     def __call__(self, s1, s2):
         if not numpy:
@@ -429,7 +442,7 @@ class SmithWaterman(_BaseSimilarity):
         return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
 
 
-class Gotoh(_BaseSimilarity):
+class Gotoh(NeedlemanWunsch):
     """Gotoh score
     Gotoh's algorithm is essentially Needleman-Wunsch with affine gap
     penalties:
@@ -444,9 +457,6 @@ class Gotoh(_BaseSimilarity):
         else:
             self.sim_func = self._ident
         self.external = external
-
-    def maximum(self, *sequences):
-        return min(map(len, sequences))
 
     def __call__(self, s1, s2):
         if not numpy:
