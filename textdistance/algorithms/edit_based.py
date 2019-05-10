@@ -373,7 +373,7 @@ class NeedlemanWunsch(_BaseSimilarity):
 
         result = self.quick_answer(s1, s2)
         if result is not None:
-            return result
+            return result * self.maximum(s1, s2)
 
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
@@ -466,7 +466,7 @@ class Gotoh(NeedlemanWunsch):
 
         result = self.quick_answer(s1, s2)
         if result is not None:
-            return result
+            return result * self.maximum(s1, s2)
 
         len_s1 = len(s1)
         len_s2 = len(s2)
