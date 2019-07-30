@@ -25,10 +25,10 @@ __all__ = [
 
 class Jaccard(_BaseSimilarity):
     """
-    Compute the Jaccard distance between the two sequences.
+    Compute the Jaccard similarity between the two sequences.
     They should contain hashable items.
-    The return value is a float between 0 and 1, where 0 means equal,
-    and 1 totally different.
+    The return value is a float between 0 and 1, where 1 means equal,
+    and 0 totally different.
 
     https://en.wikipedia.org/wiki/Jaccard_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaccard.js
