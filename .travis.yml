@@ -1,30 +1,30 @@
 language: python
 matrix:
   include:
-    - python: "2.7"
-      env: TOXENV=py2-CONS-NUMPY
-    - python: "3.5"
-      env: TOXENV=py35-CONS-NUMPY
 
+    # 2.7
     - python: "2.7"
       env: TOXENV=py2-NOCONS-NUMPY
-    - python: "3.5"
-      env: TOXENV=py35-NOCONS-NUMPY
-
-    - python: "2.7"
-      env: TOXENV=py2-CONS-NONUMPY
-    - python: "3.5"
-      env: TOXENV=py35-CONS-NONUMPY
-
     - python: "2.7"
       env: TOXENV=py2-NOCONS-NONUMPY
+
+    # 3.5
+    - python: "3.5"
+      env: TOXENV=py35-CONS-NUMPY
+    - python: "3.5"
+      env: TOXENV=py35-NOCONS-NUMPY
+    - python: "3.5"
+      env: TOXENV=py35-CONS-NONUMPY
     - python: "3.5"
       env: TOXENV=py35-NOCONS-NONUMPY
+
+    # exotic
     - python: "3.7-dev"
       env: TOXENV=py37-NOCONS-NONUMPY
     - python: pypy3.5
       env: TOXENV=pypy-NOCONS-NONUMPY
 
+    # code quality
     - python: "3.7-dev"
       env: TOXENV=flake8
 install:
