@@ -39,7 +39,10 @@ class Base(object):
     def normalized_distance(self, *sequences):
         """Get distance from 0 to 1
         """
-        return float(self.distance(*sequences)) / self.maximum(*sequences)
+        maximum = self.maximum(*sequences)
+        if maximum == 0:
+            return 1
+        return float(self.distance(*sequences)) / maximum
 
     def normalized_similarity(self, *sequences):
         """Get similarity from 0 to 1
