@@ -158,6 +158,12 @@ class Base(object):
         else:
             return sum(counter.values())
 
+    def __repr__(self):
+        return '{name}({data})'.format(
+            name=type(self).__name__,
+            data=self.__dict__,
+        )
+
 
 class BaseSimilarity(Base):
     def distance(self, *sequences):

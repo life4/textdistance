@@ -340,6 +340,8 @@ class NeedlemanWunsch(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
     """
+    positive = False
+
     def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
         self.qval = qval
         self.gap_cost = gap_cost
@@ -349,8 +351,30 @@ class NeedlemanWunsch(_BaseSimilarity):
             self.sim_func = self._ident
         self.external = external
 
+    def minimum(self, *sequences):
+        return - max(map(len, sequences)) * self.gap_cost
+
     def maximum(self, *sequences):
-        return min(map(len, sequences))
+        return max(map(len, sequences))
+
+    def distance(self, *sequences):
+        """Get distance between sequences
+        """
+        return -1 * self.similarity(*sequences)
+
+    def normalized_distance(self, *sequences):
+        """Get distance from 0 to 1
+        """
+        minimum = self.minimum(*sequences)
+        maximum = self.maximum(*sequences)
+        return float(self.distance(*sequences) - minimum) / (maximum * 2)
+
+    def normalized_similarity(self, *sequences):
+        """Get distance from 0 to 1
+        """
+        minimum = self.minimum(*sequences)
+        maximum = self.maximum(*sequences)
+        return float(self.similarity(*sequences) - minimum) / (maximum * 2)
 
     def __call__(self, s1, s2):
         if not numpy:
@@ -358,9 +382,9 @@ class NeedlemanWunsch(_BaseSimilarity):
 
         s1, s2 = self._get_sequences(s1, s2)
 
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
+        # result = self.quick_answer(s1, s2)
+        # if result is not None:
+        #     return result * self.maximum(s1, s2)
 
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
@@ -429,7 +453,7 @@ class SmithWaterman(_BaseSimilarity):
         return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
 
 
-class Gotoh(_BaseSimilarity):
+class Gotoh(NeedlemanWunsch):
     """Gotoh score
     Gotoh's algorithm is essentially Needleman-Wunsch with affine gap
     penalties:
@@ -445,6 +469,9 @@ class Gotoh(_BaseSimilarity):
             self.sim_func = self._ident
         self.external = external
 
+    def minimum(self, *sequences):
+        return -min(map(len, sequences))
+
     def maximum(self, *sequences):
         return min(map(len, sequences))
 
@@ -454,9 +481,9 @@ class Gotoh(_BaseSimilarity):
 
         s1, s2 = self._get_sequences(s1, s2)
 
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
+        # result = self.quick_answer(s1, s2)
+        # if result is not None:
+        #     return result * self.maximum(s1, s2)
 
         len_s1 = len(s1)
         len_s2 = len(s2)
