@@ -185,7 +185,7 @@ class Tanimoto(Jaccard):
     and the Tversky index for alpha=1 and beta=1.
     """
     def __call__(self, *sequences):
-        result = super(Tanimoto, self)(*sequences)
+        result = super(Tanimoto, self).__call__(*sequences)
         if result == 0:
             return float('-inf')
         else:
