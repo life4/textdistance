@@ -41,14 +41,14 @@ algos = [
 
 if NUMPY:
     algos.extend([
-        # textdistance.gotoh,
+        textdistance.gotoh,
         textdistance.needleman_wunsch,
         # textdistance.smith_waterman,
         # textdistance.editex,
     ])
 
 
-CAN_BE_NEGATIVE = {'NeedlemanWunsch'}
+CAN_BE_NEGATIVE = {'NeedlemanWunsch', 'Gotoh'}
 
 
 class CommonTest(unittest.TestCase):

@@ -469,15 +469,21 @@ class Gotoh(NeedlemanWunsch):
             self.sim_func = self._ident
         self.external = external
 
+    def minimum(self, *sequences):
+        return -min(map(len, sequences))
+
+    def maximum(self, *sequences):
+        return min(map(len, sequences))
+
     def __call__(self, s1, s2):
         if not numpy:
             raise ImportError('Please, install numpy for Gotoh measure')
 
         s1, s2 = self._get_sequences(s1, s2)
 
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result * self.maximum(s1, s2)
+        # result = self.quick_answer(s1, s2)
+        # if result is not None:
+        #     return result * self.maximum(s1, s2)
 
         len_s1 = len(s1)
         len_s2 = len(s2)
