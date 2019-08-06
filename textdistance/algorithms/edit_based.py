@@ -351,6 +351,9 @@ class NeedlemanWunsch(_BaseSimilarity):
             self.sim_func = self._ident
         self.external = external
 
+    def minimum(self, *sequences):
+        return - max(map(len, sequences)) * self.gap_cost
+
     def maximum(self, *sequences):
         return max(map(len, sequences))
 
@@ -362,8 +365,16 @@ class NeedlemanWunsch(_BaseSimilarity):
     def normalized_distance(self, *sequences):
         """Get distance from 0 to 1
         """
+        minimum = self.minimum(*sequences)
         maximum = self.maximum(*sequences)
-        return float(maximum + self.distance(*sequences)) / (2 * maximum)
+        return float(self.distance(*sequences) - minimum) / (maximum * 2)
+
+    def normalized_similarity(self, *sequences):
+        """Get distance from 0 to 1
+        """
+        minimum = self.minimum(*sequences)
+        maximum = self.maximum(*sequences)
+        return float(self.similarity(*sequences) - minimum) / (maximum * 2)
 
     def __call__(self, s1, s2):
         if not numpy:
@@ -371,9 +382,9 @@ class NeedlemanWunsch(_BaseSimilarity):
 
         s1, s2 = self._get_sequences(s1, s2)
 
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result * self.maximum(s1, s2)
+        # result = self.quick_answer(s1, s2)
+        # if result is not None:
+        #     return result * self.maximum(s1, s2)
 
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
