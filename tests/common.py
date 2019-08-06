@@ -43,14 +43,19 @@ if NUMPY:
     algos.extend([
         textdistance.gotoh,
         textdistance.needleman_wunsch,
-        textdistance.smith_waterman,
+        # textdistance.smith_waterman,
         # textdistance.editex,
     ])
+
+
+CAN_BE_NEGATIVE = {'NeedlemanWunsch', 'Gotoh'}
 
 
 class CommonTest(unittest.TestCase):
     def test_similar_distance(self):
         for alg in algos:
+            if alg.__class__.__name__ in CAN_BE_NEGATIVE:
+                continue
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
                 d = alg.distance('test me', 'test me')
                 self.assertEqual(d, 0)
@@ -62,7 +67,7 @@ class CommonTest(unittest.TestCase):
                 self.assertEqual(s, 0)
 
 
-class EmptyTest(unittest.TestCase):
+class CommonEmptyTest(unittest.TestCase):
     def test_equal_distance(self):
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
@@ -77,7 +82,7 @@ class EmptyTest(unittest.TestCase):
                     self.assertGreater(d, 0)
 
 
-class NormalizationTest(unittest.TestCase):
+class CommonNormalizationTest(unittest.TestCase):
     def test_similar_similarity(self):
         for alg in algos:
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
@@ -86,36 +91,31 @@ class NormalizationTest(unittest.TestCase):
 
     def test_different_distance(self):
         for alg in algos:
+            if alg.__class__.__name__ in CAN_BE_NEGATIVE:
+                continue
             with self.subTest(algorithm=alg.__class__.__name__, func=alg):
                 s = alg.normalized_distance('spam', 'qwer')
                 self.assertEqual(s, 1)
 
 
-class CompareTest(unittest.TestCase):
-    def test_absolute(self):
-        for alg in algos:
-            alg_name = alg.__class__.__name__
-
-            with self.subTest(algorithm=alg_name, func=alg):
-                d = alg.distance('test', 'text')
-                s = alg.similarity('test', 'text')
-                self.assertGreaterEqual(d, 0)
-            with self.subTest(algorithm=alg_name, func=alg):
-                d = alg.distance('test', 'bulk')
-                s = alg.similarity('test', 'bulk')
-                self.assertGreaterEqual(d, s)
+class CommonCompareTest(unittest.TestCase):
+    texts = (
+        ('text', 'test'),
+        ('bulk', 'test'),
+        ('xx', 'xxx'),
+        ('x', 'xxx'),
+    )
 
     def test_normalized(self):
         for alg in algos:
             alg_name = alg.__class__.__name__
-            with self.subTest(algorithm=alg_name, func=alg):
-                d = alg.normalized_distance('test', 'text')
-                s = alg.normalized_similarity('test', 'text')
-                self.assertGreaterEqual(d, 0)
-                self.assertLessEqual(d, 1)
-                self.assertGreaterEqual(s, 0)
-                self.assertLessEqual(s, 1)
-            with self.subTest(algorithm=alg_name, func=alg):
-                d = alg.normalized_distance('test', 'bulk')
-                s = alg.normalized_similarity('test', 'bulk')
-                self.assertGreaterEqual(d, s)
+            for t1, t2 in self.texts:
+                with self.subTest(algorithm=alg_name, func=alg, t1=t1, t2=t2, cat='dist'):
+                    d = alg.normalized_distance(t1, t2)
+                    self.assertGreaterEqual(d, 0)
+                    self.assertLessEqual(d, 1)
+
+                with self.subTest(algorithm=alg_name, func=alg, t1=t1, t2=t2, cat='sim'):
+                    s = alg.normalized_similarity(t1, t2)
+                    self.assertGreaterEqual(s, 0)
+                    self.assertLessEqual(s, 1)
