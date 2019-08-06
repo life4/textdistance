@@ -44,15 +44,11 @@ class CosineTest(unittest.TestCase):
 
 
 class MongeElkanTest(unittest.TestCase):
-    alg = textdistance.MongeElkan(qval=2).normalized_distance
+    alg = textdistance.MongeElkan(qval=1, algorithm=textdistance.jaro_winkler).similarity
 
     def test_common(self):
-        self.assertAlmostEqual(self.alg('Niall', 'Neal'), 3.0 / 4)
-        self.assertEqual(self.alg('Niall', 'Niel'), 3.0 / 4)
-        self.assertEqual(self.alg('Niall', 'Nigel'), 3.0 / 4)
-
-        alg = textdistance.MongeElkan(qval=2, symmetric=True).normalized_distance
-        self.assertAlmostEqual(alg('text', 'test'), 2.0 / 3)
+        self.assertAlmostEqual(self.alg(['Niall'], ['Neal']), .805)
+        self.assertAlmostEqual(self.alg(['Niall'], ['Nigel']), .78666666)
 
 
 class BagTest(unittest.TestCase):

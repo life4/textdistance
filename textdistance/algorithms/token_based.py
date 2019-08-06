@@ -206,9 +206,15 @@ class MongeElkan(_BaseSimilarity):
         self.qval = qval
 
     def maximum(self, *sequences):
-        return self.algorithm.maximum(*sequences)
+        result = self.algorithm.maximum(sequences)
+        for seq in sequences:
+            if seq:
+                result = max(result, self.algorithm.maximum(*seq))
+        return result
 
     def _calc(self, seq, *sequences):
+        if not seq:
+            return 0
         maxes = []
         for c1 in seq:
             for s in sequences:
@@ -216,7 +222,7 @@ class MongeElkan(_BaseSimilarity):
                 for c2 in s:
                     max_sim = max(max_sim, self.algorithm.similarity(c1, c2))
                 maxes.append(max_sim)
-        return float(sum(maxes)) / len(maxes)
+        return float(sum(maxes)) / len(seq) / len(maxes)
 
     def __call__(self, *sequences):
         result = self.quick_answer(*sequences)
