@@ -114,6 +114,9 @@ With extra libraries for maximum speed:
 ```bash
 pip install textdistance[extras]
 ```
+ > Note:
+ > If you are using ZSH or any shell which use [] as globbing/regex detection this command won't work. A work around is to use the escape character of your shell. As an example with ZSH :
+ > `pip install 'textdistance[extras]'`
 
 With all libraries (required for [benchmarking](#benchmarks) and [testing](#test)):
 
