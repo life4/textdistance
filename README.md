@@ -112,19 +112,19 @@ pip install textdistance
 With extra libraries for maximum speed:
 
 ```bash
-pip install textdistance[extras]
+pip install "textdistance[extras]"
 ```
 
 With all libraries (required for [benchmarking](#benchmarks) and [testing](#test)):
 
 ```bash
-pip install textdistance[benchmark]
+pip install "textdistance[benchmark]"
 ```
 
 With algorithm specific extras:
 
 ```bash
-pip install textdistance[Hamming]
+pip install "textdistance[Hamming]"
 ```
 
 Algorithms with available extras: `DamerauLevenshtein`, `Hamming`, `Jaro`, `JaroWinkler`, `Levenshtein`.
@@ -141,7 +141,7 @@ Or clone repo and install with some extras:
 
 ```bash
 git clone https://github.com/orsinium/textdistance.git
-pip install -e .[benchmark]
+pip install -e ".[benchmark]"
 ```
 
 
