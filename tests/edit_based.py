@@ -50,6 +50,12 @@ class JaroTest(unittest.TestCase):
         self.assertAlmostEqual(self.alg.similarity('DWAYNE', 'DUANE'), 0.822222222)
         self.assertAlmostEqual(self.alg.similarity('DIXON', 'DICKSONX'), 0.76666666)
 
+        # https://github.com/life4/textdistance/issues/41
+        self.assertAlmostEqual(
+            self.alg.similarity('Sint-Pietersplein 6, 9000 Gent', 'Test 10, 1010 Brussel'),
+            0.5182539682539683,
+        )
+
 
 class JaroWinklerTest(unittest.TestCase):
     alg = textdistance.JaroWinkler(external=False)
