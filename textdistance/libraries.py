@@ -158,7 +158,8 @@ prototype.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jar
 
 # libraries.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
 prototype.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler', conditions=dict(winklerize=True)))
-prototype.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
+# https://github.com/life4/textdistance/issues/39
+# prototype.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
 prototype.register('Levenshtein', LibraryBase('abydos.distance', 'levenshtein'))
 prototype.register('Levenshtein', LibraryBase('distance', 'levenshtein'))

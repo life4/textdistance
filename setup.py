@@ -38,7 +38,7 @@ extras = {
         'python-Levenshtein',   # only text
     ],
     'JaroWinkler': [
-        'python-Levenshtein',   # only text
+        'jellyfish',            # only text
     ],
     'Levenshtein': [
         'python-Levenshtein',   # only text
