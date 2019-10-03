@@ -262,8 +262,8 @@ class JaroWinkler(_BaseSimilarity):
         # looking only within search range, count & flag matched pairs
         common_chars = 0
         for i, s1_ch in enumerate(s1):
-            low = i - search_range if i > search_range else 0
-            hi = i + search_range if i + search_range < s2_len else s2_len - 1
+            low = max(0, i - search_range)
+            hi = min(i + search_range, s2_len - 1)
             for j in range(low, hi + 1):
                 if not s2_flags[j] and s2[j] == s1_ch:
                     s1_flags[i] = s2_flags[j] = True
@@ -284,7 +284,7 @@ class JaroWinkler(_BaseSimilarity):
                         break
                 if s1[i] != s2[j]:
                     trans_count += 1
-        trans_count /= 2
+        trans_count //= 2
 
         # adjust for similarities in nonmatched characters
         common_chars = float(common_chars)
@@ -312,7 +312,7 @@ class JaroWinkler(_BaseSimilarity):
         # agreed characters must be > half of remaining characters
         if not self.long_tolerance or min_len <= 4:
             return weight
-        if common_chars < i or 2 * common_chars < min_len + i:
+        if common_chars <= i + 1 or 2 * common_chars < min_len + i:
             return weight
         tmp = float(common_chars - i - 1) / (s1_len + s2_len - i * 2 + 2)
         weight += (1.0 - weight) * tmp
