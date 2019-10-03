@@ -119,7 +119,7 @@ class LCSStr(_BaseSimilarity):
             return sequences[0]
 
         sequences = self._get_sequences(*sequences)
-        if length == 2:
+        if length == 2 and max(map(len, sequences)) < 200:
             return self._standart(*sequences)
         return self._custom(*sequences)
 
