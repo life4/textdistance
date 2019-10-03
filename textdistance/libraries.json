@@ -47,10 +47,6 @@
   ],
   "JaroWinkler": [
     [
-      "Levenshtein",
-      "jaro_winkler"
-    ],
-    [
       "jellyfish",
       "jaro_winkler"
     ]

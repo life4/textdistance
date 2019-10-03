@@ -62,6 +62,10 @@ class JaroWinklerTest(unittest.TestCase):
         self.assertAlmostEqual(self.alg.similarity('DWAYNE', 'DUANE'), 0.84)
         self.assertAlmostEqual(self.alg.similarity('DIXON', 'DICKSONX'), 0.81333333)
 
+        # https://github.com/life4/textdistance/issues/39
+        ext = textdistance.JaroWinkler(external=True)
+        self.assertAlmostEqual(ext.similarity('duck donald', 'duck daisy'), 0.867272727272)
+
 
 class MatrixTest(unittest.TestCase):
     def test_common(self):

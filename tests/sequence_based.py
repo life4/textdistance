@@ -43,5 +43,6 @@ class LCSStrTest(unittest.TestCase):
         self.assertEqual(self.alg('ef', 'abcd'), '')
 
         # long
+        # https://github.com/life4/textdistance/issues/40
         self.assertEqual(self.alg('MYTEST' * 100, 'TEST'), 'TEST')
         self.assertEqual(self.alg('TEST', 'MYTEST' * 100), 'TEST')
