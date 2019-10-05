@@ -2,7 +2,7 @@
 
 ![TextDistance logo](logo.png)
 
-[![Build Status](https://travis-ci.org/orsinium/textdistance.svg?branch=master)](https://travis-ci.org/orsinium/textdistance) [![PyPI version](https://img.shields.io/pypi/v/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Status](https://img.shields.io/pypi/status/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Code size](https://img.shields.io/github/languages/code-size/orsinium/textdistance.svg)](https://github.com/orsinium/textdistance) [![License](https://img.shields.io/pypi/l/textdistance.svg)](LICENSE)
+[![Build Status](https://travis-ci.org/life4/textdistance.svg?branch=master)](https://travis-ci.org/life4/textdistance) [![PyPI version](https://img.shields.io/pypi/v/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Status](https://img.shields.io/pypi/status/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Code size](https://img.shields.io/github/languages/code-size/life4/textdistance.svg)](https://github.com/life4/textdistance) [![License](https://img.shields.io/pypi/l/textdistance.svg)](LICENSE)
 
 **TextDistance** -- python library for comparing distance between two or more sequences by many algorithms.
 
@@ -134,13 +134,13 @@ Algorithms with available extras: `DamerauLevenshtein`, `Hamming`, `Jaro`, `Jaro
 Via pip:
 
 ```bash
-pip install -e git+https://github.com/orsinium/textdistance.git#egg=textdistance
+pip install -e git+https://github.com/life4/textdistance.git#egg=textdistance
 ```
 
 Or clone repo and install with some extras:
 
 ```bash
-git clone https://github.com/orsinium/textdistance.git
+git clone https://github.com/life4/textdistance.git
 pip install -e ".[benchmark]"
 ```
 
