@@ -197,13 +197,13 @@ Via pip:
 
 .. code:: bash
 
-    pip install -e git+https://github.com/orsinium/textdistance.git#egg=textdistance
+    pip install -e git+https://github.com/life4/textdistance.git#egg=textdistance
 
 Or clone repo and install with some extras:
 
 .. code:: bash
 
-    git clone https://github.com/orsinium/textdistance.git
+    git clone https://github.com/life4/textdistance.git
     pip install -e ".[benchmark]"
 
 Usage
@@ -418,13 +418,13 @@ You can run tests via `tox <https://tox.readthedocs.io/en/latest/>`__:
     sudo pip3 install tox
     tox
 
-.. |Build Status| image:: https://travis-ci.org/orsinium/textdistance.svg?branch=master
-   :target: https://travis-ci.org/orsinium/textdistance
+.. |Build Status| image:: https://travis-ci.org/life4/textdistance.svg?branch=master
+   :target: https://travis-ci.org/life4/textdistance
 .. |PyPI version| image:: https://img.shields.io/pypi/v/textdistance.svg
    :target: https://pypi.python.org/pypi/textdistance
 .. |Status| image:: https://img.shields.io/pypi/status/textdistance.svg
    :target: https://pypi.python.org/pypi/textdistance
-.. |Code size| image:: https://img.shields.io/github/languages/code-size/orsinium/textdistance.svg
-   :target: https://github.com/orsinium/textdistance
+.. |Code size| image:: https://img.shields.io/github/languages/code-size/life4/textdistance.svg
+   :target: https://github.com/life4/textdistance
 .. |License| image:: https://img.shields.io/pypi/l/textdistance.svg
    :target: LICENSE
