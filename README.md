@@ -79,7 +79,7 @@ Work in progress algorithms that compare two strings as array of bits:
 | [LZMA](https://en.wikipedia.org/wiki/LZMA) | `LZMANCD` | `lzma_ncd` |
 | [ZLib](https://en.wikipedia.org/wiki/Zlib) | `ZLIBNCD` | `zlib_ncd` |
 
-See [blog post](https://articles.life4web.ru/eng/ncd/) for more details about NCD.
+See [blog post](https://articles.life4web.ru/other/ncd/) for more details about NCD.
 
 ### Phonetic
 
@@ -199,6 +199,15 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 ```
 
 Any other algorithms have same interface.
+
+
+## Articles
+
+A few articles with examples how to use textdistance in the real world:
+
+- [Guide to Fuzzy Matching with Python](http://theautomatic.net/2019/11/13/guide-to-fuzzy-matching-with-python/)
+- [String similarity — the basic know your algorithms guide!](https://itnext.io/string-similarity-the-basic-know-your-algorithms-guide-3de3d7346227)
+- [Normalized compression distance](https://articles.life4web.ru/other/ncd/)
 
 
 ## Extra libraries
