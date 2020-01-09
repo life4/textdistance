@@ -139,7 +139,7 @@ class RatcliffObershelp(_BaseSimilarity):
         3. Multiply this length by 2 and divide by the sum of the lengths of
            sequences.
 
-    http://collaboration.cmc.ec.gc.ca/science/rpn/biblio/ddj/Website/articles/DDJ/1988/8807/8807c/8807c.htm
+    https://en.wikipedia.org/wiki/Gestalt_Pattern_Matching
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/ratcliff-obershelp.js
     https://xlinux.nist.gov/dads/HTML/ratcliffObershelp.html
     """
