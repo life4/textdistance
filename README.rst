@@ -81,7 +81,7 @@ Sequence based
 +-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
 | `longest common substring similarity <https://docs.python.org/2/library/difflib.html#difflib.SequenceMatcher>`__                              | ``LCSStr``              | ``lcsstr``               |
 +-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
-| `Ratcliff-Obershelp similarity <http://collaboration.cmc.ec.gc.ca/science/rpn/biblio/ddj/Website/articles/DDJ/1988/8807/8807c/8807c.htm>`__   | ``RatcliffObershelp``   | ``ratcliff_obershelp``   |
+| `Ratcliff-Obershelp similarity <https://en.wikipedia.org/wiki/Gestalt_Pattern_Matching>`__                                                    | ``RatcliffObershelp``   | ``ratcliff_obershelp``   |
 +-----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+--------------------------+
 
 Compression based
