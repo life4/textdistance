@@ -41,8 +41,12 @@ Features:
 | [Overlap coefficient](https://en.wikipedia.org/wiki/Overlap_coefficient)                  | `Overlap`            | `overlap`    |
 | [Tanimoto distance](https://en.wikipedia.org/wiki/Jaccard_index#Tanimoto_similarity_and_distance) | `Tanimoto`   | `tanimoto`   |
 | [Cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)                      | `Cosine`             | `cosine`     |
-| [Monge-Elkan](https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison) | `MongeElkan` | `monge_elkan` |
 | [Bag distance](https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/bag.js) | `Bag`        | `bag`        |
+
+### Hybrid
+| Algorithm                                                                                 | Class                | Functions     |
+|-------------------------------------------------------------------------------------------|----------------------|---------------|
+| [Monge-Elkan](https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison) | `MongeElkan` | `monge_elkan` |
 
 ### Sequence based
 
