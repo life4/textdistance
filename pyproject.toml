@@ -1,0 +1,10 @@
+
+[tool.dephell.pytest-pure]
+from = "setup.py"
+envs = ["test"]
+command = "python3 -m pytest -m 'not external' tests/"
+
+[tool.dephell.pytest-external]
+from = "setup.py"
+envs = ["test", "benchmark"]
+command = "python3 -m pytest -m external tests/"

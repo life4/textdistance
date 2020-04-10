@@ -13,16 +13,27 @@ extras = {
         'python-Levenshtein',       # for Jaro and Levenshtein
         'pyxDamerauLevenshtein',    # for DamerauLevenshtein
     ],
+
     # needed for benchmarking, optimization and testing
     'benchmark': [
-        'abydos',                   # from common
-        'jellyfish',                # from common
-        'numpy',                    # from common
-        'py_stringmatching',        # maybe will be faster on your system :)
-        'python-Levenshtein',       # from common
-        'pyxDamerauLevenshtein',    # from common
-        'tabulate',                 # for benchmark's tables
+        # common
+        'abydos',
+        'jellyfish',
+        'numpy',
+        'python-Levenshtein',
+        'pyxDamerauLevenshtein',
+        # slow
+        'distance',
+        'pylev',
+        'py_stringmatching',
+        # other
+        'tabulate',     # to draw the table with results
     ],
+    'test': [
+        'hypothesis',
+        'pytest',
+    ],
+
     # for algos, from fastest to slowest, only faster than textdistance:
     'DamerauLevenshtein': [
         'jellyfish',                # only for text
