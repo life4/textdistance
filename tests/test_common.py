@@ -75,6 +75,19 @@ def test_normalization_same(text, alg):
 
 
 @pytest.mark.parametrize('alg', ALGS)
+@hypothesis.given(
+    left=hypothesis.strategies.text(min_size=1),
+    right=hypothesis.strategies.text(min_size=1),
+)
+def test_normalization_monotonic(left, right, alg):
+    nd = alg.normalized_distance(left, right)
+    ns = alg.normalized_similarity(left, right)
+    d = alg.distance(left, right)
+    s = alg.similarity(left, right)
+    assert (nd < ns) == (d < s)
+
+
+@pytest.mark.parametrize('alg', ALGS)
 def test_no_common_chars(alg):
     assert alg.similarity('spam', 'qwer') == 0
 

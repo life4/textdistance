@@ -78,7 +78,7 @@ class Matrix(_BaseSimilarity):
     """Matrix similarity
     """
 
-    def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric=True):
+    def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric=True, external=True):
         self.mat = mat
         self.mismatch_cost = mismatch_cost
         self.match_cost = match_cost
