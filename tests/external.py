@@ -12,22 +12,6 @@ class ExternalTest(unittest.TestCase):
         ('qwer', 'asdf'),
     )
 
-    def test_compare(self):
-        for alg in libraries.get_algorithms():
-            for lib in libraries.get_libs(alg):
-                conditions = lib.conditions or {}
-                internal_func = getattr(textdistance, alg)(external=False, **conditions)
-                external_func = lib.get_function()
-
-                for s1, s2 in self.test_cases:
-                    with self.subTest(alg=alg, lib=lib.module_name, s1=s1, s2=s2):
-                        if not lib.check_conditions(internal_func, s1, s2):
-                            continue
-                        int_result = internal_func(s1, s2)
-                        s1, s2 = lib.prepare(s1, s2)
-                        ext_result = external_func(s1, s2)
-                        self.assertAlmostEqual(int_result, ext_result)
-
     def test_qval(self):
         for alg in libraries.get_algorithms():
             for lib in libraries.get_libs(alg):
