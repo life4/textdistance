@@ -155,7 +155,7 @@ prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
 prototype.register('Hamming', SameLengthTextLibrary('Levenshtein', 'hamming'))
 prototype.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
 
-# prototype.register('Jaro', TextLibrary('jellyfish', 'jaro_distance'))
+prototype.register('Jaro', TextLibrary('jellyfish', 'jaro_distance'))
 # prototype.register('Jaro', TextLibrary('Levenshtein', 'jaro'))
 # prototype.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
 
