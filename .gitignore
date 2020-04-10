@@ -5,3 +5,4 @@ build/
 dist/
 .tox/
 licenses_example/choosealicense.com
+.hypothesis/
