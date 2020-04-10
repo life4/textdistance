@@ -48,7 +48,7 @@ def test_monotonicity_compressor(left, right):
     right=hypothesis.strategies.characters(),
 )
 def test_distributivity_compressor(left1, left2, right):
-    if right in left1 and right in left2:
+    if right in left1 or right in left2:
         return
     actual1 = ALG._get_size(left1 + left2) + ALG._get_size(right)
     actual2 = ALG._get_size(left1 + right) + ALG._get_size(left2 + right)
