@@ -6,7 +6,7 @@ import hypothesis
 import textdistance
 
 
-@pytest.mark.parametrize('alg', [
+ALGS = (
     textdistance.arith_ncd,
     textdistance.bwtrle_ncd,
     textdistance.bz2_ncd,
@@ -15,7 +15,10 @@ import textdistance
     textdistance.zlib_ncd,
     textdistance.sqrt_ncd,
     textdistance.entropy_ncd,
-])
+)
+
+
+@pytest.mark.parametrize('alg', ALGS)
 def test_monotonicity(alg):
     same = alg('test', 'test')
     similar = alg('test', 'text')
@@ -23,16 +26,7 @@ def test_monotonicity(alg):
     assert same <= similar <= diffirent
 
 
-@pytest.mark.parametrize('alg', [
-    textdistance.arith_ncd,
-    textdistance.bwtrle_ncd,
-    textdistance.bz2_ncd,
-    textdistance.lzma_ncd,
-    textdistance.rle_ncd,
-    textdistance.zlib_ncd,
-    textdistance.sqrt_ncd,
-    textdistance.entropy_ncd,
-])
+@pytest.mark.parametrize('alg', ALGS)
 @hypothesis.given(
     left=hypothesis.strategies.text(),
     right=hypothesis.strategies.text(),
@@ -44,16 +38,7 @@ def test_simmetry(left, right, alg):
     assert alg.normalized_distance(left, right) == alg.normalized_distance(right, left)
 
 
-@pytest.mark.parametrize('alg', [
-    textdistance.arith_ncd,
-    textdistance.bwtrle_ncd,
-    textdistance.bz2_ncd,
-    textdistance.lzma_ncd,
-    textdistance.rle_ncd,
-    textdistance.zlib_ncd,
-    textdistance.sqrt_ncd,
-    textdistance.entropy_ncd,
-])
+@pytest.mark.parametrize('alg', ALGS)
 @hypothesis.given(
     left=hypothesis.strategies.text(),
     right=hypothesis.strategies.text(),
@@ -65,16 +50,7 @@ def test_is_normalized(left, right, alg):
     assert a == d == nd
 
 
-@pytest.mark.parametrize('alg', [
-    textdistance.arith_ncd,
-    textdistance.bwtrle_ncd,
-    textdistance.bz2_ncd,
-    textdistance.lzma_ncd,
-    textdistance.rle_ncd,
-    textdistance.zlib_ncd,
-    textdistance.sqrt_ncd,
-    textdistance.entropy_ncd,
-])
+@pytest.mark.parametrize('alg', ALGS)
 @hypothesis.given(
     left=hypothesis.strategies.text(),
     right=hypothesis.strategies.text(),
