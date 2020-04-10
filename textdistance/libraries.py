@@ -145,10 +145,10 @@ class SameLengthTextLibrary(SameLengthLibrary, TextLibrary):
 
 prototype = LibrariesManager()
 
-# prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'damerau_levenshtein'))
-# prototype.register('DamerauLevenshtein', LibraryBase('pylev', 'damerau_levenshtein'))
-# prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
-# prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
+prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'damerau_levenshtein'))
+prototype.register('DamerauLevenshtein', LibraryBase('pylev', 'damerau_levenshtein'))
+prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
+prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
 
 prototype.register('Hamming', LibraryBase('abydos.distance', 'hamming'))
 prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
