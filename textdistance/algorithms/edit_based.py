@@ -287,7 +287,6 @@ class JaroWinkler(_BaseSimilarity):
         trans_count //= 2
 
         # adjust for similarities in nonmatched characters
-        common_chars = float(common_chars)
         weight = common_chars / s1_len + common_chars / s2_len
         weight += (common_chars - trans_count) / common_chars
         weight /= 3
@@ -314,7 +313,7 @@ class JaroWinkler(_BaseSimilarity):
             return weight
         if common_chars <= i + 1 or 2 * common_chars < min_len + i:
             return weight
-        tmp = float(common_chars - i - 1) / (s1_len + s2_len - i * 2 + 2)
+        tmp = (common_chars - i - 1) / (s1_len + s2_len - i * 2 + 2)
         weight += (1.0 - weight) * tmp
         return weight
 
@@ -370,7 +369,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         maximum = self.maximum(*sequences)
         if maximum == 0:
             return 0
-        return float(self.distance(*sequences) - minimum) / (maximum * 2)
+        return (self.distance(*sequences) - minimum) / (maximum * 2)
 
     def normalized_similarity(self, *sequences):
         """Get distance from 0 to 1
@@ -379,7 +378,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         maximum = self.maximum(*sequences)
         if maximum == 0:
             return 1
-        return float(self.similarity(*sequences) - minimum) / (maximum * 2)
+        return (self.similarity(*sequences) - minimum) / (maximum * 2)
 
     def __call__(self, s1, s2):
         if not numpy:
@@ -640,8 +639,8 @@ class StrCmp95(_BaseSimilarity):
         num_sim = n_simi / 10.0 + num_com
 
         # Main weight computation
-        weight = float(num_sim) / len_s1 + num_sim / len_s2
-        weight += float(num_com - n_trans) / num_com
+        weight = num_sim / len_s1 + num_sim / len_s2
+        weight += (num_com - n_trans) / num_com
         weight = weight / 3.0
 
         # Continue to boost the weight if the strings are similar
@@ -709,7 +708,7 @@ class MLIPNS(_BaseSimilarity):
         while all(sequences) and mismatches <= self.maxmismatches:
             if not maxlen:
                 return 1
-            if 1 - float(maxlen - ham) / maxlen <= self.threshold:
+            if 1 - (maxlen - ham) / maxlen <= self.threshold:
                 return 1
             mismatches += 1
             ham -= 1

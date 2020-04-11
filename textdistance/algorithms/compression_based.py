@@ -65,7 +65,7 @@ class _NCDBase(_Base):
         max_len = max(compressed_lens)
         if max_len == 0:
             return 0
-        return float(concat_len - min(compressed_lens) * (len(sequences) - 1)) / max_len
+        return (concat_len - min(compressed_lens) * (len(sequences) - 1)) / max_len
 
 
 class _BinaryNCDBase(_NCDBase):
@@ -221,7 +221,7 @@ class EntropyNCD(_NCDBase):
         total_count = len(data)
         entropy = 0.0
         for element_count in Counter(data).values():
-            p = float(element_count) / total_count
+            p = element_count / total_count
             entropy -= p * math.log(p, self.base)
         assert entropy >= 0
         return entropy

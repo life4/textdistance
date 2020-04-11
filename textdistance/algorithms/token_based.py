@@ -45,7 +45,7 @@ class Jaccard(_BaseSimilarity):
         intersection = self._count_counters(intersection)        # int
         union = self._union_counters(*sequences)                 # set
         union = self._count_counters(union)                      # int
-        return intersection / float(union)
+        return intersection / union
 
 
 class Sorensen(_BaseSimilarity):
@@ -109,13 +109,13 @@ class Tversky(_BaseSimilarity):
             result = intersection
             for k, s in zip(ks, sequences):
                 result += k * (s - intersection)
-            return float(intersection) / result
+            return intersection / result
 
         s1, s2 = sequences
         alpha, beta = ks
         a_val = min([s1, s2])
         b_val = max([s1, s2])
-        c_val = float(intersection + self.bias)
+        c_val = intersection + self.bias
         result = alpha * beta * (a_val - b_val) + b_val * beta
         return c_val / (result + c_val)
 
@@ -144,7 +144,7 @@ class Overlap(_BaseSimilarity):
         intersection = self._count_counters(intersection)           # int
         sequences = [self._count_counters(s) for s in sequences]    # ints
 
-        return float(intersection) / min(sequences)
+        return intersection / min(sequences)
 
 
 class Cosine(_BaseSimilarity):
@@ -219,7 +219,7 @@ class MongeElkan(_BaseSimilarity):
                 for c2 in s:
                     max_sim = max(max_sim, self.algorithm.similarity(c1, c2))
                 maxes.append(max_sim)
-        return float(sum(maxes)) / len(seq) / len(maxes)
+        return sum(maxes) / len(seq) / len(maxes)
 
     def __call__(self, *sequences):
         result = self.quick_answer(*sequences)
@@ -231,7 +231,7 @@ class MongeElkan(_BaseSimilarity):
             result = []
             for seqs in permutations(sequences):
                 result.append(self._calc(*seqs))
-            return float(sum(result)) / len(result)
+            return sum(result) / len(result)
         else:
             return self._calc(*sequences)
 
