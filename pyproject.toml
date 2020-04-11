@@ -8,3 +8,7 @@ command = "python3 -m pytest -m 'not external' tests/"
 from = "setup.py"
 envs = ["test", "benchmark"]
 command = "python3 -m pytest tests/"
+
+[tool.dephell.flake8]
+from = {format = "pip", path = "requirements-flake.txt"}
+command = "flake8"
