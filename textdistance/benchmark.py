@@ -3,7 +3,7 @@ import json
 from collections import defaultdict, namedtuple
 from timeit import timeit
 
-# project
+# external
 from tabulate import tabulate
 
 # app

@@ -1,7 +1,10 @@
+# built-in
 from math import isclose
 
+# external
 import pytest
 
+# project
 import textdistance
 
 

@@ -9,6 +9,11 @@ from = "setup.py"
 envs = ["test", "benchmark"]
 command = "python3 -m pytest tests/"
 
+[tool.dephell.isort]
+from = "setup.py"
+envs = ["test"]
+command = "python3 -m isort -rc ."
+
 [tool.dephell.flake8]
 from = {format = "pip", path = "requirements-flake.txt"}
 command = "flake8"

@@ -31,6 +31,7 @@ extras = {
     ],
     'test': [
         'hypothesis',
+        'isort',
         'pytest',
     ],
 

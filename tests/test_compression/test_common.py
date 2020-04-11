@@ -1,8 +1,11 @@
+# built-in
 from math import isclose
 
-import pytest
+# external
 import hypothesis
+import pytest
 
+# project
 import textdistance
 
 

@@ -1,8 +1,11 @@
+# built-in
 from fractions import Fraction
 from math import isclose
 
+# external
 import pytest
 
+# project
 import textdistance
 
 

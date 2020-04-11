@@ -2,8 +2,8 @@
 from difflib import SequenceMatcher as _SequenceMatcher
 
 # app
-from .base import BaseSimilarity as _BaseSimilarity
 from ..utils import find_ngrams
+from .base import BaseSimilarity as _BaseSimilarity
 
 
 try:

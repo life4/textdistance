@@ -1,5 +1,7 @@
+# external
 import pytest
 
+# project
 import textdistance
 
 
