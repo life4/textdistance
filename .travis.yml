@@ -27,14 +27,16 @@ matrix:
       env: ENV=pytest-pure
     - python: "3.7"
       env: ENV=pytest-pure
-    - python: "3.8-dev"
+    - python: "3.8"
+      env: ENV=pytest-pure
+    - python: "pypy3"
       env: ENV=pytest-pure
 
     - python: "3.6.7"
       env: ENV=pytest-external
     - python: "3.7"
       env: ENV=pytest-external
-    - python: "3.8-dev"
+    - python: "3.8"
       env: ENV=pytest-external
 
     - python: "3.7"
