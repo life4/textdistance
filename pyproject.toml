@@ -1,3 +1,5 @@
+[tool.dephell.main]
+from = "setup.py"
 
 [tool.dephell.pytest-pure]
 from = "setup.py"
