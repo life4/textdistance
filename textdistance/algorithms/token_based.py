@@ -64,9 +64,10 @@ class Sorensen(_BaseSimilarity):
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/dice.js
     """
-    def __init__(self, qval=1, as_set=False):
+    def __init__(self, qval=1, as_set=False, external=True):
         self.qval = qval
         self.as_set = as_set
+        self.external = external
 
     def maximum(self, *sequences):
         return 1
@@ -158,9 +159,10 @@ class Cosine(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Cosine_similarity
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/cosine.js
     """
-    def __init__(self, qval=1, as_set=False):
+    def __init__(self, qval=1, as_set=False, external=True):
         self.qval = qval
         self.as_set = as_set
+        self.external = external
 
     def maximum(self, *sequences):
         return 1
@@ -200,10 +202,11 @@ class MongeElkan(_BaseSimilarity):
     """
     _damerau_levenshtein = DamerauLevenshtein()
 
-    def __init__(self, algorithm=_damerau_levenshtein, symmetric=False, qval=1):
+    def __init__(self, algorithm=_damerau_levenshtein, symmetric=False, qval=1, external=True):
         self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval
+        self.external = external
 
     def maximum(self, *sequences):
         result = self.algorithm.maximum(sequences)

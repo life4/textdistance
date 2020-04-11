@@ -1,7 +1,11 @@
+# built-in
 from itertools import islice
 from pathlib import Path
 from sys import argv
+
+# project
 from textdistance import EntropyNCD
+
 
 # read files
 licenses = dict()

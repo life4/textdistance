@@ -33,6 +33,7 @@ except NameError:
 class _NCDBase(_Base):
     """Normalized compression distance (NCD)
 
+    https://articles.orsinium.dev/other/ncd/
     https://en.wikipedia.org/wiki/Normalized_compression_distance#Normalized_compression_distance
     """
     qval = 1
@@ -61,7 +62,10 @@ class _NCDBase(_Base):
             concat_len = min(concat_len, self._get_size(data))
 
         compressed_lens = [self._get_size(s) for s in sequences]
-        return float(concat_len - min(compressed_lens) * (len(sequences) - 1)) / max(compressed_lens)
+        max_len = max(compressed_lens)
+        if max_len == 0:
+            return 0
+        return float(concat_len - min(compressed_lens) * (len(sequences) - 1)) / max_len
 
 
 class _BinaryNCDBase(_NCDBase):
@@ -139,6 +143,8 @@ class ArithNCD(_NCDBase):
 
     def _get_size(self, data):
         numerator = self._compress(data).numerator
+        if numerator == 0:
+            return 0
         return math.ceil(math.log(numerator, self.base))
 
 

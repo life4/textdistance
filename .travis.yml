@@ -1,33 +1,43 @@
+# Config for Travis CI, tests powered by DepHell.
+# https://travis-ci.org/
+# https://github.com/dephell/dephell
+
 language: python
+dist: xenial
+
+before_install:
+  # show a little bit more information about environment
+  - sudo apt-get install -y tree
+  - env
+  - tree
+  # install DepHell
+  # https://github.com/travis-ci/travis-ci/issues/8589
+  - curl -L dephell.org/install | /opt/python/3.7/bin/python
+  - dephell inspect self
+install:
+  - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python"
+  - dephell deps install --env=$ENV
+script:
+  - dephell venv run --env=$ENV
+
 matrix:
   include:
 
-    # 2.7
-    - python: "2.7"
-      env: TOXENV=py2-NOCONS-NUMPY
-    - python: "2.7"
-      env: TOXENV=py2-NOCONS-NONUMPY
+    - python: "3.6.7"
+      env: ENV=pytest-pure
+    - python: "3.7"
+      env: ENV=pytest-pure
+    - python: "3.8"
+      env: ENV=pytest-pure
+    # - python: "pypy3"
+    #   env: ENV=pytest-pure
 
-    # 3.5
-    - python: "3.5"
-      env: TOXENV=py35-CONS-NUMPY
-    - python: "3.5"
-      env: TOXENV=py35-NOCONS-NUMPY
-    - python: "3.5"
-      env: TOXENV=py35-CONS-NONUMPY
-    - python: "3.5"
-      env: TOXENV=py35-NOCONS-NONUMPY
+    - python: "3.6.7"
+      env: ENV=pytest-external
+    - python: "3.7"
+      env: ENV=pytest-external
+    - python: "3.8"
+      env: ENV=pytest-external
 
-    # exotic
-    - python: "3.7-dev"
-      env: TOXENV=py37-NOCONS-NONUMPY
-    - python: pypy3.5
-      env: TOXENV=pypy-NOCONS-NONUMPY
-
-    # code quality
-    - python: "3.7-dev"
-      env: TOXENV=flake8
-install:
-  - pip install tox
-script:
-  - tox
+    - python: "3.7"
+      env: ENV=flake8

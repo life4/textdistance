@@ -2,8 +2,8 @@
 from difflib import SequenceMatcher as _SequenceMatcher
 
 # app
-from .base import BaseSimilarity as _BaseSimilarity
 from ..utils import find_ngrams
+from .base import BaseSimilarity as _BaseSimilarity
 
 
 try:
@@ -24,9 +24,10 @@ class LCSSeq(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     """
-    def __init__(self, qval=1, test_func=None):
+    def __init__(self, qval=1, test_func=None, external=True):
         self.qval = qval
         self.test_func = test_func or self._ident
+        self.external = external
 
     def _dynamic(self, seq1, seq2):
         """

@@ -174,6 +174,9 @@ class DamerauLevenshtein(_Base):
         return d[len(s1) - 1][len(s2) - 1]
 
     def _pure_python(self, s1, s2):
+        """
+        https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
+        """
         d = {}
 
         # matrix
@@ -197,6 +200,8 @@ class DamerauLevenshtein(_Base):
                 if not i or not j:
                     continue
                 if not self.test_func(cs1, s2[j - 1]):
+                    continue
+                if not self.test_func(s1[i - 1], cs2):
                     continue
                 d[i, j] = min(
                     d[i, j],
@@ -367,6 +372,8 @@ class NeedlemanWunsch(_BaseSimilarity):
         """
         minimum = self.minimum(*sequences)
         maximum = self.maximum(*sequences)
+        if maximum == 0:
+            return 0
         return float(self.distance(*sequences) - minimum) / (maximum * 2)
 
     def normalized_similarity(self, *sequences):
@@ -374,6 +381,8 @@ class NeedlemanWunsch(_BaseSimilarity):
         """
         minimum = self.minimum(*sequences)
         maximum = self.maximum(*sequences)
+        if maximum == 0:
+            return 1
         return float(self.similarity(*sequences) - minimum) / (maximum * 2)
 
     def __call__(self, s1, s2):
