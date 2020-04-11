@@ -78,7 +78,7 @@ class _BinaryNCDBase(_NCDBase):
             return 0
         if isinstance(sequences[0], string_types):
             sequences = [s.encode('utf-8') for s in sequences]
-        return super(_BinaryNCDBase, self).__call__(*sequences)
+        return super().__call__(*sequences)
 
 
 class ArithNCD(_NCDBase):
@@ -182,7 +182,7 @@ class BWTRLENCD(RLENCD):
             data += self.terminator
             modified = sorted(data[i:] + data[:i] for i in range(len(data)))
             data = ''.join([subdata[-1] for subdata in modified])
-        return super(BWTRLENCD, self)._compress(data)
+        return super()._compress(data)
 
 
 # -- NORMAL COMPRESSORS -- #

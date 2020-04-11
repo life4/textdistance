@@ -321,11 +321,12 @@ class JaroWinkler(_BaseSimilarity):
 
 class Jaro(JaroWinkler):
     def __init__(self, long_tolerance=False, qval=1, external=True):
-        super(Jaro, self).__init__(
+        super().__init__(
             long_tolerance=long_tolerance,
             winklerize=False,
             qval=qval,
-            external=external)
+            external=external,
+        )
 
 
 class NeedlemanWunsch(_BaseSimilarity):

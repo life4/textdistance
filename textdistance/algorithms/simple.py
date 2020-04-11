@@ -42,7 +42,7 @@ class Postfix(Prefix):
     def __call__(self, *sequences):
         s = sequences[0]
         sequences = [reversed(s) for s in sequences]
-        result = reversed(super(Postfix, self).__call__(*sequences))
+        result = reversed(super().__call__(*sequences))
         if isinstance(s, str):
             return ''.join(result)
         if isinstance(s, bytes):

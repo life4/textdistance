@@ -108,7 +108,7 @@ class LibraryBase:
 
 class TextLibrary(LibraryBase):
     def check_conditions(self, obj, *sequences):
-        if not super(TextLibrary, self).check_conditions(obj, *sequences):
+        if not super().check_conditions(obj, *sequences):
             return False
         # compare only by letters
         if getattr(obj, 'qval', 0) != 1:
@@ -131,7 +131,7 @@ class TextLibrary(LibraryBase):
 
 class SameLengthLibrary(LibraryBase):
     def check_conditions(self, obj, *sequences):
-        if not super(SameLengthLibrary, self).check_conditions(obj, *sequences):
+        if not super().check_conditions(obj, *sequences):
             return False
         # compare only same length iterators
         if min(map(len, sequences)) != max(map(len, sequences)):
