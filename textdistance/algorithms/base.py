@@ -10,7 +10,7 @@ libraries = prototype.clone()
 libraries.optimize()
 
 
-class Base(object):
+class Base:
     def __init__(self, qval=1, external=True):
         self.qval = qval
         self.external = external

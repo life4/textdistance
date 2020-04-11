@@ -11,7 +11,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 LIBRARIES_FILE = os.path.join(CURRENT_DIR, 'libraries.json')
 
 
-class LibrariesManager(object):
+class LibrariesManager:
     def __init__(self):
         self.libs = defaultdict(list)
 
@@ -56,7 +56,7 @@ class LibrariesManager(object):
         return obj
 
 
-class LibraryBase(object):
+class LibraryBase:
     func = NotImplemented
 
     def __init__(self, module_name, func_name, attr=None, presets=None, conditions=None):

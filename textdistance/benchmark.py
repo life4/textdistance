@@ -38,7 +38,7 @@ func('a' * 15, 'b' * 15)
 RUNS = 2000
 
 
-class Benchmark(object):
+class Benchmark:
     @staticmethod
     def get_installed():
         for alg in libraries.get_algorithms():
