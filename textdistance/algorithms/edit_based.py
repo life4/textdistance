@@ -1,16 +1,11 @@
 # built-in
 from collections import defaultdict
+from itertools import zip_longest
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
-try:
-    # python3
-    from itertools import zip_longest
-except ImportError:
-    # python2
-    from itertools import izip_longest as zip_longest
 try:
     import numpy
 except ImportError:

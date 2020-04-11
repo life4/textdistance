@@ -1,17 +1,17 @@
 """
 IMPORTANT: it's just draft
 """
+# built-in
+from functools import reduce
+
+# app
+from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+
 
 try:
     import numpy
 except ImportError:
     numpy = None
-try:
-    from functools import reduce
-except ImportError:
-    pass
-# app
-from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 class Chebyshev(_Base):
