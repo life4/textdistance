@@ -68,9 +68,8 @@ def test_normalization_by_one(left, right, alg):
     assert isclose(s + d, 1)
 
 
-# TODO: fix 0-size strings
 @pytest.mark.parametrize('alg', ALGS)
-@hypothesis.given(text=hypothesis.strategies.text(min_size=1))
+@hypothesis.given(text=hypothesis.strategies.text())
 def test_normalization_same(text, alg):
     assert alg.normalized_distance(text, text) == 0
     assert alg.distance(text, text) == 0
