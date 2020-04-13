@@ -110,22 +110,21 @@ class TextLibrary(LibraryBase):
     def check_conditions(self, obj, *sequences):
         if not super().check_conditions(obj, *sequences):
             return False
+
         # compare only by letters
         if getattr(obj, 'qval', 0) != 1:
             return False
+
+        # every sequence must be string
+        for seq in sequences:
+            if type(seq) is not str:
+                return False
         return True
 
     def prepare(self, *sequences):
         # convert list of letters to string
         if isinstance(sequences[0], (tuple, list)):
-            sequences = list(map(lambda x: u''.join(x), sequences))
-
-        # convert to unicode for python2
-        try:
-            sequences = list(map(unicode, sequences))
-        except NameError:
-            pass
-
+            sequences = list(map(lambda x: ''.join(x), sequences))
         return sequences
 
 
