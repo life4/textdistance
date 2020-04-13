@@ -6,7 +6,7 @@ Compute distance between sequences.
 
 # main package info
 __title__ = 'TextDistance'
-__version__ = '4.1.5'
+__version__ = '4.2.0'
 __author__ = 'Gram (@orsinium)'
 __license__ = 'MIT'
 
