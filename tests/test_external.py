@@ -62,3 +62,26 @@ def test_qval(left, right, alg):
             s1, s2 = lib.prepare(s1, s2)
             ext_result = external_func(s1, s2)
         assert isclose(int_result, ext_result), str(lib)
+
+
+@pytest.mark.external
+@pytest.mark.parametrize('alg', libraries.get_algorithms())
+@hypothesis.given(
+    left=hypothesis.strategies.lists(hypothesis.strategies.integers()),
+    right=hypothesis.strategies.lists(hypothesis.strategies.integers()),
+)
+def test_list_of_numbers(left, right, alg):
+    for lib in libraries.get_libs(alg):
+        conditions = lib.conditions or {}
+        internal_func = getattr(textdistance, alg)(external=False, **conditions)
+        external_func = lib.get_function()
+        if external_func is None:
+            raise RuntimeError('cannot import {}'.format(str(lib)))
+
+        if not lib.check_conditions(internal_func, left, right):
+            continue
+
+        int_result = internal_func(left, right)
+        s1, s2 = lib.prepare(left, right)
+        ext_result = external_func(s1, s2)
+        assert isclose(int_result, ext_result), str(lib)

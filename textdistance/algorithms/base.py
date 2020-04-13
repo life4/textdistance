@@ -41,7 +41,7 @@ class Base:
         """
         maximum = self.maximum(*sequences)
         if maximum == 0:
-            return 1
+            return 0
         return self.distance(*sequences) / maximum
 
     def normalized_similarity(self, *sequences):
