@@ -40,10 +40,9 @@ ALGS = (
 
     # numpy-based:
     # textdistance.gotoh,
-    # textdistance.needleman_wunsch,
-    # textdistance.smith_waterman,
-    # textdistance.editex,
-
+    textdistance.needleman_wunsch,
+    textdistance.smith_waterman,
+    textdistance.editex,
 )
 
 
@@ -72,7 +71,8 @@ def test_normalization_by_one(left, right, alg):
 @hypothesis.given(text=hypothesis.strategies.text())
 def test_normalization_same(text, alg):
     assert alg.normalized_distance(text, text) == 0
-    assert alg.distance(text, text) == 0
+    if alg is not textdistance.needleman_wunsch:
+        assert alg.distance(text, text) == 0
     assert alg.normalized_similarity(text, text) == 1
 
 
@@ -91,6 +91,8 @@ def test_normalization_monotonic(left, right, alg):
 
 @pytest.mark.parametrize('alg', ALGS)
 def test_no_common_chars(alg):
+    if alg is textdistance.editex:
+        return
     assert alg.similarity('spam', 'qwer') == 0
 
 
