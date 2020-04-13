@@ -2,7 +2,7 @@
 
 ![TextDistance logo](logo.png)
 
-[![Build Status](https://travis-ci.org/life4/textdistance.svg?branch=master)](https://travis-ci.org/life4/textdistance) [![PyPI version](https://img.shields.io/pypi/v/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Status](https://img.shields.io/pypi/status/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Code size](https://img.shields.io/github/languages/code-size/life4/textdistance.svg)](https://github.com/life4/textdistance) [![License](https://img.shields.io/pypi/l/textdistance.svg)](LICENSE)
+[![Build Status](https://travis-ci.org/life4/textdistance.svg?branch=master)](https://travis-ci.org/life4/textdistance) [![PyPI version](https://img.shields.io/pypi/v/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![Status](https://img.shields.io/pypi/status/textdistance.svg)](https://pypi.python.org/pypi/textdistance) [![License](https://img.shields.io/pypi/l/textdistance.svg)](LICENSE)
 
 **TextDistance** -- python library for comparing distance between two or more sequences by many algorithms.
 
@@ -115,7 +115,7 @@ With extra libraries for maximum speed:
 pip install "textdistance[extras]"
 ```
 
-With all libraries (required for [benchmarking](#benchmarks) and [testing](#test)):
+With all libraries (required for [benchmarking](#benchmarks) and [testing](#tests)):
 
 ```bash
 pip install "textdistance[benchmark]"
