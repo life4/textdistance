@@ -1,5 +1,6 @@
 [tool.dephell.main]
 from = "setup.py"
+tag = "v."
 
 [tool.dephell.pytest-pure]
 from = "setup.py"
