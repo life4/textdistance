@@ -65,7 +65,7 @@ class _NCDBase(_Base):
         max_len = max(compressed_lens)
         if max_len == 0:
             return 0
-        return float(concat_len - min(compressed_lens) * (len(sequences) - 1)) / max_len
+        return (concat_len - min(compressed_lens) * (len(sequences) - 1)) / max_len
 
 
 class _BinaryNCDBase(_NCDBase):
@@ -78,7 +78,7 @@ class _BinaryNCDBase(_NCDBase):
             return 0
         if isinstance(sequences[0], string_types):
             sequences = [s.encode('utf-8') for s in sequences]
-        return super(_BinaryNCDBase, self).__call__(*sequences)
+        return super().__call__(*sequences)
 
 
 class ArithNCD(_NCDBase):
@@ -182,7 +182,7 @@ class BWTRLENCD(RLENCD):
             data += self.terminator
             modified = sorted(data[i:] + data[:i] for i in range(len(data)))
             data = ''.join([subdata[-1] for subdata in modified])
-        return super(BWTRLENCD, self)._compress(data)
+        return super()._compress(data)
 
 
 # -- NORMAL COMPRESSORS -- #
@@ -221,7 +221,7 @@ class EntropyNCD(_NCDBase):
         total_count = len(data)
         entropy = 0.0
         for element_count in Counter(data).values():
-            p = float(element_count) / total_count
+            p = element_count / total_count
             entropy -= p * math.log(p, self.base)
         assert entropy >= 0
         return entropy

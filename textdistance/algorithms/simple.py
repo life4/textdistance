@@ -10,11 +10,6 @@ __all__ = [
     'prefix', 'postfix', 'length', 'identity', 'matrix',
 ]
 
-try:
-    string_types = (str, unicode)
-except NameError:
-    string_types = (str, )
-
 
 class Prefix(_BaseSimilarity):
     """prefix similarity
@@ -31,7 +26,7 @@ class Prefix(_BaseSimilarity):
         result = [c[0] for c in takewhile(test, zip(*sequences))]
 
         s = sequences[0]
-        if isinstance(s, string_types):
+        if isinstance(s, str):
             return ''.join(result)
         if isinstance(s, bytes):
             return b''.join(result)
@@ -47,8 +42,8 @@ class Postfix(Prefix):
     def __call__(self, *sequences):
         s = sequences[0]
         sequences = [reversed(s) for s in sequences]
-        result = reversed(super(Postfix, self).__call__(*sequences))
-        if isinstance(s, string_types):
+        result = reversed(super().__call__(*sequences))
+        if isinstance(s, str):
             return ''.join(result)
         if isinstance(s, bytes):
             return b''.join(result)
