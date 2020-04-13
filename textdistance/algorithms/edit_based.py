@@ -401,9 +401,9 @@ class NeedlemanWunsch(_BaseSimilarity):
         for j in range(len(s2) + 1):
             dist_mat[0, j] = -(j * self.gap_cost)
         # Needleman-Wunsch DP calculation
-        for i in range(1, len(s1) + 1):
-            for j in range(1, len(s2) + 1):
-                match = dist_mat[i - 1, j - 1] + self.sim_func(s1[i - 1], s2[j - 1])
+        for i, c1 in enumerate(s1, 1):
+            for j, c2 in enumerate(s2, 1):
+                match = dist_mat[i - 1, j - 1] + self.sim_func(c1, c2)
                 delete = dist_mat[i - 1, j] - self.gap_cost
                 insert = dist_mat[i, j - 1] - self.gap_cost
                 dist_mat[i, j] = max(match, delete, insert)
