@@ -115,7 +115,7 @@ With extra libraries for maximum speed:
 pip install "textdistance[extras]"
 ```
 
-With all libraries (required for [benchmarking](#benchmarks) and [testing](#tests)):
+With all libraries (required for [benchmarking](#benchmarks) and [testing](#running-tests)):
 
 ```bash
 pip install "textdistance[benchmark]"
