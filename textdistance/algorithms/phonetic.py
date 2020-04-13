@@ -135,14 +135,16 @@ class Editex(_Base):
         if result is not None:
             return result
 
-        len_s1 = len(s1)
-        len_s2 = len(s2)
+        # must do `upper` before getting length because some one-char lowercase glyphs
+        # are represented as two chars in uppercase.
+        s1 = ' ' + s1.upper()
+        s2 = ' ' + s2.upper()
+        len_s1 = len(s1) - 1
+        len_s2 = len(s2) - 1
         if numpy:
             d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.int)
         else:
             d_mat = defaultdict(lambda: defaultdict(int))
-        s1 = ' ' + s1.upper()
-        s2 = ' ' + s2.upper()
 
         if not self.local:
             for i in range(1, len_s1 + 1):
