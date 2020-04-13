@@ -171,7 +171,7 @@ Most common init arguments:
     * True -- `t` and `ttt` is equal.
     * False (default) -- `t` and `ttt` is different.
 
-## Example
+## Examples
 
 For example, [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distance):
 
@@ -289,11 +289,25 @@ python3 -m textdistance.benchmark
 TextDistance show benchmarks results table for your system and save libraries priorities into `libraries.json` file in TextDistance's folder. This file will be used by textdistance for calling fastest algorithm implementation. Default [libraries.json](textdistance/libraries.json) already included in package.
 
 
-## Test
+## Running tests
 
-You can run tests via [tox](https://tox.readthedocs.io/en/latest/):
+You can run tests via [dephell](https://github.com/dephell/dephell):
 
 ```bash
-sudo pip3 install tox
-tox
+curl -L dephell.org/install | python3
+dephell venv create --env=pytest-external
+dephell deps install --env=pytest-external
+dephell venv run --env=pytest-external
 ```
+
+## Contributing
+
+PRs are welcome!
+
++ Found a bug? Fix it!
++ Want to add more algorithms? Sure! Just make it with the same interface as other algorithms in the lib and add some tests.
++ Can make something faster? Great! Just avoid external dependencies and remember that everything should work not only with strings.
++ Something else that do you think is good? Do it! Just make sure that CI passes and everything from the README is still applicable (interface, features, and so on).
++ Have no time to code? Tell your friends and subscribers about `textdistance`. More users, more contributions, more amazing features.
+
+Thank you :heart:
