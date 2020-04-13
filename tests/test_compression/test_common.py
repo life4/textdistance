@@ -13,7 +13,10 @@ ALGS = (
     textdistance.arith_ncd,
     textdistance.bwtrle_ncd,
     textdistance.bz2_ncd,
-    textdistance.lzma_ncd,
+
+    # too slow, makes CI flaky
+    # textdistance.lzma_ncd,
+
     textdistance.rle_ncd,
     textdistance.zlib_ncd,
     textdistance.sqrt_ncd,
