@@ -352,7 +352,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         self.external = external
 
     def minimum(self, *sequences):
-        return - max(map(len, sequences)) * self.gap_cost
+        return -max(map(len, sequences)) * self.gap_cost
 
     def maximum(self, *sequences):
         return max(map(len, sequences))
@@ -369,7 +369,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         maximum = self.maximum(*sequences)
         if maximum == 0:
             return 0
-        return (self.distance(*sequences) - minimum) / (maximum * 2)
+        return (self.distance(*sequences) - minimum) / (maximum - minimum)
 
     def normalized_similarity(self, *sequences):
         """Get distance from 0 to 1
