@@ -28,7 +28,7 @@
     ],
     [
       "abydos.distance",
-      "hamming"
+      "Hamming"
     ]
   ],
   "Jaro": [
@@ -74,7 +74,7 @@
     ],
     [
       "abydos.distance",
-      "levenshtein"
+      "Levenshtein"
     ]
   ]
 }

@@ -91,7 +91,14 @@ class LibraryBase:
                 return
 
             # get object from module
-            obj = getattr(module, self.func_name)
+            if self.module_name == 'abydos.distance':
+                # abydos now provides its functions as classes allowing for
+                # various options; we stick with the defaults for our
+                # object constructor - the distance metric method is
+                # called dist_abs() (whereas dist() gives a normalised distance)
+                obj = getattr(module, self.func_name)().dist_abs
+            else:
+                obj = getattr(module, self.func_name)
             # init class
             if self.presets is not None:
                 obj = obj(**self.presets)
@@ -144,26 +151,25 @@ class SameLengthTextLibrary(SameLengthLibrary, TextLibrary):
 
 prototype = LibrariesManager()
 
-prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'damerau_levenshtein'))
-prototype.register('DamerauLevenshtein', LibraryBase('pylev', 'damerau_levenshtein'))
+prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'DamerauLevenshtein'))
 prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
 
-prototype.register('Hamming', LibraryBase('abydos.distance', 'hamming'))
+prototype.register('Hamming', LibraryBase('abydos.distance', 'Hamming'))
 prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
 prototype.register('Hamming', SameLengthTextLibrary('Levenshtein', 'hamming'))
 prototype.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
 
-prototype.register('Jaro', TextLibrary('jellyfish', 'jaro_distance'))
+prototype.register('Jaro', TextLibrary('jellyfish', 'jaro_similarity'))
 # prototype.register('Jaro', TextLibrary('Levenshtein', 'jaro'))
 # prototype.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
 
 # prototype.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
-prototype.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler', conditions=dict(winklerize=True)))
+prototype.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler_similarity', conditions=dict(winklerize=True)))
 # https://github.com/life4/textdistance/issues/39
 # prototype.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
-prototype.register('Levenshtein', LibraryBase('abydos.distance', 'levenshtein'))
+prototype.register('Levenshtein', LibraryBase('abydos.distance', 'Levenshtein'))
 prototype.register('Levenshtein', LibraryBase('distance', 'levenshtein'))
 prototype.register('Levenshtein', LibraryBase('pylev', 'levenshtein'))
 prototype.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))
