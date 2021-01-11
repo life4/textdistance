@@ -2,7 +2,7 @@ def main(ctx):
     steps = []
     for env in ("pytest-pure", "pytest-external"):
         for python in ("3.6", "3.7", "3.8", "3.9"):
-            steps.append(step(env="pytest-pure", python="3.6"))
+            steps.append(step(env=env, python=python))
     steps.append(step(env="flake8", python="3.7"))
 
     return dict(
