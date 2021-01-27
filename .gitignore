@@ -8,3 +8,5 @@ licenses_example/choosealicense.com
 .hypothesis/
 .coverage
 htmlcov
+.task/
+venvs/

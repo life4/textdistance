@@ -9,9 +9,7 @@ def main(ctx):
         kind="pipeline",
         type="docker",
         name="default",
-        trigger=dict(
-            branch="master",
-        ),
+        trigger=dict(branch="master"),
         steps=steps,
     )
 
@@ -20,26 +18,17 @@ def step(env, python):
     result = dict(
         name="{} (py{})".format(env, python),
         image="python:{}-alpine".format(python),
-        depends_on=["clone"],  # run in parallel
+        depends_on=["install task"],
         environment=dict(
-            # set coverage database file name
-            # to avoid conflicts between steps
+            # set coverage database file name to avoid conflicts between steps
             COVERAGE_FILE=".coverage.{}.{}".format(env, python),
         ),
         commands=[
-            # install DepHell
             "apk add curl git gcc libc-dev",
-            "python3 -m pip install wheel",
-            "curl -L dephell.org/install > install.py",
-            "python3 install.py --branch=master",
-            "dephell inspect self",
-            # install deps
-            "export DEPHELL_ENV={}".format(env),
-            "dephell venv create",
-            "dephell deps install --silent",
-            "dephell project register --traceback --level=DEBUG",
-            # run
-            "dephell venv run",
+            "./bin/task PYTHON_BIN=python3 VENVS=/opt/py{python}/ -f {env}:run".format(
+                python=python,
+                env=env,
+            ),
         ],
     )
     return result
