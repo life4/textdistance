@@ -1,5 +1,6 @@
 # built-in
 from collections import Counter
+from contextlib import suppress
 
 # app
 from ..libraries import prototype
@@ -72,10 +73,8 @@ class Base:
 
             prepared_sequences = lib.prepare(*sequences)
             # fail side libraries silently and try next libs
-            try:
+            with suppress(Exception):
                 return lib.func(*prepared_sequences)
-            except Exception:
-                pass
 
     def quick_answer(self, *sequences):
         """Try to get answer quick without main implementation calling.
