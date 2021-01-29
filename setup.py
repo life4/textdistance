@@ -32,6 +32,7 @@ extras = {
     'test': [
         'hypothesis',
         'isort',
+        'numpy',
         'pytest',
     ],
 

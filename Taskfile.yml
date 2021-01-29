@@ -1,0 +1,97 @@
+# https://taskfile.dev/
+version: "3"
+
+vars:
+  PYTHON_BIN: python3.7
+  VENVS: ./venvs/
+  FLAKE8_ENV: "{{.VENVS}}flake8"
+  PYTEST_PURE_ENV: "{{.VENVS}}pytest-pure"
+  PYTEST_EXT_ENV: "{{.VENVS}}pytest-ext"
+  ISORT_ENV:  "{{.VENVS}}isort"
+
+  TESTS_PATH: tests/
+
+tasks:
+  venv:create:
+    status:
+      - "test -f {{.ENV}}/bin/activate"
+    cmds:
+      - "{{.PYTHON_BIN}} -m venv {{.ENV}}"
+      - "{{.ENV}}/bin/python3 -m pip install -U pip setuptools wheel"
+  pip:install:
+    sources:
+      - pyproject.toml
+      - "{{.ENV}}/bin/activate"
+    deps:
+      - task: venv:create
+        vars:
+          ENV: "{{.ENV}}"
+    cmds:
+      - "{{.ENV}}/bin/pip install '.[{{.EXTRA}}]'"
+
+  flake8:install:
+    status:
+      - "test -f {{.FLAKE8_ENV}}/bin/flake8"
+    deps:
+      - task: venv:create
+        vars:
+          ENV: "{{.FLAKE8_ENV}}"
+    cmds:
+      - "{{.FLAKE8_ENV}}/bin/python3 -m pip install -r requirements-flake.txt"
+  flake8:run:
+    sources:
+      - "**/*.py"
+    deps:
+      - flake8:install
+    cmds:
+      - "{{.FLAKE8_ENV}}/bin/flake8 ."
+
+
+  pytest-pure:run:
+    deps:
+      - task: pip:install
+        vars:
+          ENV: "{{.PYTEST_PURE_ENV}}"
+          EXTRA: test
+    cmds:
+      - "{{.PYTEST_PURE_ENV}}/bin/pytest  -m 'not external' {{.ARGS}} {{.TESTS_PATH}}"
+
+  pytest-external:run:
+    deps:
+      - task: pip:install
+        vars:
+          ENV: "{{.PYTEST_EXT_ENV}}"
+          EXTRA: test,benchmark
+    cmds:
+      - "{{.PYTEST_EXT_ENV}}/bin/pytest {{.ARGS}} {{.TESTS_PATH}}"
+
+  isort:run:
+    sources:
+      - "**/*.py"
+    deps:
+      - task: pip:install
+        vars:
+          ENV: "{{.ISORT_ENV}}"
+          EXTRA: tests
+    cmds:
+      - "{{.ISORT_ENV}}/bin/isort ."
+
+  sphinx:run:
+    sources:
+      - deal/**/*.py
+      - docs/**/*.md
+    deps:
+      - task: pip:install
+        vars:
+          ENV: "{{.SPHINX_ENV}}"
+          EXTRA: docs
+    cmds:
+      - "{{.SPHINX_ENV}}/bin/sphinx-build -W docs docs/build"
+
+  deal:prove:
+    deps:
+      - task: pip:install
+        vars:
+          ENV: "{{.DEAL_ENV}}"
+    cmds:
+      - "{{.DEAL_ENV}}/bin/python -m deal prove {{.ARGS}}"
