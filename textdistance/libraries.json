@@ -28,7 +28,7 @@
     ],
     [
       "abydos.distance",
-      "hamming"
+      "Hamming"
     ]
   ],
   "Jaro": [
@@ -38,7 +38,7 @@
     ],
     [
       "jellyfish",
-      "jaro_distance"
+      "jaro_similarity"
     ],
     [
       "py_stringmatching.similarity_measure.jaro",
@@ -48,7 +48,7 @@
   "JaroWinkler": [
     [
       "jellyfish",
-      "jaro_winkler"
+      "jaro_winkler_similarity"
     ]
   ],
   "Levenshtein": [
@@ -74,7 +74,7 @@
     ],
     [
       "abydos.distance",
-      "levenshtein"
+      "Levenshtein"
     ]
   ]
 }
