@@ -8,6 +8,7 @@ vars:
   PYTEST_PURE_ENV: "{{.VENVS}}pytest-pure"
   PYTEST_EXT_ENV: "{{.VENVS}}pytest-ext"
   ISORT_ENV:  "{{.VENVS}}isort"
+  TWINE_ENV:  "{{.VENVS}}twine"
 
   TESTS_PATH: tests/
 
@@ -28,6 +29,25 @@ tasks:
           ENV: "{{.ENV}}"
     cmds:
       - "{{.ENV}}/bin/pip install '.[{{.EXTRA}}]'"
+
+  twine:install:
+    deps:
+      - task: venv:create
+        vars:
+          ENV: "{{.TWINE_ENV}}"
+    cmds:
+      - "{{.TWINE_ENV}}/bin/pip install twine"
+  twine:build:
+    deps:
+      - twine:install
+    cmds:
+      - rm -rf dist/
+      - "{{.TWINE_ENV}}/bin/python3 setup.py sdist bdist_wheel"
+  twine:release:
+    deps:
+      - twine:build
+    cmds:
+      - "{{.TWINE_ENV}}/bin/twine upload dist/textdistance-*"
 
   flake8:install:
     status:
@@ -75,23 +95,3 @@ tasks:
           EXTRA: tests
     cmds:
       - "{{.ISORT_ENV}}/bin/isort ."
-
-  sphinx:run:
-    sources:
-      - deal/**/*.py
-      - docs/**/*.md
-    deps:
-      - task: pip:install
-        vars:
-          ENV: "{{.SPHINX_ENV}}"
-          EXTRA: docs
-    cmds:
-      - "{{.SPHINX_ENV}}/bin/sphinx-build -W docs docs/build"
-
-  deal:prove:
-    deps:
-      - task: pip:install
-        vars:
-          ENV: "{{.DEAL_ENV}}"
-    cmds:
-      - "{{.DEAL_ENV}}/bin/python -m deal prove {{.ARGS}}"
