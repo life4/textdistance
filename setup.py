@@ -69,23 +69,24 @@ extras['benchmarks'] = extras['benchmark']
 
 
 try:
-    long_description = open('README.rst', encoding='utf-8').read()
+    long_description = open('README.md', encoding='utf-8').read()
 except TypeError:
     try:
-        long_description = open('README.rst').read()
+        long_description = open('README.md').read()
     except UnicodeDecodeError:
         long_description = ''
 
 
 setup(
     name='textdistance',
-    version='4.2.0',
+    version='4.2.1',
 
     author='orsinium',
-    author_email='master_fess@mail.ru',
+    author_email='gram@orsinium.dev',
 
     description='Compute distance between the two texts.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     keywords='distance between text strings sequences iterators',
 
     packages=['textdistance', 'textdistance.algorithms'],
