@@ -226,8 +226,8 @@ class JaroWinkler(_BaseSimilarity):
     and thus are likely to match.
 
     https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
-    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaro.js
-    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/jaro-winkler.js
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaro.js
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaro-winkler.js
     """
     def __init__(self, long_tolerance=False, winklerize=True, qval=1, external=True):
         self.qval = qval
@@ -419,7 +419,7 @@ class SmithWaterman(_BaseSimilarity):
     segments of all possible lengths and optimizes the similarity measure.
 
     https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm
-    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/smith-waterman.js
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/smith-waterman.js
     """
     def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
         self.qval = qval
@@ -684,7 +684,7 @@ class MLIPNS(_BaseSimilarity):
     The Hamming distance is the number of differing items in ordered sequences.
 
     http://www.sial.iias.spb.su/files/386-386-1-PB.pdf
-    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/mlipns.js
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/mlipns.js
     """
     def __init__(self, threshold=0.25, maxmismatches=2, qval=1, external=True):
         self.qval = qval

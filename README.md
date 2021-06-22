@@ -42,7 +42,7 @@ Features:
 | [Tanimoto distance](https://en.wikipedia.org/wiki/Jaccard_index#Tanimoto_similarity_and_distance) | `Tanimoto`   | `tanimoto`   |
 | [Cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)                      | `Cosine`             | `cosine`     |
 | [Monge-Elkan](https://www.academia.edu/200314/Generalized_Monge-Elkan_Method_for_Approximate_Text_String_Comparison) | `MongeElkan` | `monge_elkan` |
-| [Bag distance](https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/bag.js) | `Bag`        | `bag`        |
+| [Bag distance](https://github.com/Yomguithereal/talisman/blob/master/src/metrics/bag.js) | `Bag`        | `bag`        |
 
 ### Sequence based
 
