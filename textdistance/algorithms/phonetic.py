@@ -25,7 +25,7 @@ __all__ = [
 class MRA(_BaseSimilarity):
     """Western Airlines Surname Match Rating Algorithm comparison rating
     https://en.wikipedia.org/wiki/Match_rating_approach
-    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/mra.js
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/mra.js
     """
 
     def maximum(self, *sequences):

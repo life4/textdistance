@@ -141,7 +141,7 @@ class RatcliffObershelp(_BaseSimilarity):
            sequences.
 
     https://en.wikipedia.org/wiki/Gestalt_Pattern_Matching
-    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/distance/ratcliff-obershelp.js
+    https://github.com/Yomguithereal/talisman/blob/master/src/metrics/ratcliff-obershelp.js
     https://xlinux.nist.gov/dads/HTML/ratcliffObershelp.html
     """
 
