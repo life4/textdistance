@@ -36,7 +36,7 @@ class LCSSeq(_BaseSimilarity):
         http://rosettacode.org/wiki/Longest_common_subsequence#Dynamic_Programming_8
         """
         if numpy:
-            lengths = numpy.zeros((len(seq1) + 1, len(seq2) + 1), dtype=numpy.int)
+            lengths = numpy.zeros((len(seq1) + 1, len(seq2) + 1), dtype=int)
         else:
             lengths = [array('L', [0] * (len(seq2) + 1)) for _ in range(len(seq1) + 1)]
 

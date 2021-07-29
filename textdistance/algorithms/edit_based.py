@@ -137,7 +137,7 @@ class DamerauLevenshtein(_Base):
 
     def _numpy(self, s1, s2):
         # TODO: doesn't pass tests, need improve
-        d = numpy.zeros([len(s1) + 1, len(s2) + 1], dtype=numpy.int)
+        d = numpy.zeros([len(s1) + 1, len(s2) + 1], dtype=int)
 
         # matrix
         for i in range(-1, len(s1) + 1):

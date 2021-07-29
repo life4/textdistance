@@ -142,7 +142,7 @@ class Editex(_Base):
         len_s1 = len(s1) - 1
         len_s2 = len(s2) - 1
         if numpy:
-            d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.int)
+            d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=int)
         else:
             d_mat = defaultdict(lambda: defaultdict(int))
 
