@@ -392,7 +392,7 @@ class NeedlemanWunsch(_BaseSimilarity):
 
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
-            dtype=numpy.float,
+            dtype=float,
         )
         # DP initialization
         for i in range(len(s1) + 1):
@@ -442,7 +442,7 @@ class SmithWaterman(_BaseSimilarity):
 
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
-            dtype=numpy.float,
+            dtype=float,
         )
         for i, sc1 in enumerate(s1, start=1):
             for j, sc2 in enumerate(s2, start=1):
@@ -491,9 +491,9 @@ class Gotoh(NeedlemanWunsch):
 
         len_s1 = len(s1)
         len_s2 = len(s2)
-        d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
-        p_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
-        q_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=numpy.float)
+        d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=float)
+        p_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=float)
+        q_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=float)
 
         d_mat[0, 0] = 0
         p_mat[0, 0] = float('-inf')
