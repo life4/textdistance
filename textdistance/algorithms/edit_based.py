@@ -251,8 +251,9 @@ class JaroWinkler(_BaseSimilarity):
         if not s1_len or not s2_len:
             return 0.0
 
-        min_len = max(s1_len, s2_len)
-        search_range = (min_len // 2) - 1
+        min_len = min(s1_len, s2_len)
+        search_range = max(s1_len, s2_len)
+        search_range = (search_range // 2) - 1
         if search_range < 0:
             search_range = 0
 
@@ -294,7 +295,7 @@ class JaroWinkler(_BaseSimilarity):
         # stop to boost if strings are not similar
         if not self.winklerize:
             return weight
-        if weight <= 0.7 or s1_len <= 3 or s2_len <= 3:
+        if weight <= 0.7:
             return weight
 
         # winkler modification
