@@ -8,12 +8,12 @@
 
 Features:
 
-* 30+ algorithms
-* Pure python implementation
-* Simple usage
-* More than two sequences comparing
-* Some algorithms have more than one implementation in one class.
-* Optional numpy usage for maximum speed.
+- 30+ algorithms
+- Pure python implementation
+- Simple usage
+- More than two sequences comparing
+- Some algorithms have more than one implementation in one class.
+- Optional numpy usage for maximum speed.
 
 ## Algorithms
 
@@ -98,7 +98,6 @@ See [blog post](https://articles.life4web.ru/other/ncd/) for more details about 
 | Identity similarity | `Identity` | `identity` |
 | Matrix similarity   | `Matrix`   | `matrix`   |
 
-
 ## Installation
 
 ### Stable
@@ -144,7 +143,6 @@ git clone https://github.com/life4/textdistance.git
 pip install -e ".[benchmark]"
 ```
 
-
 ## Usage
 
 All algorithms have 2 interfaces:
@@ -160,16 +158,15 @@ All algorithms have some common methods:
 4. `.normalized_distance(*sequences)` -- normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
 5. `.normalized_similarity(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
 
-
 Most common init arguments:
 
 1. `qval` -- q-value for split sequences into q-grams. Possible values:
-    * 1 (default) -- compare sequences by chars.
-    * 2 or more -- transform sequences to q-grams.
-    * None -- split sequences by words.
+    - 1 (default) -- compare sequences by chars.
+    - 2 or more -- transform sequences to q-grams.
+    - None -- split sequences by words.
 2. `as_set` -- for token-based algorithms:
-    * True -- `t` and `ttt` is equal.
-    * False (default) -- `t` and `ttt` is different.
+    - True -- `t` and `ttt` is equal.
+    - False (default) -- `t` and `ttt` is different.
 
 ## Examples
 
@@ -200,7 +197,6 @@ textdistance.Hamming(qval=2).distance('test', 'text')
 
 Any other algorithms have same interface.
 
-
 ## Articles
 
 A few articles with examples how to use textdistance in the real world:
@@ -208,7 +204,6 @@ A few articles with examples how to use textdistance in the real world:
 - [Guide to Fuzzy Matching with Python](http://theautomatic.net/2019/11/13/guide-to-fuzzy-matching-with-python/)
 - [String similarity — the basic know your algorithms guide!](https://itnext.io/string-similarity-the-basic-know-your-algorithms-guide-3de3d7346227)
 - [Normalized compression distance](https://articles.life4web.ru/other/ncd/)
-
 
 ## Extra libraries
 
@@ -240,7 +235,6 @@ Algorithms:
 1. Jaro
 1. JaroWinkler
 1. Levenshtein
-
 
 ## Benchmarks
 
@@ -288,26 +282,18 @@ python3 -m textdistance.benchmark
 
 TextDistance show benchmarks results table for your system and save libraries priorities into `libraries.json` file in TextDistance's folder. This file will be used by textdistance for calling fastest algorithm implementation. Default [libraries.json](textdistance/libraries.json) already included in package.
 
-
 ## Running tests
 
-You can run tests via [dephell](https://github.com/dephell/dephell):
-
-```bash
-curl -L dephell.org/install | python3
-dephell venv create --env=pytest-external
-dephell deps install --env=pytest-external
-dephell venv run --env=pytest-external
-```
+All you need is [task](https://taskfile.dev/). See [Taskfile.yml](./Taskfile.yml) for the list of available commands. For example, to run tests including third-party libraries usage, execute `task pytest-external:run`.
 
 ## Contributing
 
 PRs are welcome!
 
-+ Found a bug? Fix it!
-+ Want to add more algorithms? Sure! Just make it with the same interface as other algorithms in the lib and add some tests.
-+ Can make something faster? Great! Just avoid external dependencies and remember that everything should work not only with strings.
-+ Something else that do you think is good? Do it! Just make sure that CI passes and everything from the README is still applicable (interface, features, and so on).
-+ Have no time to code? Tell your friends and subscribers about `textdistance`. More users, more contributions, more amazing features.
+- Found a bug? Fix it!
+- Want to add more algorithms? Sure! Just make it with the same interface as other algorithms in the lib and add some tests.
+- Can make something faster? Great! Just avoid external dependencies and remember that everything should work not only with strings.
+- Something else that do you think is good? Do it! Just make sure that CI passes and everything from the README is still applicable (interface, features, and so on).
+- Have no time to code? Tell your friends and subscribers about `textdistance`. More users, more contributions, more amazing features.
 
 Thank you :heart:
