@@ -7,9 +7,10 @@ def main(ctx):
         steps=[
             dict(
                 name="install task",
-                image="alpine:latest",
+                image="debian:latest",
                 commands=[
-                    "apk add --no-cache wget",
+                    "apt update",
+                    "apt install -y wget",
                     "wget https://taskfile.dev/install.sh",
                     "sh install.sh -- latest",
                     "rm install.sh",
@@ -34,14 +35,15 @@ def main(ctx):
 def step(env, python):
     result = dict(
         name="{} (py{})".format(env, python),
-        image="python:{}-alpine".format(python),
+        image="python:{}-buster".format(python),
         depends_on=["install task"],
         environment=dict(
             # set coverage database file name to avoid conflicts between steps
             COVERAGE_FILE=".coverage.{}.{}".format(env, python),
         ),
         commands=[
-            "apk add curl git gcc libc-dev",
+            "apt update",
+            "apt install -y curl git build-essential",
             "./bin/task PYTHON_BIN=python3 VENVS=/opt/py{python}/ -f {env}:run".format(
                 python=python,
                 env=env,

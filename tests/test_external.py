@@ -62,7 +62,7 @@ def test_qval(left, right, alg):
             int_result = internal_func(left, right)
             s1, s2 = lib.prepare(s1, s2)
             ext_result = external_func(s1, s2)
-        assert isclose(int_result, ext_result), str(lib)
+            assert isclose(int_result, ext_result), str(lib)
 
 
 @pytest.mark.external
