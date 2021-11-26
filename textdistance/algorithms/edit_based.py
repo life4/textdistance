@@ -557,6 +557,12 @@ class StrCmp95(_BaseSimilarity):
         return 0 < ord(char) < 91
 
     def __call__(self, s1, s2):
+        # Doing `upper` might result in some one-char lowercase glyphs
+        # being represented as two chars in uppercase, which in turn
+        # might result in a distance that is greater than the maximum
+        # input sequence length.  We therefore save that maximum first,
+        # and do not return a distance greater than it.
+        max_length = self.maximum(s1, s2)
         s1 = s1.strip().upper()
         s2 = s2.strip().upper()
 
@@ -667,16 +673,16 @@ class StrCmp95(_BaseSimilarity):
         # After agreeing beginning chars, at least two more must agree and
         # the agreeing characters must be > .5 of remaining characters.
         if not self.long_strings:
-            return weight
+            return min(weight, max_length)
         if minv <= 4:
-            return weight
+            return min(weight, max_length)
         if num_com <= i + 1 or 2 * num_com < minv + i:
-            return weight
+            return min(weight, max_length)
         if s1[0].isdigit():
-            return weight
+            return min(weight, max_length)
         res = (num_com - i - 1) / (len_s1 + len_s2 - i * 2 + 2)
         weight += (1.0 - weight) * res
-        return weight
+        return min(weight, max_length)
 
 
 class MLIPNS(_BaseSimilarity):
