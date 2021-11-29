@@ -77,6 +77,7 @@ def test_normalization_same(text, alg):
 
 
 @pytest.mark.parametrize('alg', ALGS)
+@hypothesis.settings(deadline=None)
 @hypothesis.given(
     left=hypothesis.strategies.text(min_size=1),
     right=hypothesis.strategies.text(min_size=1),

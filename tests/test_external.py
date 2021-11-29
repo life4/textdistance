@@ -15,6 +15,7 @@ libraries = prototype.clone()
 
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
+@hypothesis.settings(deadline=None)
 @hypothesis.given(
     left=hypothesis.strategies.text(min_size=1),
     right=hypothesis.strategies.text(min_size=1),
