@@ -95,9 +95,10 @@ class Editex(_Base):
 
     def __init__(self, local=False, match_cost=0, group_cost=1, mismatch_cost=2,
                  groups=None, ungrouped=None, external=True):
+        # Ensure that match_cost <= group_cost <= mismatch_cost
         self.match_cost = match_cost
-        self.group_cost = group_cost
-        self.mismatch_cost = mismatch_cost
+        self.group_cost = max(group_cost, self.match_cost)
+        self.mismatch_cost = max(mismatch_cost, self.group_cost)
         self.local = local
         self.external = external
 
@@ -137,6 +138,9 @@ class Editex(_Base):
 
         # must do `upper` before getting length because some one-char lowercase glyphs
         # are represented as two chars in uppercase.
+        # This might result in a distance that is greater than the maximum
+        # input sequence length, though, so we save that maximum first.
+        max_length = self.maximum(s1, s2)
         s1 = ' ' + s1.upper()
         s2 = ' ' + s2.upper()
         len_s1 = len(s1) - 1
@@ -160,7 +164,8 @@ class Editex(_Base):
                     d_mat[i - 1][j - 1] + self.r_cost(cs1_curr, cs2_curr),
                 )
 
-        return d_mat[len_s1][len_s2]
+        distance = d_mat[len_s1][len_s2]
+        return min(distance, max_length)
 
 
 mra = MRA()

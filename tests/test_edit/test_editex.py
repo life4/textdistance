@@ -27,7 +27,7 @@ def test_distance(left, right, expected):
 
 @pytest.mark.parametrize('left, right, params, expected', [
     ('MARTHA', 'MARHTA', dict(match_cost=2), 12),
-    ('MARTHA', 'MARHTA', dict(match_cost=4), 14),
+    ('MARTHA', 'MARHTA', dict(match_cost=4), 24),
     ('MARTHA', 'MARHTA', dict(group_cost=1, local=True), 3),
     ('MARTHA', 'MARHTA', dict(group_cost=2, local=True), 4),
     ('MARTHA', 'MARHTA', dict(mismatch_cost=4, local=True), 5),
