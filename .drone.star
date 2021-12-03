@@ -36,7 +36,7 @@ def main(ctx):
 def step(env, python):
     result = dict(
         name="{} (py{})".format(env, python),
-        image="python:{}-alpine".format(python),
+        image="python:{}-buster".format(python),
         depends_on=["install task"],
         environment=dict(
             # set coverage database file name to avoid conflicts between steps
