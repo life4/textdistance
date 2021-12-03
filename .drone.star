@@ -20,11 +20,13 @@ def main(ctx):
             step(env="pytest-pure", python="3.7"),
             step(env="pytest-pure", python="3.8"),
             step(env="pytest-pure", python="3.9"),
+            step(env="pytest-pure", python="3.10"),
 
             step(env="pytest-external", python="3.6"),
             step(env="pytest-external", python="3.7"),
             step(env="pytest-external", python="3.8"),
             step(env="pytest-external", python="3.9"),
+            step(env="pytest-external", python="3.10"),
 
             step(env="flake8", python="3.7"),
         ],
