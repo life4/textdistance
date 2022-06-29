@@ -102,4 +102,4 @@ def test_list_of_numbers(left, right, alg):
         int_result = internal_func(left, right)
         s1, s2 = lib.prepare(left, right)
         ext_result = external_func(s1, s2)
-        assert isclose(int_result, ext_result), str(lib)
+        assert isclose(int_result, ext_result), f'{lib}({repr(s1)}, {repr(s2)})'
