@@ -97,18 +97,6 @@ class LibraryBase:
                 # object constructor - the distance metric method is
                 # called dist_abs() (whereas dist() gives a normalised distance)
                 obj = getattr(module, self.func_name)().dist_abs
-            elif self.module_name in {'rapidfuzz.distance.Jaro', 'rapidfuzz.distance.JaroWinkler'}:
-                if self.func_name == 'similarity':
-                    module_func = getattr(module, self.func_name)
-
-                    def func(s1, s2):
-                        if not s1 and not s2:
-                            return 1
-                        return module_func(s1, s2)
-
-                    obj = func
-                else:
-                    obj = getattr(module, self.func_name)
             else:
                 obj = getattr(module, self.func_name)
             # init class
