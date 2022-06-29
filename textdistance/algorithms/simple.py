@@ -15,7 +15,7 @@ class Prefix(_BaseSimilarity):
     """prefix similarity
     """
 
-    def __init__(self, qval=1, sim_test=None) -> None:
+    def __init__(self, qval: int = 1, sim_test=None) -> None:
         self.qval = qval
         self.sim_test = sim_test or self._ident
 
@@ -23,7 +23,10 @@ class Prefix(_BaseSimilarity):
         if not sequences:
             return 0
         sequences = self._get_sequences(*sequences)
-        def test(seq): return self.sim_test(*seq)  # noQA
+
+        def test(seq):
+            return self.sim_test(*seq)
+
         result = [c[0] for c in takewhile(test, zip(*sequences))]
 
         s = sequences[0]
@@ -76,12 +79,11 @@ class Matrix(_BaseSimilarity):
     """Matrix similarity
     """
 
-    def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric: bool = True, external: bool = True) -> None:
+    def __init__(self, mat=None, mismatch_cost: int = 0, match_cost: int = 1, symmetric: bool = True, external: bool = True) -> None:
         self.mat = mat
         self.mismatch_cost = mismatch_cost
         self.match_cost = match_cost
         self.symmetric = symmetric
-        # self.alphabet = sum(mat.keys(), ())
 
     def maximum(self, *sequences):
         return self.match_cost

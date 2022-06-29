@@ -38,7 +38,7 @@ class _NCDBase(_Base):
     """
     qval = 1
 
-    def __init__(self, qval=1) -> None:
+    def __init__(self, qval: int = 1) -> None:
         self.qval = qval
 
     def maximum(self, *sequences) -> int:
@@ -89,7 +89,7 @@ class ArithNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Arithmetic_coding
     """
 
-    def __init__(self, base=2, terminator=None, qval=1) -> None:
+    def __init__(self, base: int = 2, terminator=None, qval: int = 1) -> None:
         self.base = base
         self.terminator = terminator
         self.qval = qval
@@ -196,7 +196,7 @@ class SqrtNCD(_NCDBase):
     element in the input sequence.
     """
 
-    def __init__(self, qval=1) -> None:
+    def __init__(self, qval: int = 1) -> None:
         self.qval = qval
 
     def _compress(self, data):
@@ -215,7 +215,7 @@ class EntropyNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Entropy_encoding
     """
 
-    def __init__(self, qval=1, coef=1, base=2) -> None:
+    def __init__(self, qval: int = 1, coef: int = 1, base: int = 2) -> None:
         self.qval = qval
         self.coef = coef
         self.base = base
