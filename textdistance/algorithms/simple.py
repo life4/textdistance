@@ -14,7 +14,7 @@ __all__ = [
 class Prefix(_BaseSimilarity):
     """prefix similarity
     """
-    def __init__(self, qval=1, sim_test=None):
+    def __init__(self, qval=1, sim_test=None) -> None:
         self.qval = qval
         self.sim_test = sim_test or self._ident
 
@@ -73,7 +73,7 @@ class Matrix(_BaseSimilarity):
     """Matrix similarity
     """
 
-    def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric=True, external=True):
+    def __init__(self, mat=None, mismatch_cost=0, match_cost=1, symmetric=True, external=True) -> None:
         self.mat = mat
         self.mismatch_cost = mismatch_cost
         self.match_cost = match_cost

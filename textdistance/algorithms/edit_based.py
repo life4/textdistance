@@ -33,7 +33,7 @@ class Hamming(_Base):
     https://en.wikipedia.org/wiki/Hamming_distance
     """
 
-    def __init__(self, qval=1, test_func=None, truncate=False, external=True):
+    def __init__(self, qval=1, test_func=None, truncate=False, external=True) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.truncate = truncate
@@ -64,7 +64,7 @@ class Levenshtein(_Base):
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
     """
 
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(self, qval=1, test_func=None, external=True) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
@@ -133,7 +133,7 @@ class DamerauLevenshtein(_Base):
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     """
 
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(self, qval=1, test_func=None, external=True) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
@@ -233,7 +233,7 @@ class JaroWinkler(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaro-winkler.js
     """
 
-    def __init__(self, long_tolerance=False, winklerize=True, qval=1, external=True):
+    def __init__(self, long_tolerance=False, winklerize=True, qval=1, external=True) -> None:
         self.qval = qval
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
@@ -324,7 +324,7 @@ class JaroWinkler(_BaseSimilarity):
 
 
 class Jaro(JaroWinkler):
-    def __init__(self, long_tolerance=False, qval=1, external=True):
+    def __init__(self, long_tolerance=False, qval=1, external=True) -> None:
         super().__init__(
             long_tolerance=long_tolerance,
             winklerize=False,
@@ -347,7 +347,7 @@ class NeedlemanWunsch(_BaseSimilarity):
     """
     positive = False
 
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
+    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         if sim_func:
@@ -427,7 +427,7 @@ class SmithWaterman(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/smith-waterman.js
     """
 
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
+    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         self.sim_func = sim_func or self._ident
@@ -470,7 +470,7 @@ class Gotoh(NeedlemanWunsch):
     https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
     """
 
-    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1, external=True):
+    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1, external=True) -> None:
         self.qval = qval
         self.gap_open = gap_open
         self.gap_ext = gap_ext
@@ -551,7 +551,7 @@ class StrCmp95(_BaseSimilarity):
         ('1', 'I'), ('1', 'L'), ('0', 'O'), ('0', 'Q'), ('C', 'K'), ('G', 'J'),
     )
 
-    def __init__(self, long_strings=False, external=True):
+    def __init__(self, long_strings=False, external=True) -> None:
         self.long_strings = long_strings
         self.external = external
 
@@ -694,7 +694,7 @@ class MLIPNS(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/mlipns.js
     """
 
-    def __init__(self, threshold=0.25, maxmismatches=2, qval=1, external=True):
+    def __init__(self, threshold=0.25, maxmismatches=2, qval=1, external=True) -> None:
         self.qval = qval
         self.threshold = threshold
         self.maxmismatches = maxmismatches

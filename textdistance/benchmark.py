@@ -95,7 +95,7 @@ class Benchmark:
         return table
 
     @staticmethod
-    def save(libs):
+    def save(libs) -> None:
         data = defaultdict(list)
         for lib in libs:
             data[lib.algorithm].append([lib.library, lib.function])
@@ -103,7 +103,7 @@ class Benchmark:
             json.dump(obj=data, fp=f, indent=2, sort_keys=True)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> None:
         print('# Installed libraries:\n')
         installed = list(cls.get_installed())
         installed.sort()

@@ -12,15 +12,15 @@ LIBRARIES_FILE = os.path.join(CURRENT_DIR, 'libraries.json')
 
 
 class LibrariesManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.libs = defaultdict(list)
 
-    def register(self, alg, lib):
+    def register(self, alg, lib) -> None:
         """Register new lib
         """
         self.libs[alg].append(lib)
 
-    def optimize(self):
+    def optimize(self) -> None:
         """Sort algorithm implementations by speed.
         """
         # load benchmarks results
@@ -59,7 +59,7 @@ class LibrariesManager:
 class LibraryBase:
     func = NotImplemented
 
-    def __init__(self, module_name, func_name, attr=None, presets=None, conditions=None):
+    def __init__(self, module_name, func_name, attr=None, presets=None, conditions=None) -> None:
         self.module_name = module_name
         self.func_name = func_name
         self.presets = presets

@@ -24,7 +24,7 @@ class LCSSeq(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     """
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(self, qval=1, test_func=None, external=True) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external

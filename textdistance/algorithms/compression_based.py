@@ -38,7 +38,7 @@ class _NCDBase(_Base):
     """
     qval = 1
 
-    def __init__(self, qval=1):
+    def __init__(self, qval=1) -> None:
         self.qval = qval
 
     def maximum(self, *sequences):
@@ -70,7 +70,7 @@ class _NCDBase(_Base):
 
 class _BinaryNCDBase(_NCDBase):
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def __call__(self, *sequences):
@@ -89,7 +89,7 @@ class ArithNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Arithmetic_coding
     """
 
-    def __init__(self, base=2, terminator=None, qval=1):
+    def __init__(self, base=2, terminator=None, qval=1) -> None:
         self.base = base
         self.terminator = terminator
         self.qval = qval
@@ -172,7 +172,7 @@ class BWTRLENCD(RLENCD):
     https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
     https://en.wikipedia.org/wiki/Run-length_encoding
     """
-    def __init__(self, terminator='\0'):
+    def __init__(self, terminator='\0') -> None:
         self.terminator = terminator
 
     def _compress(self, data):
@@ -194,7 +194,7 @@ class SqrtNCD(_NCDBase):
     Size of compressed data equals to sum of square roots of counts of every
     element in the input sequence.
     """
-    def __init__(self, qval=1):
+    def __init__(self, qval=1) -> None:
         self.qval = qval
 
     def _compress(self, data):
@@ -212,7 +212,7 @@ class EntropyNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Entropy_(information_theory)
     https://en.wikipedia.org/wiki/Entropy_encoding
     """
-    def __init__(self, qval=1, coef=1, base=2):
+    def __init__(self, qval=1, coef=1, base=2) -> None:
         self.qval = qval
         self.coef = coef
         self.base = base
