@@ -94,7 +94,7 @@ class Editex(_Base):
     ungrouped = frozenset('HW')  # all letters in alphabet that not presented in `grouped`
 
     def __init__(self, local: bool = False, match_cost=0, group_cost=1, mismatch_cost=2,
-                 groups=None, ungrouped=None, external: bool = True):
+                 groups=None, ungrouped=None, external: bool = True) -> None:
         # Ensure that match_cost <= group_cost <= mismatch_cost
         self.match_cost = match_cost
         self.group_cost = max(group_cost, self.match_cost)
