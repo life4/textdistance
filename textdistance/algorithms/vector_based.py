@@ -59,7 +59,7 @@ class Manhattan(_Base):
 
 
 class Euclidean(_Base):
-    def __init__(self, squared=False) -> None:
+    def __init__(self, squared: bool=False) -> None:
         self.squared = squared
 
     def _numpy(self, s1, s2):
