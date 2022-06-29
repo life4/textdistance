@@ -27,7 +27,8 @@ class Jaccard(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Jaccard_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaccard.js
     """
-    def __init__(self, qval=1, as_set: bool=False, external: bool=True) -> None:
+
+    def __init__(self, qval=1, as_set: bool = False, external: bool = True) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
@@ -58,7 +59,8 @@ class Sorensen(_BaseSimilarity):
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/dice.js
     """
-    def __init__(self, qval=1, as_set: bool=False, external: bool=True) -> None:
+
+    def __init__(self, qval=1, as_set: bool = False, external: bool = True) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
@@ -84,7 +86,8 @@ class Tversky(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Tversky_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/tversky.js
     """
-    def __init__(self, qval=1, ks=None, bias=None, as_set: bool=False, external: bool=True) -> None:
+
+    def __init__(self, qval=1, ks=None, bias=None, as_set: bool = False, external: bool = True) -> None:
         self.qval = qval
         self.ks = ks or repeat(1)
         self.bias = bias
@@ -126,7 +129,8 @@ class Overlap(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Overlap_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/overlap.js
     """
-    def __init__(self, qval=1, as_set: bool=False, external: bool=True) -> None:
+
+    def __init__(self, qval=1, as_set: bool = False, external: bool = True) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
@@ -153,7 +157,8 @@ class Cosine(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Cosine_similarity
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/cosine.js
     """
-    def __init__(self, qval=1, as_set: bool=False, external: bool=True) -> None:
+
+    def __init__(self, qval=1, as_set: bool = False, external: bool = True) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
@@ -180,6 +185,7 @@ class Tanimoto(Jaccard):
     This is identical to the Jaccard similarity coefficient
     and the Tversky index for alpha=1 and beta=1.
     """
+
     def __call__(self, *sequences):
         result = super().__call__(*sequences)
         if result == 0:
@@ -196,7 +202,7 @@ class MongeElkan(_BaseSimilarity):
     """
     _damerau_levenshtein = DamerauLevenshtein()
 
-    def __init__(self, algorithm=_damerau_levenshtein, symmetric: bool=False, qval=1, external: bool=True) -> None:
+    def __init__(self, algorithm=_damerau_levenshtein, symmetric: bool = False, qval=1, external: bool = True) -> None:
         self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval
@@ -240,6 +246,7 @@ class Bag(_Base):
     """Bag distance
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/bag.js
     """
+
     def __call__(self, *sequences):
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set

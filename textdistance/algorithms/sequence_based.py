@@ -24,7 +24,8 @@ class LCSSeq(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     """
-    def __init__(self, qval=1, test_func=None, external: bool=True) -> None:
+
+    def __init__(self, qval=1, test_func=None, external: bool = True) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
@@ -92,6 +93,7 @@ class LCSSeq(_BaseSimilarity):
 class LCSStr(_BaseSimilarity):
     """longest common substring similarity
     """
+
     def _standart(self, s1, s2):
         matcher = _SequenceMatcher(a=s1, b=s2)
         match = matcher.find_longest_match(0, len(s1), 0, len(s2))

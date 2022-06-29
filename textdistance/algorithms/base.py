@@ -12,7 +12,7 @@ libraries.optimize()
 
 
 class Base:
-    def __init__(self, qval=1, external: bool=True) -> None:
+    def __init__(self, qval=1, external: bool = True) -> None:
         self.qval = qval
         self.external = external
 

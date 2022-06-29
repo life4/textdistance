@@ -172,6 +172,7 @@ class BWTRLENCD(RLENCD):
     https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
     https://en.wikipedia.org/wiki/Run-length_encoding
     """
+
     def __init__(self, terminator='\0') -> None:
         self.terminator = terminator
 
@@ -194,6 +195,7 @@ class SqrtNCD(_NCDBase):
     Size of compressed data equals to sum of square roots of counts of every
     element in the input sequence.
     """
+
     def __init__(self, qval=1) -> None:
         self.qval = qval
 
@@ -212,6 +214,7 @@ class EntropyNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Entropy_(information_theory)
     https://en.wikipedia.org/wiki/Entropy_encoding
     """
+
     def __init__(self, qval=1, coef=1, base=2) -> None:
         self.qval = qval
         self.coef = coef
@@ -242,6 +245,7 @@ class BZ2NCD(_BinaryNCDBase):
     """
     https://en.wikipedia.org/wiki/Bzip2
     """
+
     def _compress(self, data):
         return codecs.encode(data, 'bz2_codec')[15:]
 
@@ -250,6 +254,7 @@ class LZMANCD(_BinaryNCDBase):
     """
     https://en.wikipedia.org/wiki/LZMA
     """
+
     def _compress(self, data):
         if not lzma:
             raise ImportError('Please, install the PylibLZMA module')
@@ -260,6 +265,7 @@ class ZLIBNCD(_BinaryNCDBase):
     """
     https://en.wikipedia.org/wiki/Zlib
     """
+
     def _compress(self, data):
         return codecs.encode(data, 'zlib_codec')[2:]
 
