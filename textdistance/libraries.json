@@ -19,6 +19,10 @@
       "hamming"
     ],
     [
+      "rapidfuzz.distance.hamming",
+      "distance"
+    ],
+    [
       "jellyfish",
       "hamming_distance"
     ],
@@ -32,6 +36,10 @@
     ]
   ],
   "Jaro": [
+    [
+      "rapidfuzz.distance.Jaro",
+      "similarity"
+    ],
     [
       "Levenshtein",
       "jaro"
@@ -47,11 +55,19 @@
   ],
   "JaroWinkler": [
     [
+      "rapidfuzz.distance.JaroWinkler",
+      "similarity"
+    ],
+    [
       "jellyfish",
       "jaro_winkler_similarity"
     ]
   ],
   "Levenshtein": [
+    [
+      "rapidfuzz.distance.Levenshtein",
+      "distance"
+    ],
     [
       "Levenshtein",
       "distance"
