@@ -242,7 +242,7 @@ class JaroWinkler(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, s1, s2, prefix_weight=0.1):
+    def __call__(self, s1, s2, prefix_weight: float = 0.1):
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
@@ -347,7 +347,7 @@ class NeedlemanWunsch(_BaseSimilarity):
     """
     positive = False
 
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external: bool = True) -> None:
+    def __init__(self, gap_cost: float = 1.0, sim_func=None, qval=1, external: bool = True) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         if sim_func:
@@ -427,7 +427,7 @@ class SmithWaterman(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/smith-waterman.js
     """
 
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external: bool = True) -> None:
+    def __init__(self, gap_cost: float = 1.0, sim_func=None, qval=1, external: bool = True) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         self.sim_func = sim_func or self._ident
@@ -470,7 +470,7 @@ class Gotoh(NeedlemanWunsch):
     https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
     """
 
-    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1, external: bool = True) -> None:
+    def __init__(self, gap_open=1, gap_ext: float = 0.4, sim_func=None, qval=1, external: bool = True) -> None:
         self.qval = qval
         self.gap_open = gap_open
         self.gap_ext = gap_ext
@@ -694,7 +694,7 @@ class MLIPNS(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/mlipns.js
     """
 
-    def __init__(self, threshold=0.25, maxmismatches=2, qval=1, external: bool = True) -> None:
+    def __init__(self, threshold: float = 0.25, maxmismatches=2, qval=1, external: bool = True) -> None:
         self.qval = qval
         self.threshold = threshold
         self.maxmismatches = maxmismatches

@@ -173,7 +173,7 @@ class BWTRLENCD(RLENCD):
     https://en.wikipedia.org/wiki/Run-length_encoding
     """
 
-    def __init__(self, terminator='\0') -> None:
+    def __init__(self, terminator: str = '\0') -> None:
         self.terminator = terminator
 
     def _compress(self, data):

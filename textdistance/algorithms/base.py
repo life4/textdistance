@@ -20,7 +20,7 @@ class Base:
         raise NotImplementedError
 
     @staticmethod
-    def maximum(*sequences):
+    def maximum(*sequences) -> int:
         """Get maximum possible value
         """
         return max(map(len, sequences))
