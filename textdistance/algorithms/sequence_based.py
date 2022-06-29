@@ -145,7 +145,7 @@ class RatcliffObershelp(_BaseSimilarity):
     https://xlinux.nist.gov/dads/HTML/ratcliffObershelp.html
     """
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def _find(self, *sequences):

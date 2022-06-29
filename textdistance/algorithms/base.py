@@ -160,7 +160,7 @@ class Base:
         else:
             return sum(counter.values())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{name}({data})'.format(
             name=type(self).__name__,
             data=self.__dict__,

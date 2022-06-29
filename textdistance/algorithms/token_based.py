@@ -32,7 +32,7 @@ class Jaccard(_BaseSimilarity):
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):
@@ -63,7 +63,7 @@ class Sorensen(_BaseSimilarity):
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):
@@ -91,7 +91,7 @@ class Tversky(_BaseSimilarity):
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):
@@ -131,7 +131,7 @@ class Overlap(_BaseSimilarity):
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):
@@ -158,7 +158,7 @@ class Cosine(_BaseSimilarity):
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):

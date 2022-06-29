@@ -66,7 +66,7 @@ class LibraryBase:
         self.conditions = conditions
         self.attr = attr
 
-    def check_conditions(self, obj, *sequences):
+    def check_conditions(self, obj, *sequences) -> bool:
         # external libs can compare only 2 strings
         if len(sequences) != 2:
             return False
@@ -109,12 +109,12 @@ class LibraryBase:
 
         return self.func
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{}.{}'.format(self.module_name, self.func_name)
 
 
 class TextLibrary(LibraryBase):
-    def check_conditions(self, obj, *sequences):
+    def check_conditions(self, obj, *sequences) -> bool:
         if not super().check_conditions(obj, *sequences):
             return False
 
@@ -136,7 +136,7 @@ class TextLibrary(LibraryBase):
 
 
 class SameLengthLibrary(LibraryBase):
-    def check_conditions(self, obj, *sequences):
+    def check_conditions(self, obj, *sequences) -> bool:
         if not super().check_conditions(obj, *sequences):
             return False
         # compare only same length iterators

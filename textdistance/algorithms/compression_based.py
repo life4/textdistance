@@ -41,7 +41,7 @@ class _NCDBase(_Base):
     def __init__(self, qval=1) -> None:
         self.qval = qval
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def _get_size(self, data):

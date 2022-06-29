@@ -239,7 +239,7 @@ class JaroWinkler(_BaseSimilarity):
         self.winklerize = winklerize
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, s1, s2, prefix_weight=0.1):
@@ -555,7 +555,7 @@ class StrCmp95(_BaseSimilarity):
         self.long_strings = long_strings
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     @staticmethod
@@ -700,7 +700,7 @@ class MLIPNS(_BaseSimilarity):
         self.maxmismatches = maxmismatches
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):

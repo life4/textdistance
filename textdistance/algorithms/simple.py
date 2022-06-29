@@ -62,7 +62,7 @@ class Identity(_BaseSimilarity):
     """Identity similarity
     """
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences) -> int:
         return 1
 
     def __call__(self, *sequences):
