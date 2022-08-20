@@ -12,7 +12,7 @@ extras = {
         'numpy',                    # for SmithWaterman and other
         'python-Levenshtein',       # for Jaro and Levenshtein
         'pyxDamerauLevenshtein',    # for DamerauLevenshtein
-        'rapidfuzz>=2.0.0',         # for Jaro, Levenshtein and other
+        'rapidfuzz>=2.6.0',         # for Jaro, Levenshtein and other
     ],
 
     # needed for benchmarking, optimization and testing
@@ -23,7 +23,7 @@ extras = {
         'numpy',
         'python-Levenshtein',
         'pyxDamerauLevenshtein',
-        'rapidfuzz>=2.0.0',
+        'rapidfuzz>=2.6.0',
         # slow
         'distance',
         'pylev',
@@ -40,26 +40,27 @@ extras = {
 
     # for algos, from fastest to slowest, only faster than textdistance:
     'DamerauLevenshtein': [
+        'rapidfuzz>=2.6.0',         # any iterators of hashable elements
         'jellyfish',                # only for text
         'pyxDamerauLevenshtein',    # for any iterators
     ],
     'Hamming': [
         'python-Levenshtein',   # only same length and strings
-        'rapidfuzz>=2.0.0',     # only same length, any iterators of hashable elements
+        'rapidfuzz>=2.6.0',     # only same length, any iterators of hashable elements
         'jellyfish',            # only strings, any length
         'distance',             # only same length, any iterators
         'abydos',               # any iterators
     ],
     'Jaro': [
-        'rapidfuzz>=2.0.0',     # any iterators of hashable elements
+        'rapidfuzz>=2.6.0',     # any iterators of hashable elements
         'python-Levenshtein',   # only text
     ],
     'JaroWinkler': [
-        'rapidfuzz>=2.0.0',     # any iterators of hashable elements
+        'rapidfuzz>=2.6.0',     # any iterators of hashable elements
         'jellyfish',            # only text
     ],
     'Levenshtein': [
-        'rapidfuzz>=2.0.0',     # any iterators of hashable elements
+        'rapidfuzz>=2.6.0',     # any iterators of hashable elements
         'python-Levenshtein',   # only text
         # yeah, other libs slower than textdistance
     ],
