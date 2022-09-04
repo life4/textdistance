@@ -151,8 +151,11 @@ class SameLengthTextLibrary(SameLengthLibrary, TextLibrary):
 
 prototype = LibrariesManager()
 
+prototype.register('DamerauLevenshteinUnrestricted', LibraryBase('abydos.distance', 'DamerauLevenshtein'))
+prototype.register('DamerauLevenshteinUnrestricted', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
+prototype.register('DamerauLevenshteinUnrestricted', LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
+prototype.register('DamerauLevenshteinRestricted', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'DamerauLevenshtein'))
-prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
 

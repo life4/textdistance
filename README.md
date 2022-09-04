@@ -24,7 +24,9 @@ Features:
 | [Hamming](https://en.wikipedia.org/wiki/Hamming_distance)                                 | `Hamming`            | `hamming`              |
 | [MLIPNS](http://www.sial.iias.spb.su/files/386-386-1-PB.pdf)                              | `Mlipns`             | `mlipns`               |
 | [Levenshtein](https://en.wikipedia.org/wiki/Levenshtein_distance)                         | `Levenshtein`        | `levenshtein`          |
-| [Damerau-Levenshtein](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) | `DamerauLevenshtein` | `damerau_levenshtein`  |
+| [Damerau-Levenshtein unrestricted](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) | `DamerauLevenshteinUnrestricted` | `damerau_levenshtein`  |
+| [Damerau-Levenshtein unrestricted](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) | `DamerauLevenshtein` | `damerau_levenshtein`  |
+| [Damerau-Levenshtein restricted](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) | `DamerauLevenshteinRestricted` | `damerau_levenshtein`  |
 | [Jaro-Winkler](https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance)               | `JaroWinkler`        | `jaro_winkler`, `jaro` |
 | [Strcmp95](http://cpansearch.perl.org/src/SCW/Text-JaroWinkler-0.1/strcmp95.c)            | `StrCmp95`           | `strcmp95`             |
 | [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm)      | `NeedlemanWunsch`    | `needleman_wunsch`     |
@@ -126,7 +128,7 @@ With algorithm specific extras:
 pip install "textdistance[Hamming]"
 ```
 
-Algorithms with available extras: `DamerauLevenshtein`, `Hamming`, `Jaro`, `JaroWinkler`, `Levenshtein`.
+Algorithms with available extras: `DamerauLevenshtein` (both versions), `Hamming`, `Jaro`, `JaroWinkler`, `Levenshtein`.
 
 ### Dev
 
@@ -242,11 +244,12 @@ Without extras installation:
 
 | algorithm | library | function | time |
 |-----------|---------|----------|------|
-| DamerauLevenshtein | jellyfish | damerau_levenshtein_distance | 0.00965294 |
-| DamerauLevenshtein | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.151378 |
-| DamerauLevenshtein | pylev | damerau_levenshtein | 0.766461 |
-| DamerauLevenshtein | **textdistance** | DamerauLevenshtein | 4.13463 |
-| DamerauLevenshtein | abydos | damerau_levenshtein | 4.3831 |
+| DamerauLevenshteinUnrestricted | jellyfish | damerau_levenshtein_distance | 0.00965294 |
+| DamerauLevenshteinUnrestricted | **textdistance** | DamerauLevenshteinUnrestricted | 1.130407 |
+| DamerauLevenshteinUnrestricted | abydos | damerau_levenshtein | 4.3831 |
+| DamerauLevenshteinRestricted | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.151378 |
+| DamerauLevenshteinRestricted | pylev | damerau_levenshtein | 0.766461 |
+| DamerauLevenshteinRestricted | **textdistance** | DamerauLevenshteinRestricted | 4.13463 |
 | Hamming | Levenshtein | hamming | 0.0014428 |
 | Hamming | jellyfish | hamming_distance | 0.00240262 |
 | Hamming | distance | hamming | 0.036253 |
