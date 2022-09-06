@@ -1,6 +1,10 @@
 {
   "DamerauLevenshtein": [
     [
+      "rapidfuzz.distance.DamerauLevenshtein",
+      "distance"
+    ],
+    [
       "jellyfish",
       "damerau_levenshtein_distance"
     ],

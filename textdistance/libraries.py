@@ -154,6 +154,7 @@ prototype = LibrariesManager()
 prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'DamerauLevenshtein'))
 prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
+prototype.register('DamerauLevenshtein', LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
 
 prototype.register('Hamming', LibraryBase('abydos.distance', 'Hamming'))
 prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
