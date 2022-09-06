@@ -37,6 +37,24 @@ extras = {
         'numpy',
         'pytest',
     ],
+    'lint': [
+        'twine',
+        'mypy',
+        'isort',
+        'flake8',
+
+        # flake8 plugins
+        'flake8-blind-except',
+        'flake8-bugbear',
+        'flake8-commas',
+        'flake8-logging-format',
+        'flake8-mutable',
+        'flake8-pep3101',
+        'flake8-quotes',
+        'flake8-string-format',
+        'flake8-tidy-imports',
+        'pep8-naming',
+    ],
 
     # for algos, from fastest to slowest, only faster than textdistance:
     'DamerauLevenshtein': [

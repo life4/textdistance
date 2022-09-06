@@ -2,13 +2,11 @@
 version: "3"
 
 vars:
-  PYTHON_BIN: python3.7
-  VENVS: ./venvs/
-  FLAKE8_ENV: "{{.VENVS}}flake8"
-  PYTEST_PURE_ENV: "{{.VENVS}}pytest-pure"
-  PYTEST_EXT_ENV: "{{.VENVS}}pytest-ext"
-  ISORT_ENV:  "{{.VENVS}}isort"
-  TWINE_ENV:  "{{.VENVS}}twine"
+  PYTHON_BIN: python3
+  VENVS: .venvs/
+  LINT_ENV: "{{.VENVS}}lint"
+  TEST_PURE_ENV: "{{.VENVS}}pytest-pure"
+  TEST_EXT_ENV: "{{.VENVS}}pytest-ext"
 
 tasks:
   venv:create:
@@ -21,6 +19,8 @@ tasks:
     sources:
       - setup.py
       - "{{.ENV}}/bin/activate"
+    status:
+      - test -f {{.ENV}}/bin/flake8
     deps:
       - task: venv:create
         vars:
@@ -28,68 +28,52 @@ tasks:
     cmds:
       - "{{.ENV}}/bin/pip install '.[{{.EXTRA}}]'"
 
-  twine:install:
-    deps:
-      - task: venv:create
-        vars:
-          ENV: "{{.TWINE_ENV}}"
+  lint:install:
     cmds:
-      - "{{.TWINE_ENV}}/bin/pip install twine"
+      - task: pip:install
+        vars:
+          ENV: "{{.LINT_ENV}}"
+          EXTRA: test,lint
+
   twine:build:
     deps:
-      - twine:install
+      - lint:install
     cmds:
       - rm -rf dist/
-      - "{{.TWINE_ENV}}/bin/python3 setup.py sdist bdist_wheel"
+      - "{{.LINT_ENV}}/bin/python3 setup.py sdist bdist_wheel"
   twine:release:
     deps:
       - twine:build
     cmds:
-      - "{{.TWINE_ENV}}/bin/twine upload dist/textdistance-*"
+      - "{{.LINT_ENV}}/bin/twine upload dist/textdistance-*"
 
-  flake8:install:
-    status:
-      - "test -f {{.FLAKE8_ENV}}/bin/flake8"
-    deps:
-      - task: venv:create
-        vars:
-          ENV: "{{.FLAKE8_ENV}}"
-    cmds:
-      - "{{.FLAKE8_ENV}}/bin/python3 -m pip install -r requirements-flake.txt"
   flake8:run:
-    sources:
-      - "**/*.py"
     deps:
-      - flake8:install
+      - lint:install
     cmds:
-      - "{{.FLAKE8_ENV}}/bin/flake8 ."
+      - "{{.LINT_ENV}}/bin/flake8 ."
 
 
   pytest-pure:run:
     deps:
       - task: pip:install
         vars:
-          ENV: "{{.PYTEST_PURE_ENV}}"
+          ENV: "{{.TEST_PURE_ENV}}"
           EXTRA: test
     cmds:
-      - "{{.PYTEST_PURE_ENV}}/bin/pytest  -m 'not external' {{.CLI_ARGS}}"
+      - "{{.TEST_PURE_ENV}}/bin/pytest  -m 'not external' {{.CLI_ARGS}}"
 
   pytest-external:run:
     deps:
       - task: pip:install
         vars:
-          ENV: "{{.PYTEST_EXT_ENV}}"
+          ENV: "{{.TEST_EXT_ENV}}"
           EXTRA: test,benchmark
     cmds:
-      - "{{.PYTEST_EXT_ENV}}/bin/pytest {{.CLI_ARGS}}"
+      - "{{.TEST_EXT_ENV}}/bin/pytest {{.CLI_ARGS}}"
 
   isort:run:
-    sources:
-      - "**/*.py"
     deps:
-      - task: pip:install
-        vars:
-          ENV: "{{.ISORT_ENV}}"
-          EXTRA: tests
+      - lint:install
     cmds:
-      - "{{.ISORT_ENV}}/bin/isort ."
+      - "{{.LINT_ENV}}/bin/isort ."
