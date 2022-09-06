@@ -45,7 +45,7 @@ class LibrariesManager:
         """
         return list(self.libs.keys())
 
-    def get_libs(self, alg) -> list:
+    def get_libs(self, alg) -> list[LibraryBase]:
         """Get libs list for algorithm
         """
         if alg not in self.libs:

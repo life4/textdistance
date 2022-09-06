@@ -731,7 +731,7 @@ class MLIPNS(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences) -> int:
+    def __call__(self, *sequences) -> float:
         sequences = self._get_sequences(*sequences)
 
         result = self.quick_answer(*sequences)

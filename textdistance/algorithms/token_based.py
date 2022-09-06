@@ -99,9 +99,9 @@ class Tversky(_BaseSimilarity):
         return 1
 
     def __call__(self, *sequences) -> Any:
-        result = self.quick_answer(*sequences)
-        if result is not None:
-            return result
+        quick_result = self.quick_answer(*sequences)
+        if quick_result is not None:
+            return quick_result
 
         sequences = self._get_counters(*sequences)                # sets
         intersection = self._intersect_counters(*sequences)       # set
@@ -235,9 +235,9 @@ class MongeElkan(_BaseSimilarity):
         return sum(maxes) / len(seq) / len(maxes)
 
     def __call__(self, *sequences) -> float:
-        result = self.quick_answer(*sequences)
-        if result is not None:
-            return result
+        quick_result = self.quick_answer(*sequences)
+        if quick_result is not None:
+            return quick_result
         sequences = self._get_sequences(*sequences)
 
         if self.symmetric:
@@ -254,12 +254,10 @@ class Bag(_Base):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/bag.js
     """
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences) -> float:
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
-        sequences = (self._count_counters(sequence - intersection) for sequence in sequences)
-        # ^ ints
-        return max(sequences)
+        return max(self._count_counters(sequence - intersection) for sequence in sequences)
 
 
 bag = Bag()
