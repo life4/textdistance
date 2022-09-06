@@ -13,6 +13,7 @@ from .libraries import LIBRARIES_FILE, prototype
 # python3 -m textdistance.benchmark
 
 
+from typing import Iterator
 libraries = prototype.clone()
 Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'presets'])
 
@@ -40,7 +41,7 @@ RUNS = 2000
 
 class Benchmark:
     @staticmethod
-    def get_installed():
+    def get_installed() -> Iterator:
         for alg in libraries.get_algorithms():
             for lib in libraries.get_libs(alg):
                 # try load function
@@ -56,7 +57,7 @@ class Benchmark:
                 )
 
     @staticmethod
-    def get_external_benchmark(installed):
+    def get_external_benchmark(installed) -> Iterator:
         for lib in installed:
             yield lib._replace(time=timeit(
                 stmt=STMT,
@@ -65,7 +66,7 @@ class Benchmark:
             ))
 
     @staticmethod
-    def get_internal_benchmark():
+    def get_internal_benchmark() -> Iterator:
         for alg in libraries.get_algorithms():
             yield Lib(
                 algorithm=alg,
@@ -80,7 +81,7 @@ class Benchmark:
             )
 
     @staticmethod
-    def filter_benchmark(external, internal):
+    def filter_benchmark(external, internal) -> filter:
         limits = {i.algorithm: i.time for i in internal}
         return filter(lambda x: x.time < limits[x.algorithm], external)
 

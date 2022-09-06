@@ -6,6 +6,7 @@ import os.path
 from collections import defaultdict
 from copy import deepcopy
 from importlib import import_module
+from typing import Any, Callable
 
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -39,19 +40,19 @@ class LibrariesManager:
             # sort libs by speed
             self.libs[alg].sort(key=lambda lib: libs_names.index([lib.module_name, lib.func_name]))
 
-    def get_algorithms(self):
+    def get_algorithms(self) -> list:
         """Get list of available algorithms.
         """
         return list(self.libs.keys())
 
-    def get_libs(self, alg):
+    def get_libs(self, alg) -> list:
         """Get libs list for algorithm
         """
         if alg not in self.libs:
             return []
         return self.libs[alg]
 
-    def clone(self):
+    def clone(self) -> LibrariesManager:
         """Clone library manager prototype
         """
         obj = self.__class__()
@@ -60,7 +61,7 @@ class LibrariesManager:
 
 
 class LibraryBase:
-    func = NotImplemented
+    func: Callable | None | Any = NotImplemented
 
     def __init__(self, module_name, func_name, attr=None, presets=None, conditions=None) -> None:
         self.module_name = module_name
@@ -81,17 +82,17 @@ class LibraryBase:
 
         return True
 
-    def prepare(self, *sequences):
+    def prepare(self, *sequences) -> tuple:
         return sequences
 
-    def get_function(self):
+    def get_function(self) -> Callable | None:
         if self.func is NotImplemented:
             # import module
             try:
                 module = import_module(self.module_name)
             except ImportError:
                 self.func = None
-                return
+                return None
 
             # get object from module
             if self.module_name == 'abydos.distance':
@@ -131,10 +132,10 @@ class TextLibrary(LibraryBase):
                 return False
         return True
 
-    def prepare(self, *sequences):
+    def prepare(self, *sequences) -> tuple:
         # convert list of letters to string
         if isinstance(sequences[0], (tuple, list)):
-            sequences = list(map(lambda x: ''.join(x), sequences))
+            sequences = tuple(map(lambda x: ''.join(x), sequences))
         return sequences
 
 

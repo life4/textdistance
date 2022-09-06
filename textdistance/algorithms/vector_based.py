@@ -8,6 +8,7 @@ from functools import reduce
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
+from typing import Any
 try:
     import numpy
 except ImportError:
@@ -22,7 +23,7 @@ class Chebyshev(_Base):
     def _pure(self, s1, s2):
         return max(abs(e1 - e2) for e1, e2 in zip(s1, s2))
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         if numpy:
             return self._numpy(s1, s2)
         else:
@@ -46,7 +47,7 @@ class Minkowski(_Base):
         result = sum(e ** self.p for e in result)
         return result ** (1.0 / self.p)
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         if numpy:
             return self._numpy(s1, s2)
         else:
@@ -54,7 +55,7 @@ class Minkowski(_Base):
 
 
 class Manhattan(_Base):
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         raise NotImplementedError
 
 
@@ -71,10 +72,10 @@ class Euclidean(_Base):
             return result
         return numpy.sqrt(result)
 
-    def _pure(self, s1, s2):
+    def _pure(self, s1, s2) -> None:
         raise NotImplementedError
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         if numpy:
             return self._numpy(s1, s2)
         else:
@@ -82,7 +83,7 @@ class Euclidean(_Base):
 
 
 class Mahalanobis(_Base):
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         raise NotImplementedError
 
 
@@ -106,5 +107,5 @@ class Correlation(_BaseSimilarity):
 
 
 class Kulsinski(_BaseSimilarity):
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         raise NotImplementedError

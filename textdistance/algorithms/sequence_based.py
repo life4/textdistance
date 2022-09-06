@@ -6,6 +6,7 @@ from ..utils import find_ngrams
 from .base import BaseSimilarity as _BaseSimilarity
 
 
+from typing import Any
 try:
     import numpy
 except ImportError:
@@ -30,12 +31,13 @@ class LCSSeq(_BaseSimilarity):
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _dynamic(self, seq1, seq2):
+    def _dynamic(self, seq1, seq2) -> str:
         """
         https://github.com/chrislit/abydos/blob/master/abydos/distance/_lcsseq.py
         http://www.dis.uniroma1.it/~bonifaci/algo/LCSSEQ.py
         http://rosettacode.org/wiki/Longest_common_subsequence#Dynamic_Programming_8
         """
+        lengths: Any
         if numpy:
             lengths = numpy.zeros((len(seq1) + 1, len(seq2) + 1), dtype=int)
         else:
@@ -77,7 +79,7 @@ class LCSSeq(_BaseSimilarity):
             m = max([self(*ss), m], key=len)
         return m
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> str:
         if not sequences:
             return ''
         sequences = self._get_sequences(*sequences)
@@ -86,7 +88,7 @@ class LCSSeq(_BaseSimilarity):
         else:
             return self._recursive(*sequences)
 
-    def similarity(self, *sequences):
+    def similarity(self, *sequences) -> int:
         return len(self(*sequences))
 
 
@@ -99,20 +101,20 @@ class LCSStr(_BaseSimilarity):
         match = matcher.find_longest_match(0, len(s1), 0, len(s2))
         return s1[match.a: match.a + match.size]
 
-    def _custom(self, *sequences):
+    def _custom(self, *sequences) -> str:
         short = min(sequences, key=len)
         length = len(short)
         for n in range(length, 0, -1):
             for subseq in find_ngrams(short, n):
-                subseq = ''.join(subseq)
+                joined = ''.join(subseq)
                 for seq in sequences:
-                    if subseq not in seq:
+                    if joined not in seq:
                         break
                 else:
-                    return subseq
+                    return joined
         return type(short)()  # empty sequence
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> str:
         if not all(sequences):
             return ''
         length = len(sequences)
@@ -126,7 +128,7 @@ class LCSStr(_BaseSimilarity):
             return self._standart(*sequences)
         return self._custom(*sequences)
 
-    def similarity(self, *sequences):
+    def similarity(self, *sequences) -> int:
         return len(self(*sequences))
 
 
@@ -150,7 +152,7 @@ class RatcliffObershelp(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def _find(self, *sequences):
+    def _find(self, *sequences) -> int:
         subseq = LCSStr()(*sequences)
         length = len(subseq)
         if length == 0:
@@ -159,7 +161,7 @@ class RatcliffObershelp(_BaseSimilarity):
         after = [s[s.find(subseq) + length:] for s in sequences]
         return self._find(*before) + length + self._find(*after)
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result

@@ -8,6 +8,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 from .edit_based import DamerauLevenshtein
 
 
+from typing import Any
 __all__ = [
     'Jaccard', 'Sorensen', 'Tversky',
     'Overlap', 'Cosine', 'Tanimoto', 'MongeElkan', 'Bag',
@@ -36,7 +37,7 @@ class Jaccard(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -68,7 +69,7 @@ class Sorensen(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -97,7 +98,7 @@ class Tversky(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -138,7 +139,7 @@ class Overlap(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -166,7 +167,7 @@ class Cosine(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -186,7 +187,7 @@ class Tanimoto(Jaccard):
     and the Tversky index for alpha=1 and beta=1.
     """
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> float:
         result = super().__call__(*sequences)
         if result == 0:
             return float('-inf')
@@ -221,7 +222,7 @@ class MongeElkan(_BaseSimilarity):
                 result = max(result, self.algorithm.maximum(*seq))
         return result
 
-    def _calc(self, seq, *sequences):
+    def _calc(self, seq, *sequences) -> float:
         if not seq:
             return 0
         maxes = []
@@ -233,7 +234,7 @@ class MongeElkan(_BaseSimilarity):
                 maxes.append(max_sim)
         return sum(maxes) / len(seq) / len(maxes)
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -253,7 +254,7 @@ class Bag(_Base):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/bag.js
     """
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
         sequences = (self._count_counters(sequence - intersection) for sequence in sequences)

@@ -1,3 +1,4 @@
+from __future__ import annotations
 # built-in
 from collections import defaultdict
 from itertools import groupby
@@ -7,6 +8,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
 from itertools import zip_longest
+from typing import Any, Iterator
 try:
     import numpy
 except ImportError:
@@ -29,7 +31,7 @@ class MRA(_BaseSimilarity):
         sequences = [list(self._calc_mra(s)) for s in sequences]
         return max(map(len, sequences))
 
-    def _calc_mra(self, word):
+    def _calc_mra(self, word: str) -> str:
         if not word:
             return word
         word = word.upper()
@@ -40,7 +42,7 @@ class MRA(_BaseSimilarity):
             return word[:3] + word[-3:]
         return word
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> int:
         if not all(sequences):
             return 0
         sequences = [list(self._calc_mra(s)) for s in sequences]
@@ -58,6 +60,7 @@ class MRA(_BaseSimilarity):
                     new_sequences.append(chars)
             new_sequences = map(list, zip(*new_sequences))
             # update sequences
+            ss: Iterator[tuple[Any, Any]]
             ss = zip_longest(new_sequences, sequences, fillvalue=list())
             sequences = [s1 + s2[minlen:] for s1, s2 in ss]
             # update lengths
@@ -109,7 +112,7 @@ class Editex(_Base):
     def maximum(self, *sequences):
         return max(map(len, sequences)) * self.mismatch_cost
 
-    def r_cost(self, *elements):
+    def r_cost(self, *elements) -> int:
         if self._ident(*elements):
             return self.match_cost
         if any(map(lambda x: x not in self.grouped, elements)):
@@ -119,12 +122,12 @@ class Editex(_Base):
                 return self.group_cost
         return self.mismatch_cost
 
-    def d_cost(self, *elements):
+    def d_cost(self, *elements) -> int:
         if not self._ident(*elements) and elements[0] in self.ungrouped:
             return self.group_cost
         return self.r_cost(*elements)
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         result = self.quick_answer(s1, s2)
         if result is not None:
             return result
@@ -138,6 +141,7 @@ class Editex(_Base):
         s2 = ' ' + s2.upper()
         len_s1 = len(s1) - 1
         len_s2 = len(s2) - 1
+        d_mat: Any
         if numpy:
             d_mat = numpy.zeros((len_s1 + 1, len_s2 + 1), dtype=int)
         else:

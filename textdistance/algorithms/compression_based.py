@@ -4,6 +4,7 @@ import math
 from collections import Counter
 from fractions import Fraction
 from itertools import groupby, permutations
+from typing import Any
 
 # app
 from .base import Base as _Base
@@ -38,21 +39,24 @@ class _NCDBase(_Base):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def _get_size(self, data):
+    def _get_size(self, data) -> int:
         return len(self._compress(data))
 
-    def __call__(self, *sequences):
+    def _compress(self, data: Any) -> Any:
+        raise NotImplementedError
+
+    def __call__(self, *sequences) -> float:
         if not sequences:
             return 0
         sequences = self._get_sequences(*sequences)
 
         concat_len = float('Inf')
         empty = type(sequences[0])()
-        for data in permutations(sequences):
+        for mutation in permutations(sequences):
             if isinstance(empty, (str, bytes)):
-                data = empty.join(data)
+                data = empty.join(mutation)
             else:
-                data = sum(data, empty)
+                data = sum(mutation, empty)
             concat_len = min(concat_len, self._get_size(data))
 
         compressed_lens = [self._get_size(s) for s in sequences]
@@ -67,11 +71,11 @@ class _BinaryNCDBase(_NCDBase):
     def __init__(self) -> None:
         pass
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> float:
         if not sequences:
             return 0
         if isinstance(sequences[0], str):
-            sequences = [s.encode('utf-8') for s in sequences]
+            sequences = tuple(s.encode('utf-8') for s in sequences)
         return super().__call__(*sequences)
 
 
@@ -88,7 +92,7 @@ class ArithNCD(_NCDBase):
         self.terminator = terminator
         self.qval = qval
 
-    def _make_probs(self, *sequences):
+    def _make_probs(self, *sequences) -> dict:
         """
         https://github.com/gw-c/arith/blob/master/arith.py
         """
@@ -110,7 +114,7 @@ class ArithNCD(_NCDBase):
         assert cumulative_count == total_letters
         return prob_pairs
 
-    def _get_range(self, data, probs):
+    def _get_range(self, data, probs) -> tuple:
         if self.terminator is not None:
             if self.terminator in data:
                 data = data.replace(self.terminator, '')
@@ -124,7 +128,7 @@ class ArithNCD(_NCDBase):
             width *= prob_width
         return start, start + width
 
-    def _compress(self, data):
+    def _compress(self, data) -> Fraction:
         probs = self._make_probs(data)
         start, end = self._get_range(data=data, probs=probs)
         output_fraction = Fraction(0, 1)
@@ -135,7 +139,7 @@ class ArithNCD(_NCDBase):
             output_denominator *= 2
         return output_fraction
 
-    def _get_size(self, data):
+    def _get_size(self, data) -> int:
         numerator = self._compress(data).numerator
         if numerator == 0:
             return 0
@@ -148,7 +152,7 @@ class RLENCD(_NCDBase):
     https://en.wikipedia.org/wiki/Run-length_encoding
     """
 
-    def _compress(self, data):
+    def _compress(self, data) -> str:
         new_data = []
         for k, g in groupby(data):
             n = len(list(g))
@@ -170,7 +174,7 @@ class BWTRLENCD(RLENCD):
     def __init__(self, terminator: str = '\0') -> None:
         self.terminator = terminator
 
-    def _compress(self, data):
+    def _compress(self, data) -> str:
         if not data:
             data = self.terminator
         elif self.terminator not in data:
@@ -193,7 +197,7 @@ class SqrtNCD(_NCDBase):
     def __init__(self, qval: int = 1) -> None:
         self.qval = qval
 
-    def _compress(self, data):
+    def _compress(self, data) -> dict:
         return {element: math.sqrt(count) for element, count in Counter(data).items()}
 
     def _get_size(self, data):
@@ -214,7 +218,7 @@ class EntropyNCD(_NCDBase):
         self.coef = coef
         self.base = base
 
-    def _compress(self, data):
+    def _compress(self, data) -> float:
         total_count = len(data)
         entropy = 0.0
         for element_count in Counter(data).values():
@@ -228,7 +232,7 @@ class EntropyNCD(_NCDBase):
         # absolute_entropy = math.log(unique_count, 2) / unique_count
         # return absolute_entropy - entropy / unique_count
 
-    def _get_size(self, data):
+    def _get_size(self, data) -> float:
         return self.coef + self._compress(data)
 
 

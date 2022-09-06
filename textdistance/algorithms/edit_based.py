@@ -42,7 +42,7 @@ class Hamming(_Base):
         self.truncate = truncate
         self.external = external
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> Any:
         sequences = self._get_sequences(*sequences)
 
         result = self.quick_answer(*sequences)
@@ -72,7 +72,7 @@ class Levenshtein(_Base):
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _recursive(self, s1, s2):
+    def _recursive(self, s1, s2) -> int:
         # TODO: more than 2 sequences support
         if not s1 or not s2:
             return len(s1) + len(s2)
@@ -112,7 +112,7 @@ class Levenshtein(_Base):
                 cur[c] = min(edit, deletion, insertion)
         return cur[-1]
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
@@ -211,7 +211,7 @@ class DamerauLevenshtein(_Base):
 
         return d[len(s1) - 1, len(s2) - 1]
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
@@ -251,7 +251,7 @@ class JaroWinkler(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, s1, s2, prefix_weight: float = 0.1):
+    def __call__(self, s1, s2, prefix_weight: float = 0.1) -> float:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
@@ -382,7 +382,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         """
         return -1 * self.similarity(*sequences)
 
-    def normalized_distance(self, *sequences):
+    def normalized_distance(self, *sequences) -> int:
         """Get distance from 0 to 1
         """
         minimum = self.minimum(*sequences)
@@ -391,7 +391,7 @@ class NeedlemanWunsch(_BaseSimilarity):
             return 0
         return (self.distance(*sequences) - minimum) / (maximum - minimum)
 
-    def normalized_similarity(self, *sequences):
+    def normalized_similarity(self, *sequences) -> int:
         """Get distance from 0 to 1
         """
         minimum = self.minimum(*sequences)
@@ -400,7 +400,7 @@ class NeedlemanWunsch(_BaseSimilarity):
             return 1
         return (self.similarity(*sequences) - minimum) / (maximum * 2)
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         if not numpy:
             raise ImportError('Please, install numpy for Needleman-Wunsch measure')
 
@@ -457,7 +457,7 @@ class SmithWaterman(_BaseSimilarity):
     def maximum(self, *sequences):
         return min(map(len, sequences))
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         if not numpy:
             raise ImportError('Please, install numpy for Smith-Waterman measure')
 
@@ -514,7 +514,7 @@ class Gotoh(NeedlemanWunsch):
     def maximum(self, *sequences):
         return min(map(len, sequences))
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> Any:
         if not numpy:
             raise ImportError('Please, install numpy for Gotoh measure')
 
@@ -587,10 +587,10 @@ class StrCmp95(_BaseSimilarity):
         return 1
 
     @staticmethod
-    def _in_range(char):
+    def _in_range(char) -> bool:
         return 0 < ord(char) < 91
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1, s2) -> float:
         s1 = s1.strip().upper()
         s2 = s2.strip().upper()
 
@@ -731,7 +731,7 @@ class MLIPNS(_BaseSimilarity):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences) -> int:
         sequences = self._get_sequences(*sequences)
 
         result = self.quick_answer(*sequences)
