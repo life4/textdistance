@@ -12,7 +12,7 @@ def main(ctx):
                     "apt update",
                     "apt install -y wget",
                     "wget https://taskfile.dev/install.sh",
-                    "sh install.sh -- latest",
+                    "sh install.sh",
                     "rm install.sh",
                 ],
             ),
