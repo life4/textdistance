@@ -154,18 +154,23 @@ prototype = LibrariesManager()
 prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'DamerauLevenshtein'))
 prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
+prototype.register('DamerauLevenshtein', LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
 
 prototype.register('Hamming', LibraryBase('abydos.distance', 'Hamming'))
 prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
 prototype.register('Hamming', SameLengthTextLibrary('Levenshtein', 'hamming'))
 prototype.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
+prototype.register('Hamming', SameLengthLibrary('rapidfuzz.distance.Hamming', 'distance'))
 
 prototype.register('Jaro', TextLibrary('jellyfish', 'jaro_similarity'))
+prototype.register('Jaro', LibraryBase('rapidfuzz.distance.Jaro', 'similarity'))
 # prototype.register('Jaro', TextLibrary('Levenshtein', 'jaro'))
 # prototype.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
 
 # prototype.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
 prototype.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler_similarity', conditions=dict(winklerize=True)))
+prototype.register('JaroWinkler', LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity',
+                                              conditions=dict(winklerize=True)))
 # https://github.com/life4/textdistance/issues/39
 # prototype.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
@@ -174,4 +179,5 @@ prototype.register('Levenshtein', LibraryBase('distance', 'levenshtein'))
 prototype.register('Levenshtein', LibraryBase('pylev', 'levenshtein'))
 prototype.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))
 prototype.register('Levenshtein', TextLibrary('Levenshtein', 'distance'))
+prototype.register('Levenshtein', LibraryBase('rapidfuzz.distance.Levenshtein', 'distance'))
 # prototype.register('Levenshtein', TextLibrary('py_stringmatching.similarity_measure.levenshtein', 'levenshtein'))

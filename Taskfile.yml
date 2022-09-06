@@ -10,8 +10,6 @@ vars:
   ISORT_ENV:  "{{.VENVS}}isort"
   TWINE_ENV:  "{{.VENVS}}twine"
 
-  TESTS_PATH: tests/
-
 tasks:
   venv:create:
     status:
@@ -21,7 +19,7 @@ tasks:
       - "{{.ENV}}/bin/python3 -m pip install -U pip setuptools wheel"
   pip:install:
     sources:
-      - pyproject.toml
+      - setup.py
       - "{{.ENV}}/bin/activate"
     deps:
       - task: venv:create
@@ -74,7 +72,7 @@ tasks:
           ENV: "{{.PYTEST_PURE_ENV}}"
           EXTRA: test
     cmds:
-      - "{{.PYTEST_PURE_ENV}}/bin/pytest  -m 'not external' {{.ARGS}} {{.TESTS_PATH}}"
+      - "{{.PYTEST_PURE_ENV}}/bin/pytest  -m 'not external' {{.CLI_ARGS}}"
 
   pytest-external:run:
     deps:
@@ -83,7 +81,7 @@ tasks:
           ENV: "{{.PYTEST_EXT_ENV}}"
           EXTRA: test,benchmark
     cmds:
-      - "{{.PYTEST_EXT_ENV}}/bin/pytest {{.ARGS}} {{.TESTS_PATH}}"
+      - "{{.PYTEST_EXT_ENV}}/bin/pytest {{.CLI_ARGS}}"
 
   isort:run:
     sources:

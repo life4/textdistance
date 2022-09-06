@@ -7,9 +7,10 @@ def main(ctx):
         steps=[
             dict(
                 name="install task",
-                image="alpine:latest",
+                image="debian:latest",
                 commands=[
-                    "apk add --no-cache wget",
+                    "apt update",
+                    "apt install -y wget",
                     "wget https://taskfile.dev/install.sh",
                     "sh install.sh -- latest",
                     "rm install.sh",
@@ -43,7 +44,8 @@ def step(env, python):
             COVERAGE_FILE=".coverage.{}.{}".format(env, python),
         ),
         commands=[
-            "apt install curl git gcc libc-dev",
+            "apt update",
+            "apt install -y curl git gcc libc-dev build-essential",
             "./bin/task PYTHON_BIN=python3 VENVS=/opt/py{python}/ -f {env}:run".format(
                 python=python,
                 env=env,
