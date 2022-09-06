@@ -10,7 +10,7 @@ try:
     import numpy
 except ImportError:
     from array import array
-    numpy = None
+    numpy = None  # type: ignore[assignment]
 
 
 __all__ = [

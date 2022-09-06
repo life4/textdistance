@@ -12,7 +12,7 @@ from .base import Base as _Base
 try:
     import lzma
 except ImportError:
-    lzma = None
+    lzma = None  # type: ignore[assignment]
 
 
 __all__ = [
@@ -22,12 +22,6 @@ __all__ = [
     'bz2_ncd', 'lzma_ncd', 'arith_ncd', 'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
     'sqrt_ncd', 'entropy_ncd',
 ]
-
-
-try:
-    string_types = (str, unicode)
-except NameError:
-    string_types = (str, )
 
 
 class _NCDBase(_Base):
@@ -76,7 +70,7 @@ class _BinaryNCDBase(_NCDBase):
     def __call__(self, *sequences):
         if not sequences:
             return 0
-        if isinstance(sequences[0], string_types):
+        if isinstance(sequences[0], str):
             sequences = [s.encode('utf-8') for s in sequences]
         return super().__call__(*sequences)
 

@@ -1,22 +1,7 @@
-[tool.dephell.main]
-from = "setup.py"
-tag = "v."
-
-[tool.dephell.pytest-pure]
-from = "setup.py"
-envs = ["test"]
-command = "python3 -m pytest -m 'not external' tests/"
-
-[tool.dephell.pytest-external]
-from = "setup.py"
-envs = ["test", "benchmark"]
-command = "python3 -m pytest tests/"
-
-[tool.dephell.isort]
-from = "setup.py"
-envs = ["test"]
-command = "python3 -m isort -rc ."
-
-[tool.dephell.flake8]
-from = {format = "pip", path = "requirements-flake.txt"}
-command = "flake8"
+[tool.mypy]
+files = ["textdistance"]
+python_version = 3.7
+show_error_codes = true
+disable_error_code = ["override"]
+warn_unused_ignores = true
+allow_redefinition = true

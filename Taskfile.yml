@@ -52,6 +52,11 @@ tasks:
       - lint:install
     cmds:
       - "{{.LINT_ENV}}/bin/flake8 ."
+  mypy:run:
+    deps:
+      - lint:install
+    cmds:
+      - "{{.LINT_ENV}}/bin/mypy"
 
 
   pytest-pure:run:

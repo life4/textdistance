@@ -1,6 +1,8 @@
+from __future__ import annotations
 # built-in
 from collections import defaultdict
 from itertools import zip_longest
+from typing import Any, Callable, Optional
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
@@ -9,7 +11,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 try:
     import numpy
 except ImportError:
-    numpy = None
+    numpy = None  # type: ignore[assignment]
 
 
 __all__ = [
@@ -23,6 +25,7 @@ __all__ = [
     'jaro', 'jaro_winkler', 'strcmp95',
     'needleman_wunsch', 'gotoh', 'smith_waterman',
 ]
+SimFunc = Optional[Callable[[Any, Any], float]]
 
 
 class Hamming(_Base):
@@ -233,7 +236,13 @@ class JaroWinkler(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaro-winkler.js
     """
 
-    def __init__(self, long_tolerance: bool = False, winklerize: bool = True, qval: int = 1, external: bool = True) -> None:
+    def __init__(
+        self,
+        long_tolerance: bool = False,
+        winklerize: bool = True,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
@@ -347,7 +356,13 @@ class NeedlemanWunsch(_BaseSimilarity):
     """
     positive = False
 
-    def __init__(self, gap_cost: float = 1.0, sim_func=None, qval: int = 1, external: bool = True) -> None:
+    def __init__(
+        self,
+        gap_cost: float = 1.0,
+        sim_func: SimFunc = None,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         if sim_func:
@@ -427,7 +442,13 @@ class SmithWaterman(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/smith-waterman.js
     """
 
-    def __init__(self, gap_cost: float = 1.0, sim_func=None, qval: int = 1, external: bool = True) -> None:
+    def __init__(
+        self,
+        gap_cost: float = 1.0,
+        sim_func: SimFunc = None,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         self.sim_func = sim_func or self._ident
@@ -470,7 +491,14 @@ class Gotoh(NeedlemanWunsch):
     https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
     """
 
-    def __init__(self, gap_open: int = 1, gap_ext: float = 0.4, sim_func=None, qval: int = 1, external: bool = True) -> None:
+    def __init__(
+        self,
+        gap_open: int = 1,
+        gap_ext: float = 0.4,
+        sim_func: SimFunc = None,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.gap_open = gap_open
         self.gap_ext = gap_ext

@@ -42,6 +42,7 @@ extras = {
         'mypy',
         'isort',
         'flake8',
+        'types-tabulate',
 
         # flake8 plugins
         'flake8-blind-except',

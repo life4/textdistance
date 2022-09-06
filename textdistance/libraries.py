@@ -1,3 +1,4 @@
+from __future__ import annotations
 # built-in
 import json
 import os
@@ -12,10 +13,12 @@ LIBRARIES_FILE = os.path.join(CURRENT_DIR, 'libraries.json')
 
 
 class LibrariesManager:
+    libs: defaultdict[str, list[LibraryBase]]
+
     def __init__(self) -> None:
         self.libs = defaultdict(list)
 
-    def register(self, alg, lib) -> None:
+    def register(self, alg: str, lib: LibraryBase) -> None:
         """Register new lib
         """
         self.libs[alg].append(lib)

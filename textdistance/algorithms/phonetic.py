@@ -6,14 +6,11 @@ from itertools import groupby
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
-try:
-    from itertools import zip_longest
-except ImportError:
-    from itertools import izip_longest as zip_longest
+from itertools import zip_longest
 try:
     import numpy
 except ImportError:
-    numpy = None
+    numpy = None  # type: ignore[assignment]
 
 
 __all__ = [
@@ -108,10 +105,6 @@ class Editex(_Base):
             self.groups = groups
             self.ungrouped = ungrouped
         self.grouped = frozenset.union(*self.groups)
-
-        # backward compat
-        if hasattr(self, 'letter_groups'):
-            self.groups = self.letter_groups
 
     def maximum(self, *sequences):
         return max(map(len, sequences)) * self.mismatch_cost

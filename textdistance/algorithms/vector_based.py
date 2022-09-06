@@ -11,7 +11,7 @@ from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 try:
     import numpy
 except ImportError:
-    numpy = None
+    numpy = None  # type: ignore[assignment]
 
 
 class Chebyshev(_Base):

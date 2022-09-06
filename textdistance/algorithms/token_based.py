@@ -202,7 +202,13 @@ class MongeElkan(_BaseSimilarity):
     """
     _damerau_levenshtein = DamerauLevenshtein()
 
-    def __init__(self, algorithm=_damerau_levenshtein, symmetric: bool = False, qval: int = 1, external: bool = True) -> None:
+    def __init__(
+        self,
+        algorithm=_damerau_levenshtein,
+        symmetric: bool = False,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval
