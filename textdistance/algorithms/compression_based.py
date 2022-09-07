@@ -1,10 +1,11 @@
+from __future__ import annotations
 # built-in
 import codecs
 import math
 from collections import Counter
 from fractions import Fraction
 from itertools import groupby, permutations
-from typing import Any
+from typing import Any, Sequence, TypeVar
 
 # app
 from .base import Base as _Base
@@ -23,6 +24,7 @@ __all__ = [
     'bz2_ncd', 'lzma_ncd', 'arith_ncd', 'rle_ncd', 'bwtrle_ncd', 'zlib_ncd',
     'sqrt_ncd', 'entropy_ncd',
 ]
+T = TypeVar('T')
 
 
 class _NCDBase(_Base):
@@ -39,10 +41,10 @@ class _NCDBase(_Base):
     def maximum(self, *sequences) -> int:
         return 1
 
-    def _get_size(self, data) -> int:
+    def _get_size(self, data: str) -> float:
         return len(self._compress(data))
 
-    def _compress(self, data: Any) -> Any:
+    def _compress(self, data: str) -> Any:
         raise NotImplementedError
 
     def __call__(self, *sequences) -> float:
@@ -57,7 +59,7 @@ class _NCDBase(_Base):
                 data = empty.join(mutation)
             else:
                 data = sum(mutation, empty)
-            concat_len = min(concat_len, self._get_size(data))
+            concat_len = min(concat_len, self._get_size(data))  # type: ignore[arg-type]
 
         compressed_lens = [self._get_size(s) for s in sequences]
         max_len = max(compressed_lens)
@@ -87,12 +89,12 @@ class ArithNCD(_NCDBase):
     https://en.wikipedia.org/wiki/Arithmetic_coding
     """
 
-    def __init__(self, base: int = 2, terminator=None, qval: int = 1) -> None:
+    def __init__(self, base: int = 2, terminator: str | None = None, qval: int = 1) -> None:
         self.base = base
         self.terminator = terminator
         self.qval = qval
 
-    def _make_probs(self, *sequences) -> dict:
+    def _make_probs(self, *sequences) -> dict[str, tuple[Fraction, Fraction]]:
         """
         https://github.com/gw-c/arith/blob/master/arith.py
         """
@@ -114,7 +116,11 @@ class ArithNCD(_NCDBase):
         assert cumulative_count == total_letters
         return prob_pairs
 
-    def _get_range(self, data, probs) -> tuple:
+    def _get_range(
+        self,
+        data: str,
+        probs: dict[str, tuple[Fraction, Fraction]],
+    ) -> tuple[Fraction, Fraction]:
         if self.terminator is not None:
             if self.terminator in data:
                 data = data.replace(self.terminator, '')
@@ -128,7 +134,7 @@ class ArithNCD(_NCDBase):
             width *= prob_width
         return start, start + width
 
-    def _compress(self, data) -> Fraction:
+    def _compress(self, data: str) -> Fraction:
         probs = self._make_probs(data)
         start, end = self._get_range(data=data, probs=probs)
         output_fraction = Fraction(0, 1)
@@ -139,7 +145,7 @@ class ArithNCD(_NCDBase):
             output_denominator *= 2
         return output_fraction
 
-    def _get_size(self, data) -> int:
+    def _get_size(self, data: str) -> int:
         numerator = self._compress(data).numerator
         if numerator == 0:
             return 0
@@ -152,7 +158,7 @@ class RLENCD(_NCDBase):
     https://en.wikipedia.org/wiki/Run-length_encoding
     """
 
-    def _compress(self, data) -> str:
+    def _compress(self, data: Sequence) -> str:
         new_data = []
         for k, g in groupby(data):
             n = len(list(g))
@@ -172,15 +178,16 @@ class BWTRLENCD(RLENCD):
     """
 
     def __init__(self, terminator: str = '\0') -> None:
-        self.terminator = terminator
+        self.terminator: Any = terminator
 
-    def _compress(self, data) -> str:
+    def _compress(self, data: str) -> str:
         if not data:
             data = self.terminator
         elif self.terminator not in data:
             data += self.terminator
             modified = sorted(data[i:] + data[:i] for i in range(len(data)))
-            data = ''.join([subdata[-1] for subdata in modified])
+            empty = type(data)()
+            data = empty.join(subdata[-1] for subdata in modified)
         return super()._compress(data)
 
 
@@ -197,10 +204,10 @@ class SqrtNCD(_NCDBase):
     def __init__(self, qval: int = 1) -> None:
         self.qval = qval
 
-    def _compress(self, data) -> dict:
+    def _compress(self, data: Sequence[T]) -> dict[T, float]:
         return {element: math.sqrt(count) for element, count in Counter(data).items()}
 
-    def _get_size(self, data):
+    def _get_size(self, data: Sequence) -> float:
         return sum(self._compress(data).values())
 
 
@@ -218,7 +225,7 @@ class EntropyNCD(_NCDBase):
         self.coef = coef
         self.base = base
 
-    def _compress(self, data) -> float:
+    def _compress(self, data: Sequence) -> float:
         total_count = len(data)
         entropy = 0.0
         for element_count in Counter(data).values():
@@ -232,7 +239,7 @@ class EntropyNCD(_NCDBase):
         # absolute_entropy = math.log(unique_count, 2) / unique_count
         # return absolute_entropy - entropy / unique_count
 
-    def _get_size(self, data) -> float:
+    def _get_size(self, data: Sequence) -> float:
         return self.coef + self._compress(data)
 
 
@@ -244,7 +251,7 @@ class BZ2NCD(_BinaryNCDBase):
     https://en.wikipedia.org/wiki/Bzip2
     """
 
-    def _compress(self, data):
+    def _compress(self, data: str | bytes) -> bytes:
         return codecs.encode(data, 'bz2_codec')[15:]
 
 
@@ -253,7 +260,7 @@ class LZMANCD(_BinaryNCDBase):
     https://en.wikipedia.org/wiki/LZMA
     """
 
-    def _compress(self, data):
+    def _compress(self, data: bytes) -> bytes:
         if not lzma:
             raise ImportError('Please, install the PylibLZMA module')
         return lzma.compress(data)[14:]
@@ -264,7 +271,7 @@ class ZLIBNCD(_BinaryNCDBase):
     https://en.wikipedia.org/wiki/Zlib
     """
 
-    def _compress(self, data):
+    def _compress(self, data: str | bytes) -> bytes:
         return codecs.encode(data, 'zlib_codec')[2:]
 
 
