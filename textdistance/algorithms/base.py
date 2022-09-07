@@ -2,6 +2,7 @@ from __future__ import annotations
 # built-in
 from collections import Counter
 from contextlib import suppress
+from typing import Sequence
 
 # app
 from ..libraries import prototype
@@ -111,7 +112,7 @@ class Base:
                     return False
             return True
 
-    def _get_sequences(self, *sequences) -> list:
+    def _get_sequences(self, *sequences: Sequence[object]) -> list:
         """Prepare sequences.
 
         qval=None: split text by words
@@ -120,19 +121,19 @@ class Base:
         """
         # by words
         if not self.qval:
-            return [s.split() for s in sequences]
+            return [s.split() for s in sequences]  # type: ignore[attr-defined]
         # by chars
         if self.qval == 1:
             return list(sequences)
         # by n-grams
         return [find_ngrams(s, self.qval) for s in sequences]
 
-    def _get_counters(self, *sequences) -> list[Counter]:
+    def _get_counters(self, *sequences: Sequence[object]) -> list[Counter]:
         """Prepare sequences and convert it to Counters.
         """
         # already Counters
         if all(isinstance(s, Counter) for s in sequences):
-            return list(sequences)
+            return list(sequences)  # type: ignore[arg-type]
         return [Counter(s) for s in self._get_sequences(*sequences)]
 
     def _intersect_counters(self, *sequences: Counter) -> Counter:

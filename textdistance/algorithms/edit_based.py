@@ -2,7 +2,7 @@ from __future__ import annotations
 # built-in
 from collections import defaultdict
 from itertools import zip_longest
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Sequence
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
@@ -26,6 +26,7 @@ __all__ = [
     'needleman_wunsch', 'gotoh', 'smith_waterman',
 ]
 SimFunc = Optional[Callable[[Any, Any], float]]
+TestFunc = Optional[Callable[[Any, Any], bool]]
 
 
 class Hamming(_Base):
@@ -36,21 +37,28 @@ class Hamming(_Base):
     https://en.wikipedia.org/wiki/Hamming_distance
     """
 
-    def __init__(self, qval: int = 1, test_func=None, truncate: bool = False, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc | None = None,
+        truncate: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.truncate = truncate
         self.external = external
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: Sequence[object]) -> int:
         sequences = self._get_sequences(*sequences)
 
         result = self.quick_answer(*sequences)
         if result is not None:
+            assert isinstance(result, int)
             return result
 
         _zip = zip if self.truncate else zip_longest
-        return sum([not self.test_func(*es) for es in _zip(*sequences)])
+        return sum(not self.test_func(*es) for es in _zip(*sequences))
 
 
 class Levenshtein(_Base):
@@ -67,12 +75,17 @@ class Levenshtein(_Base):
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
     """
 
-    def __init__(self, qval: int = 1, test_func=None, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc | None = None,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _recursive(self, s1, s2) -> int:
+    def _recursive(self, s1: Sequence[object], s2: Sequence[object]) -> int:
         # TODO: more than 2 sequences support
         if not s1 or not s2:
             return len(s1) + len(s2)
@@ -89,7 +102,7 @@ class Levenshtein(_Base):
         s = self(s1[:-1], s2[:-1])
         return min(d, s) + 1
 
-    def _cicled(self, s1, s2):
+    def _cycled(self, s1: Sequence[object], s2: Sequence[object]) -> int:
         """
         source:
         https://github.com/jamesturk/jellyfish/blob/master/jellyfish/_jellyfish.py#L18
@@ -97,6 +110,7 @@ class Levenshtein(_Base):
         rows = len(s1) + 1
         cols = len(s2) + 1
         prev = None
+        cur: Any
         if numpy:
             cur = numpy.arange(cols)
         else:
@@ -112,14 +126,15 @@ class Levenshtein(_Base):
                 cur[c] = min(edit, deletion, insertion)
         return cur[-1]
 
-    def __call__(self, s1, s2) -> Any:
+    def __call__(self, s1, s2) -> int:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
         if result is not None:
+            assert isinstance(result, int)
             return result
 
-        return self._cicled(s1, s2)
+        return self._cycled(s1, s2)
 
 
 class DamerauLevenshtein(_Base):
@@ -136,12 +151,17 @@ class DamerauLevenshtein(_Base):
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     """
 
-    def __init__(self, qval: int = 1, test_func=None, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc | None = None,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _numpy(self, s1, s2):
+    def _numpy(self, s1: Sequence[object], s2: Sequence[object]) -> int:
         # TODO: doesn't pass tests, need improve
         d = numpy.zeros([len(s1) + 1, len(s2) + 1], dtype=int)
 
@@ -174,7 +194,7 @@ class DamerauLevenshtein(_Base):
 
         return d[len(s1) - 1][len(s2) - 1]
 
-    def _pure_python(self, s1, s2):
+    def _pure_python(self, s1: Sequence[object], s2: Sequence[object]) -> int:
         """
         https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
         """
@@ -211,12 +231,12 @@ class DamerauLevenshtein(_Base):
 
         return d[len(s1) - 1, len(s2) - 1]
 
-    def __call__(self, s1, s2) -> Any:
+    def __call__(self, s1: Sequence[object], s2: Sequence[object]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
         if result is not None:
-            return result
+            return result  # type: ignore[return-value]
 
         # if numpy:
         #     return self._numpy(s1, s2)
