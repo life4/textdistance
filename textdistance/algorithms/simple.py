@@ -1,9 +1,11 @@
+from __future__ import annotations
 # built-in
 from itertools import takewhile
+from typing import Sequence
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
-
+from .types import SimFunc
 
 __all__ = [
     'Prefix', 'Postfix', 'Length', 'Identity', 'Matrix',
@@ -15,13 +17,13 @@ class Prefix(_BaseSimilarity):
     """prefix similarity
     """
 
-    def __init__(self, qval: int = 1, sim_test=None) -> None:
+    def __init__(self, qval: int = 1, sim_test: SimFunc = None) -> None:
         self.qval = qval
         self.sim_test = sim_test or self._ident
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> Sequence:
         if not sequences:
-            return 0
+            return ''
         sequences = self._get_sequences(*sequences)
 
         def test(seq):
@@ -36,7 +38,7 @@ class Prefix(_BaseSimilarity):
             return b''.join(result)
         return result
 
-    def similarity(self, *sequences):
+    def similarity(self, *sequences: Sequence) -> int:
         return len(self(*sequences))
 
 
@@ -44,9 +46,9 @@ class Postfix(Prefix):
     """postfix similarity
     """
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> Sequence:
         s = sequences[0]
-        sequences = [reversed(s) for s in sequences]
+        sequences = [list(reversed(s)) for s in sequences]
         result = reversed(super().__call__(*sequences))
         if isinstance(s, str):
             return ''.join(result)
@@ -59,7 +61,7 @@ class Length(_Base):
     """Length distance
     """
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> int:
         lengths = list(map(len, sequences))
         return max(lengths) - min(lengths)
 
@@ -68,10 +70,10 @@ class Identity(_BaseSimilarity):
     """Identity similarity
     """
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> int:
         return int(self._ident(*sequences))
 
 
@@ -92,10 +94,10 @@ class Matrix(_BaseSimilarity):
         self.match_cost = match_cost
         self.symmetric = symmetric
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> int:
         return self.match_cost
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> int:
         if not self.mat:
             if self._ident(*sequences):
                 return self.match_cost
