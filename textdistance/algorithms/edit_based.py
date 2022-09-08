@@ -2,10 +2,11 @@ from __future__ import annotations
 # built-in
 from collections import defaultdict
 from itertools import zip_longest
-from typing import Any, Callable, Optional, Sequence, TypeVar
+from typing import Any, Sequence, TypeVar
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+from .types import TestFunc, SimFunc
 
 
 try:
@@ -25,8 +26,6 @@ __all__ = [
     'jaro', 'jaro_winkler', 'strcmp95',
     'needleman_wunsch', 'gotoh', 'smith_waterman',
 ]
-SimFunc = Optional[Callable[[Any, Any], float]]
-TestFunc = Optional[Callable[[Any, Any], bool]]
 T = TypeVar('T')
 
 

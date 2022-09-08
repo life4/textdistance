@@ -1,12 +1,13 @@
+from __future__ import annotations
 # built-in
 from difflib import SequenceMatcher as _SequenceMatcher
+from typing import Any
 
 # app
 from ..utils import find_ngrams
 from .base import BaseSimilarity as _BaseSimilarity
+from .types import TestFunc
 
-
-from typing import Any
 try:
     import numpy
 except ImportError:
@@ -26,12 +27,17 @@ class LCSSeq(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     """
 
-    def __init__(self, qval: int = 1, test_func=None, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc = None,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _dynamic(self, seq1, seq2) -> str:
+    def _dynamic(self, seq1: str, seq2: str) -> str:
         """
         https://github.com/chrislit/abydos/blob/master/abydos/distance/_lcsseq.py
         http://www.dis.uniroma1.it/~bonifaci/algo/LCSSEQ.py
@@ -66,12 +72,12 @@ class LCSSeq(_BaseSimilarity):
                 j -= 1
         return result
 
-    def _recursive(self, *sequences):
+    def _recursive(self, *sequences: str) -> str:
         if not all(sequences):
             return type(sequences[0])()  # empty sequence
         if self.test_func(*[s[-1] for s in sequences]):
             c = sequences[0][-1]
-            sequences = [s[:-1] for s in sequences]
+            sequences = tuple(s[:-1] for s in sequences)
             return self(*sequences) + c
         m = type(sequences[0])()  # empty sequence
         for i, s in enumerate(sequences):
@@ -79,7 +85,7 @@ class LCSSeq(_BaseSimilarity):
             m = max([self(*ss), m], key=len)
         return m
 
-    def __call__(self, *sequences) -> str:
+    def __call__(self, *sequences: str) -> str:
         if not sequences:
             return ''
         sequences = self._get_sequences(*sequences)
@@ -96,12 +102,12 @@ class LCSStr(_BaseSimilarity):
     """longest common substring similarity
     """
 
-    def _standart(self, s1, s2):
+    def _standart(self, s1: str, s2: str) -> str:
         matcher = _SequenceMatcher(a=s1, b=s2)
         match = matcher.find_longest_match(0, len(s1), 0, len(s2))
         return s1[match.a: match.a + match.size]
 
-    def _custom(self, *sequences) -> str:
+    def _custom(self, *sequences: str) -> str:
         short = min(sequences, key=len)
         length = len(short)
         for n in range(length, 0, -1):
@@ -114,7 +120,7 @@ class LCSStr(_BaseSimilarity):
                     return joined
         return type(short)()  # empty sequence
 
-    def __call__(self, *sequences) -> str:
+    def __call__(self, *sequences: str) -> str:
         if not all(sequences):
             return ''
         length = len(sequences)
@@ -128,7 +134,7 @@ class LCSStr(_BaseSimilarity):
             return self._standart(*sequences)
         return self._custom(*sequences)
 
-    def similarity(self, *sequences) -> int:
+    def similarity(self, *sequences: str) -> int:
         return len(self(*sequences))
 
 
@@ -149,10 +155,10 @@ class RatcliffObershelp(_BaseSimilarity):
     https://xlinux.nist.gov/dads/HTML/ratcliffObershelp.html
     """
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: str) -> int:
         return 1
 
-    def _find(self, *sequences) -> int:
+    def _find(self, *sequences: str) -> int:
         subseq = LCSStr()(*sequences)
         length = len(subseq)
         if length == 0:
@@ -161,7 +167,7 @@ class RatcliffObershelp(_BaseSimilarity):
         after = [s[s.find(subseq) + length:] for s in sequences]
         return self._find(*before) + length + self._find(*after)
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: str) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
