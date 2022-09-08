@@ -1,14 +1,15 @@
+from __future__ import annotations
 # built-in
 from functools import reduce
 from itertools import islice, permutations, repeat
 from math import log
+from typing import Sequence
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 from .edit_based import DamerauLevenshtein
 
 
-from typing import Any
 __all__ = [
     'Jaccard', 'Sorensen', 'Tversky',
     'Overlap', 'Cosine', 'Tanimoto', 'MongeElkan', 'Bag',
@@ -29,15 +30,20 @@ class Jaccard(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaccard.js
     """
 
-    def __init__(self, qval: int = 1, as_set: bool = False, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -66,10 +72,10 @@ class Sorensen(_BaseSimilarity):
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -88,17 +94,24 @@ class Tversky(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/tversky.js
     """
 
-    def __init__(self, qval: int = 1, ks=None, bias=None, as_set: bool = False, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        ks: Sequence[float] = None,
+        bias: float | None = None,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.ks = ks or repeat(1)
         self.bias = bias
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: Sequence) -> float:
         quick_result = self.quick_answer(*sequences)
         if quick_result is not None:
             return quick_result
@@ -131,15 +144,20 @@ class Overlap(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/overlap.js
     """
 
-    def __init__(self, qval: int = 1, as_set: bool = False, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -159,15 +177,20 @@ class Cosine(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/cosine.js
     """
 
-    def __init__(self, qval: int = 1, as_set: bool = False, external: bool = True) -> None:
+    def __init__(
+        self,
+        qval: int = 1,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences) -> int:
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences) -> Any:
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -187,7 +210,7 @@ class Tanimoto(Jaccard):
     and the Tversky index for alpha=1 and beta=1.
     """
 
-    def __call__(self, *sequences) -> float:
+    def __call__(self, *sequences: Sequence) -> float:
         result = super().__call__(*sequences)
         if result == 0:
             return float('-inf')
@@ -215,14 +238,14 @@ class MongeElkan(_BaseSimilarity):
         self.qval = qval
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> float:
         result = self.algorithm.maximum(sequences)
         for seq in sequences:
             if seq:
                 result = max(result, self.algorithm.maximum(*seq))
         return result
 
-    def _calc(self, seq, *sequences) -> float:
+    def _calc(self, seq, *sequences: Sequence) -> float:
         if not seq:
             return 0
         maxes = []
@@ -234,7 +257,7 @@ class MongeElkan(_BaseSimilarity):
                 maxes.append(max_sim)
         return sum(maxes) / len(seq) / len(maxes)
 
-    def __call__(self, *sequences) -> float:
+    def __call__(self, *sequences: Sequence) -> float:
         quick_result = self.quick_answer(*sequences)
         if quick_result is not None:
             return quick_result
@@ -254,7 +277,7 @@ class Bag(_Base):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/bag.js
     """
 
-    def __call__(self, *sequences) -> float:
+    def __call__(self, *sequences: Sequence) -> float:
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
         return max(self._count_counters(sequence - intersection) for sequence in sequences)
