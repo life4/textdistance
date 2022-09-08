@@ -67,15 +67,11 @@ class Benchmark:
     @staticmethod
     def get_external_benchmark(installed: Iterable[Lib]) -> Iterator[Lib]:
         for lib in installed:
-            try:
-                time = timeit(
-                    stmt=STMT,
-                    setup=lib.setup,
-                    number=RUNS,
-                )
-            except Exception:
-                print(f'Error running {lib.library}.{lib.function}:')
-                raise
+            time = timeit(
+                stmt=STMT,
+                setup=lib.setup,
+                number=RUNS,
+            )
             yield lib._replace(time=time)
 
     @staticmethod
