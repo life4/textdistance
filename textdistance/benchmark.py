@@ -1,28 +1,36 @@
+from __future__ import annotations
 # built-in
 import json
-from collections import defaultdict, namedtuple
+from collections import defaultdict
+import math
 from timeit import timeit
+from typing import Iterable, Iterator, NamedTuple
 
 # external
 from tabulate import tabulate
 
 # app
-from .libraries import LIBRARIES_FILE, prototype
+from .libraries import LIBRARIES_PATH, prototype
 
 
 # python3 -m textdistance.benchmark
 
 
 libraries = prototype.clone()
-Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'presets'])
 
 
-EXTERNAL_SETUP = """
-from {library} import {function} as func
-presets = {presets}
-if presets:
-    func = func(presets)
-"""
+class Lib(NamedTuple):
+    algorithm: str
+    library: str
+    function: str
+    time: float
+    setup: str
+
+    @property
+    def row(self) -> tuple[str, ...]:
+        time = '' if math.isinf(self.time) else f'{self.time:0.05f}'
+        return (self.algorithm, self.library.split('.')[0], time)
+
 
 INTERNAL_SETUP = """
 from textdistance import {} as cls
@@ -35,16 +43,17 @@ func('qwer', 'asdf')
 func('a' * 15, 'b' * 15)
 """
 
-RUNS = 2000
+RUNS = 4000
 
 
 class Benchmark:
     @staticmethod
-    def get_installed():
+    def get_installed() -> Iterator[Lib]:
         for alg in libraries.get_algorithms():
             for lib in libraries.get_libs(alg):
                 # try load function
                 if not lib.get_function():
+                    print(f'WARNING: cannot get func for {lib}')
                     continue
                 # return library info
                 yield Lib(
@@ -52,58 +61,63 @@ class Benchmark:
                     library=lib.module_name,
                     function=lib.func_name,
                     time=float('Inf'),
-                    presets=lib.presets,
+                    setup=lib.setup,
                 )
 
     @staticmethod
-    def get_external_benchmark(installed):
+    def get_external_benchmark(installed: Iterable[Lib]) -> Iterator[Lib]:
         for lib in installed:
-            yield lib._replace(time=timeit(
+            time = timeit(
                 stmt=STMT,
-                setup=EXTERNAL_SETUP.format(**lib._asdict()),
+                setup=lib.setup,
                 number=RUNS,
-            ))
+            )
+            yield lib._replace(time=time)
 
     @staticmethod
-    def get_internal_benchmark():
+    def get_internal_benchmark() -> Iterator[Lib]:
         for alg in libraries.get_algorithms():
+            setup = f'func = __import__("textdistance").{alg}(external=False)'
             yield Lib(
                 algorithm=alg,
                 library='**textdistance**',
                 function=alg,
                 time=timeit(
                     stmt=STMT,
-                    setup=INTERNAL_SETUP.format(alg),
+                    setup=setup,
                     number=RUNS,
                 ),
-                presets=None,
+                setup=setup,
             )
 
     @staticmethod
-    def filter_benchmark(external, internal):
+    def filter_benchmark(
+        external: Iterable[Lib],
+        internal: Iterable[Lib],
+    ) -> Iterator[Lib]:
         limits = {i.algorithm: i.time for i in internal}
         return filter(lambda x: x.time < limits[x.algorithm], external)
 
     @staticmethod
-    def get_table(data):
+    def get_table(libs: list[Lib]) -> str:
         table = tabulate(
-            [tuple(i[:-1]) for i in data],
-            headers=['algorithm', 'library', 'function', 'time'],
-            tablefmt='orgtbl',
+            [lib.row for lib in libs],
+            headers=['algorithm', 'library', 'time'],
+            tablefmt='github',
         )
-        table += '\nTotal: {} libs.\n\n'.format(len(data))
+        table += f'\nTotal: {len(libs)} libs.\n\n'
         return table
 
     @staticmethod
-    def save(libs):
+    def save(libs: Iterable[Lib]) -> None:
         data = defaultdict(list)
         for lib in libs:
             data[lib.algorithm].append([lib.library, lib.function])
-        with open(LIBRARIES_FILE, 'w') as f:
+        with LIBRARIES_PATH.open('w', encoding='utf8') as f:
             json.dump(obj=data, fp=f, indent=2, sort_keys=True)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> None:
         print('# Installed libraries:\n')
         installed = list(cls.get_installed())
         installed.sort()
@@ -116,10 +130,7 @@ class Benchmark:
         benchmark.sort(key=lambda x: (x.algorithm, x.time))
         print(cls.get_table(benchmark))
 
-        print('# Faster than textdistance:\n')
         benchmark = list(cls.filter_benchmark(benchmark, benchmark_internal))
-        print(cls.get_table(benchmark))
-
         cls.save(benchmark)
 
 

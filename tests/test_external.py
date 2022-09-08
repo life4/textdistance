@@ -58,6 +58,8 @@ def test_qval(left, right, alg, qval):
         conditions = lib.conditions or {}
         internal_func = getattr(textdistance, alg)(external=False, **conditions)
         external_func = lib.get_function()
+        if external_func is None:
+            raise RuntimeError('cannot import {}'.format(str(lib)))
         # algorithm doesn't support q-grams
         if not hasattr(internal_func, 'qval'):
             continue
