@@ -92,10 +92,6 @@ class LibraryBase:
         return sequences
 
     @property
-    def qname(self) -> str:
-        return f'{self.module_name}.{self.func_name}'
-
-    @property
     def setup(self) -> str:
         result = f'from {self.module_name} import {self.func_name} as func'
         result += '\nfunc = func'
@@ -127,7 +123,7 @@ class LibraryBase:
         return self.func
 
     def __str__(self) -> str:
-        return '{}.{}'.format(self.module_name, self.func_name)
+        return f'{self.module_name}.{self.func_name}'
 
 
 class TextLibrary(LibraryBase):

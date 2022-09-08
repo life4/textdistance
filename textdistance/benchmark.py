@@ -53,7 +53,7 @@ class Benchmark:
             for lib in libraries.get_libs(alg):
                 # try load function
                 if not lib.get_function():
-                    print(f'WARNING: cannot get func for {lib.qname}')
+                    print(f'WARNING: cannot get func for {lib}')
                     continue
                 # return library info
                 yield Lib(
@@ -105,7 +105,7 @@ class Benchmark:
             headers=['algorithm', 'library', 'time'],
             tablefmt='github',
         )
-        table += '\nTotal: {} libs.\n\n'.format(len(libs))
+        table += f'\nTotal: {len(libs)} libs.\n\n'
         return table
 
     @staticmethod
