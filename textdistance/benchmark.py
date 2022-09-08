@@ -2,6 +2,7 @@ from __future__ import annotations
 # built-in
 import json
 from collections import defaultdict
+import math
 from timeit import timeit
 from typing import Iterable, Iterator, NamedTuple
 
@@ -9,7 +10,7 @@ from typing import Iterable, Iterator, NamedTuple
 from tabulate import tabulate
 
 # app
-from .libraries import LIBRARIES_FILE, prototype
+from .libraries import LIBRARIES_PATH, prototype
 
 
 # python3 -m textdistance.benchmark
@@ -23,15 +24,13 @@ class Lib(NamedTuple):
     library: str
     function: str
     time: float
-    presets: object
+    setup: str
 
+    @property
+    def row(self) -> tuple[str, ...]:
+        time = '' if math.isinf(self.time) else f'{self.time:0.05f}'
+        return (self.algorithm, self.library.split('.')[0], time)
 
-EXTERNAL_SETUP = """
-from {library} import {function} as func
-presets = {presets}
-if presets:
-    func = func(presets)
-"""
 
 INTERNAL_SETUP = """
 from textdistance import {} as cls
@@ -54,6 +53,7 @@ class Benchmark:
             for lib in libraries.get_libs(alg):
                 # try load function
                 if not lib.get_function():
+                    print(f'WARNING: cannot get func for {lib.qname}')
                     continue
                 # return library info
                 yield Lib(
@@ -61,31 +61,37 @@ class Benchmark:
                     library=lib.module_name,
                     function=lib.func_name,
                     time=float('Inf'),
-                    presets=lib.presets,
+                    setup=lib.setup,
                 )
 
     @staticmethod
     def get_external_benchmark(installed: Iterable[Lib]) -> Iterator[Lib]:
         for lib in installed:
-            yield lib._replace(time=timeit(
-                stmt=STMT,
-                setup=EXTERNAL_SETUP.format(**lib._asdict()),
-                number=RUNS,
-            ))
+            try:
+                time = timeit(
+                    stmt=STMT,
+                    setup=lib.setup,
+                    number=RUNS,
+                )
+            except Exception:
+                print(f'Error running {lib.library}.{lib.function}:')
+                raise
+            yield lib._replace(time=time)
 
     @staticmethod
     def get_internal_benchmark() -> Iterator[Lib]:
         for alg in libraries.get_algorithms():
+            setup = f'func = __import__("textdistance").{alg}(external=False)'
             yield Lib(
                 algorithm=alg,
                 library='**textdistance**',
                 function=alg,
                 time=timeit(
                     stmt=STMT,
-                    setup=INTERNAL_SETUP.format(alg),
+                    setup=setup,
                     number=RUNS,
                 ),
-                presets=None,
+                setup=setup,
             )
 
     @staticmethod
@@ -97,13 +103,13 @@ class Benchmark:
         return filter(lambda x: x.time < limits[x.algorithm], external)
 
     @staticmethod
-    def get_table(data: list[Lib]) -> str:
+    def get_table(libs: list[Lib]) -> str:
         table = tabulate(
-            [tuple(i[:-1]) for i in data],
-            headers=['algorithm', 'library', 'function', 'time'],
+            [lib.row for lib in libs],
+            headers=['algorithm', 'library', 'time'],
             tablefmt='orgtbl',
         )
-        table += '\nTotal: {} libs.\n\n'.format(len(data))
+        table += '\nTotal: {} libs.\n\n'.format(len(libs))
         return table
 
     @staticmethod
@@ -111,7 +117,7 @@ class Benchmark:
         data = defaultdict(list)
         for lib in libs:
             data[lib.algorithm].append([lib.library, lib.function])
-        with open(LIBRARIES_FILE, 'w') as f:
+        with LIBRARIES_PATH.open('w', encoding='utf8') as f:
             json.dump(obj=data, fp=f, indent=2, sort_keys=True)
 
     @classmethod
@@ -128,10 +134,7 @@ class Benchmark:
         benchmark.sort(key=lambda x: (x.algorithm, x.time))
         print(cls.get_table(benchmark))
 
-        print('# Faster than textdistance:\n')
         benchmark = list(cls.filter_benchmark(benchmark, benchmark_internal))
-        print(cls.get_table(benchmark))
-
         cls.save(benchmark)
 
 

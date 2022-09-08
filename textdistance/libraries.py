@@ -1,16 +1,14 @@
 from __future__ import annotations
 # built-in
 import json
-import os
-import os.path
 from collections import defaultdict
 from copy import deepcopy
 from importlib import import_module
-from typing import Any, Callable
+from pathlib import Path
+from typing import Any, Callable, Sequence
 
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-LIBRARIES_FILE = os.path.join(CURRENT_DIR, 'libraries.json')
+LIBRARIES_PATH = Path(__file__).parent / 'libraries.json'
 
 
 class LibrariesManager:
@@ -28,8 +26,8 @@ class LibrariesManager:
         """Sort algorithm implementations by speed.
         """
         # load benchmarks results
-        with open(LIBRARIES_FILE, 'r') as f:
-            libs_data = json.load(f)
+        with LIBRARIES_PATH.open('r', encoding='utf8') as f:
+            libs_data: dict = json.load(f)
         # optimize
         for alg, libs_names in libs_data.items():
             libs = self.get_libs(alg)
@@ -67,9 +65,10 @@ class LibraryBase:
         self,
         module_name: str,
         func_name: str,
-        attr=None,
-        presets=None,
-        conditions: dict | None = None,
+        *,
+        presets: dict[str, Any] | None = None,
+        attr: str | None = None,
+        conditions: dict[str, Any] | None = None,
     ) -> None:
         self.module_name = module_name
         self.func_name = func_name
@@ -77,7 +76,7 @@ class LibraryBase:
         self.conditions = conditions
         self.attr = attr
 
-    def check_conditions(self, obj, *sequences) -> bool:
+    def check_conditions(self, obj: object, *sequences: Sequence) -> bool:
         # external libs can compare only 2 strings
         if len(sequences) != 2:
             return False
@@ -92,6 +91,20 @@ class LibraryBase:
     def prepare(self, *sequences) -> tuple:
         return sequences
 
+    @property
+    def qname(self) -> str:
+        return f'{self.module_name}.{self.func_name}'
+
+    @property
+    def setup(self) -> str:
+        result = f'from {self.module_name} import {self.func_name} as func'
+        result += '\nfunc = func'
+        if self.presets is not None:
+            result += f'(**{repr(self.presets)})'
+        if self.attr is not None:
+            result += f'.{self.attr}'
+        return result
+
     def get_function(self) -> Callable | None:
         if self.func is NotImplemented:
             # import module
@@ -102,19 +115,12 @@ class LibraryBase:
                 return None
 
             # get object from module
-            if self.module_name == 'abydos.distance':
-                # abydos now provides its functions as classes allowing for
-                # various options; we stick with the defaults for our
-                # object constructor - the distance metric method is
-                # called dist_abs() (whereas dist() gives a normalised distance)
-                obj = getattr(module, self.func_name)().dist_abs
-            else:
-                obj = getattr(module, self.func_name)
+            obj = getattr(module, self.func_name)
             # init class
             if self.presets is not None:
                 obj = obj(**self.presets)
             # get needed attribute
-            if self.attr:
+            if self.attr is not None:
                 obj = getattr(obj, self.attr)
             self.func = obj
 
@@ -125,7 +131,7 @@ class LibraryBase:
 
 
 class TextLibrary(LibraryBase):
-    def check_conditions(self, obj, *sequences) -> bool:
+    def check_conditions(self, obj, *sequences: Sequence) -> bool:
         if not super().check_conditions(obj, *sequences):
             return False
 
@@ -147,7 +153,7 @@ class TextLibrary(LibraryBase):
 
 
 class SameLengthLibrary(LibraryBase):
-    def check_conditions(self, obj, *sequences) -> bool:
+    def check_conditions(self, obj, *sequences: Sequence) -> bool:
         if not super().check_conditions(obj, *sequences):
             return False
         # compare only same length iterators
@@ -162,12 +168,18 @@ class SameLengthTextLibrary(SameLengthLibrary, TextLibrary):
 
 prototype = LibrariesManager()
 
-prototype.register('DamerauLevenshtein', LibraryBase('abydos.distance', 'DamerauLevenshtein'))
+prototype.register(
+    'DamerauLevenshtein',
+    LibraryBase('abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs'),
+)
 prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
 prototype.register('DamerauLevenshtein', LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
 
-prototype.register('Hamming', LibraryBase('abydos.distance', 'Hamming'))
+prototype.register(
+    'Hamming',
+    LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'),
+)
 prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
 prototype.register('Hamming', SameLengthTextLibrary('Levenshtein', 'hamming'))
 prototype.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
@@ -179,13 +191,21 @@ prototype.register('Jaro', LibraryBase('rapidfuzz.distance.Jaro', 'similarity'))
 # prototype.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
 
 # prototype.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
-prototype.register('JaroWinkler', TextLibrary('jellyfish', 'jaro_winkler_similarity', conditions=dict(winklerize=True)))
-prototype.register('JaroWinkler', LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity',
-                                              conditions=dict(winklerize=True)))
+prototype.register(
+    'JaroWinkler',
+    TextLibrary('jellyfish', 'jaro_winkler_similarity', conditions=dict(winklerize=True)),
+)
+prototype.register(
+    'JaroWinkler',
+    LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity', conditions=dict(winklerize=True)),
+)
 # https://github.com/life4/textdistance/issues/39
 # prototype.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
-prototype.register('Levenshtein', LibraryBase('abydos.distance', 'Levenshtein'))
+prototype.register(
+    'Levenshtein',
+    LibraryBase('abydos.distance', 'Levenshtein', presets={}, attr='dist_abs'),
+)
 prototype.register('Levenshtein', LibraryBase('distance', 'levenshtein'))
 prototype.register('Levenshtein', LibraryBase('pylev', 'levenshtein'))
 prototype.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))

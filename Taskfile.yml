@@ -5,6 +5,7 @@ vars:
   PYTHON_BIN: python3
   VENVS: .venvs/
   LINT_ENV: "{{.VENVS}}lint"
+  BENCHMARK_ENV: "{{.VENVS}}benchmark"
   TEST_PURE_ENV: "{{.VENVS}}pytest-pure"
   TEST_EXT_ENV: "{{.VENVS}}pytest-ext"
 
@@ -82,3 +83,12 @@ tasks:
       - lint:install
     cmds:
       - "{{.LINT_ENV}}/bin/isort ."
+
+  benchmark:
+    deps:
+      - task: pip:install
+        vars:
+          ENV: "{{.BENCHMARK_ENV}}"
+          EXTRA: benchmark
+    cmds:
+      - "{{.BENCHMARK_ENV}}/bin/python3 -m textdistance.benchmark"
