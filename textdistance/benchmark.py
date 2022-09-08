@@ -43,7 +43,7 @@ func('qwer', 'asdf')
 func('a' * 15, 'b' * 15)
 """
 
-RUNS = 2000
+RUNS = 4000
 
 
 class Benchmark:
@@ -107,7 +107,7 @@ class Benchmark:
         table = tabulate(
             [lib.row for lib in libs],
             headers=['algorithm', 'library', 'time'],
-            tablefmt='orgtbl',
+            tablefmt='github',
         )
         table += '\nTotal: {} libs.\n\n'.format(len(libs))
         return table

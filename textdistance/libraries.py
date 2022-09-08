@@ -167,48 +167,39 @@ class SameLengthTextLibrary(SameLengthLibrary, TextLibrary):
 
 
 prototype = LibrariesManager()
+reg = prototype.register
 
-prototype.register(
-    'DamerauLevenshtein',
-    LibraryBase('abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs'),
-)
-prototype.register('DamerauLevenshtein', LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
-prototype.register('DamerauLevenshtein', TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
-prototype.register('DamerauLevenshtein', LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
+alg = 'DamerauLevenshtein'
+reg(alg, LibraryBase('abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs'))
+reg(alg, LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
+reg(alg, TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
+reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
 
-prototype.register(
-    'Hamming',
-    LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'),
-)
-prototype.register('Hamming', SameLengthLibrary('distance', 'hamming'))
-prototype.register('Hamming', SameLengthTextLibrary('Levenshtein', 'hamming'))
-prototype.register('Hamming', TextLibrary('jellyfish', 'hamming_distance'))
-prototype.register('Hamming', SameLengthLibrary('rapidfuzz.distance.Hamming', 'distance'))
+alg = 'Hamming'
+reg(alg, LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'))
+reg(alg, SameLengthLibrary('distance', 'hamming'))
+reg(alg, SameLengthTextLibrary('Levenshtein', 'hamming'))
+reg(alg, TextLibrary('jellyfish', 'hamming_distance'))
+reg(alg, SameLengthLibrary('rapidfuzz.distance.Hamming', 'distance'))
 
-prototype.register('Jaro', TextLibrary('jellyfish', 'jaro_similarity'))
-prototype.register('Jaro', LibraryBase('rapidfuzz.distance.Jaro', 'similarity'))
-# prototype.register('Jaro', TextLibrary('Levenshtein', 'jaro'))
-# prototype.register('Jaro', TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
+alg = 'Jaro'
+reg(alg, TextLibrary('jellyfish', 'jaro_similarity'))
+reg(alg, LibraryBase('rapidfuzz.distance.Jaro', 'similarity'))
+# reg(alg, TextLibrary('Levenshtein', 'jaro'))
+# reg(alg, TextLibrary('py_stringmatching.similarity_measure.jaro', 'jaro'))
 
-# prototype.register('JaroWinkler', LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
-prototype.register(
-    'JaroWinkler',
-    TextLibrary('jellyfish', 'jaro_winkler_similarity', conditions=dict(winklerize=True)),
-)
-prototype.register(
-    'JaroWinkler',
-    LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity', conditions=dict(winklerize=True)),
-)
+alg = 'JaroWinkler'
+# reg(alg, LibraryBase('py_stringmatching.similarity_measure.jaro_winkler', 'jaro_winkler'))
+reg(alg, TextLibrary('jellyfish', 'jaro_winkler_similarity', conditions=dict(winklerize=True)))
+reg(alg, LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity', conditions=dict(winklerize=True)))
 # https://github.com/life4/textdistance/issues/39
-# prototype.register('JaroWinkler', TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
+# reg(alg, TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
-prototype.register(
-    'Levenshtein',
-    LibraryBase('abydos.distance', 'Levenshtein', presets={}, attr='dist_abs'),
-)
-prototype.register('Levenshtein', LibraryBase('distance', 'levenshtein'))
-prototype.register('Levenshtein', LibraryBase('pylev', 'levenshtein'))
-prototype.register('Levenshtein', TextLibrary('jellyfish', 'levenshtein_distance'))
-prototype.register('Levenshtein', TextLibrary('Levenshtein', 'distance'))
-prototype.register('Levenshtein', LibraryBase('rapidfuzz.distance.Levenshtein', 'distance'))
-# prototype.register('Levenshtein', TextLibrary('py_stringmatching.similarity_measure.levenshtein', 'levenshtein'))
+alg = 'Levenshtein'
+reg(alg, LibraryBase('abydos.distance', 'Levenshtein', presets={}, attr='dist_abs'))
+reg(alg, LibraryBase('distance', 'levenshtein'))
+reg(alg, LibraryBase('pylev', 'levenshtein'))
+reg(alg, TextLibrary('jellyfish', 'levenshtein_distance'))
+reg(alg, TextLibrary('Levenshtein', 'distance'))
+reg(alg, LibraryBase('rapidfuzz.distance.Levenshtein', 'distance'))
+# reg(alg, TextLibrary('py_stringmatching.similarity_measure.levenshtein', 'levenshtein'))
