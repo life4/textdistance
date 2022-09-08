@@ -2,7 +2,7 @@ from __future__ import annotations
 # built-in
 from collections import Counter
 from contextlib import suppress
-from typing import Sequence
+from typing import Sequence, TypeVar
 
 # app
 from ..libraries import prototype
@@ -11,6 +11,7 @@ from ..utils import find_ngrams
 
 libraries = prototype.clone()
 libraries.optimize()
+T = TypeVar('T')
 
 
 class Base:
@@ -18,28 +19,28 @@ class Base:
         self.qval = qval
         self.external = external
 
-    def __call__(self, *sequences) -> float:
+    def __call__(self, *sequences: Sequence[object]) -> float:
         raise NotImplementedError
 
     @staticmethod
-    def maximum(*sequences) -> float:
+    def maximum(*sequences: Sequence[object]) -> float:
         """Get maximum possible value
         """
         return max(map(len, sequences))
 
-    def distance(self, *sequences) -> float:
+    def distance(self, *sequences: Sequence[object]) -> float:
         """Get distance between sequences
         """
         return self(*sequences)
 
-    def similarity(self, *sequences) -> float:
+    def similarity(self, *sequences: Sequence[object]) -> float:
         """Get sequences similarity.
 
         similarity = maximum - distance
         """
         return self.maximum(*sequences) - self.distance(*sequences)
 
-    def normalized_distance(self, *sequences) -> float:
+    def normalized_distance(self, *sequences: Sequence[object]) -> float:
         """Get distance from 0 to 1
         """
         maximum = self.maximum(*sequences)
@@ -47,14 +48,14 @@ class Base:
             return 0
         return self.distance(*sequences) / maximum
 
-    def normalized_similarity(self, *sequences) -> float:
+    def normalized_similarity(self, *sequences: Sequence[object]) -> float:
         """Get similarity from 0 to 1
 
         normalized_similarity = 1 - normalized_distance
         """
         return 1 - self.normalized_distance(*sequences)
 
-    def external_answer(self, *sequences) -> float | None:
+    def external_answer(self, *sequences: Sequence[object]) -> float | None:
         """Try to get answer from known external libraries.
         """
         # if this feature disabled
@@ -80,7 +81,7 @@ class Base:
                 return func(*prepared_sequences)
         return None
 
-    def quick_answer(self, *sequences) -> float | None:
+    def quick_answer(self, *sequences: Sequence[object]) -> float | None:
         """Try to get answer quick without main implementation calling.
 
         If no sequences, 1 sequence or all sequences are equal then return 0.
@@ -99,7 +100,7 @@ class Base:
         return self.external_answer(*sequences)
 
     @staticmethod
-    def _ident(*elements) -> bool:
+    def _ident(*elements: object) -> bool:
         """Return True if all sequences are equal.
         """
         try:
@@ -136,19 +137,19 @@ class Base:
             return list(sequences)  # type: ignore[arg-type]
         return [Counter(s) for s in self._get_sequences(*sequences)]
 
-    def _intersect_counters(self, *sequences: Counter) -> Counter:
+    def _intersect_counters(self, *sequences: Counter[T]) -> Counter[T]:
         intersection = sequences[0].copy()
         for s in sequences[1:]:
             intersection &= s
         return intersection
 
-    def _union_counters(self, *sequences: Counter) -> Counter:
+    def _union_counters(self, *sequences: Counter[T]) -> Counter[T]:
         union = sequences[0].copy()
         for s in sequences[1:]:
             union |= s
         return union
 
-    def _sum_counters(self, *sequences: Counter) -> Counter:
+    def _sum_counters(self, *sequences: Counter[T]) -> Counter[T]:
         result = sequences[0].copy()
         for s in sequences[1:]:
             result += s
@@ -170,13 +171,13 @@ class Base:
 
 
 class BaseSimilarity(Base):
-    def distance(self, *sequences) -> float:
+    def distance(self, *sequences: Sequence[object]) -> float:
         return self.maximum(*sequences) - self.similarity(*sequences)
 
-    def similarity(self, *sequences) -> float:
+    def similarity(self, *sequences: Sequence[object]) -> float:
         return self(*sequences)
 
-    def quick_answer(self, *sequences) -> float | None:
+    def quick_answer(self, *sequences: Sequence[object]) -> float | None:
         if not sequences:
             return self.maximum(*sequences)
         if len(sequences) == 1:

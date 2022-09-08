@@ -63,7 +63,14 @@ class LibrariesManager:
 class LibraryBase:
     func: Callable | None | Any = NotImplemented
 
-    def __init__(self, module_name, func_name, attr=None, presets=None, conditions=None) -> None:
+    def __init__(
+        self,
+        module_name: str,
+        func_name: str,
+        attr=None,
+        presets=None,
+        conditions: dict | None = None,
+    ) -> None:
         self.module_name = module_name
         self.func_name = func_name
         self.presets = presets

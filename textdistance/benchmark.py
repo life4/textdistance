@@ -1,7 +1,9 @@
+from __future__ import annotations
 # built-in
 import json
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from timeit import timeit
+from typing import Iterable, Iterator, NamedTuple
 
 # external
 from tabulate import tabulate
@@ -13,9 +15,15 @@ from .libraries import LIBRARIES_FILE, prototype
 # python3 -m textdistance.benchmark
 
 
-from typing import Iterator
 libraries = prototype.clone()
-Lib = namedtuple('Lib', ['algorithm', 'library', 'function', 'time', 'presets'])
+
+
+class Lib(NamedTuple):
+    algorithm: str
+    library: str
+    function: str
+    time: float
+    presets: object
 
 
 EXTERNAL_SETUP = """
@@ -41,7 +49,7 @@ RUNS = 2000
 
 class Benchmark:
     @staticmethod
-    def get_installed() -> Iterator:
+    def get_installed() -> Iterator[Lib]:
         for alg in libraries.get_algorithms():
             for lib in libraries.get_libs(alg):
                 # try load function
@@ -57,7 +65,7 @@ class Benchmark:
                 )
 
     @staticmethod
-    def get_external_benchmark(installed) -> Iterator:
+    def get_external_benchmark(installed: Iterable[Lib]) -> Iterator[Lib]:
         for lib in installed:
             yield lib._replace(time=timeit(
                 stmt=STMT,
@@ -66,7 +74,7 @@ class Benchmark:
             ))
 
     @staticmethod
-    def get_internal_benchmark() -> Iterator:
+    def get_internal_benchmark() -> Iterator[Lib]:
         for alg in libraries.get_algorithms():
             yield Lib(
                 algorithm=alg,
@@ -81,12 +89,15 @@ class Benchmark:
             )
 
     @staticmethod
-    def filter_benchmark(external, internal) -> filter:
+    def filter_benchmark(
+        external: Iterable[Lib],
+        internal: Iterable[Lib],
+    ) -> Iterator[Lib]:
         limits = {i.algorithm: i.time for i in internal}
         return filter(lambda x: x.time < limits[x.algorithm], external)
 
     @staticmethod
-    def get_table(data):
+    def get_table(data: list[Lib]) -> str:
         table = tabulate(
             [tuple(i[:-1]) for i in data],
             headers=['algorithm', 'library', 'function', 'time'],
@@ -96,7 +107,7 @@ class Benchmark:
         return table
 
     @staticmethod
-    def save(libs) -> None:
+    def save(libs: Iterable[Lib]) -> None:
         data = defaultdict(list)
         for lib in libs:
             data[lib.algorithm].append([lib.library, lib.function])
