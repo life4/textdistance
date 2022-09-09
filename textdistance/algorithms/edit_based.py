@@ -1,15 +1,18 @@
+from __future__ import annotations
 # built-in
 from collections import defaultdict
 from itertools import zip_longest
+from typing import Any, Sequence, TypeVar
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
+from .types import TestFunc, SimFunc
 
 
 try:
     import numpy
 except ImportError:
-    numpy = None
+    numpy = None  # type: ignore[assignment]
 
 
 __all__ = [
@@ -24,6 +27,7 @@ __all__ = [
     'jaro', 'jaro_winkler', 'strcmp95',
     'needleman_wunsch', 'gotoh', 'smith_waterman',
 ]
+T = TypeVar('T')
 
 
 class Hamming(_Base):
@@ -34,21 +38,28 @@ class Hamming(_Base):
     https://en.wikipedia.org/wiki/Hamming_distance
     """
 
-    def __init__(self, qval=1, test_func=None, truncate=False, external=True):
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc | None = None,
+        truncate: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.truncate = truncate
         self.external = external
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence[object]) -> int:
         sequences = self._get_sequences(*sequences)
 
         result = self.quick_answer(*sequences)
         if result is not None:
+            assert isinstance(result, int)
             return result
 
         _zip = zip if self.truncate else zip_longest
-        return sum([not self.test_func(*es) for es in _zip(*sequences)])
+        return sum(not self.test_func(*es) for es in _zip(*sequences))
 
 
 class Levenshtein(_Base):
@@ -65,12 +76,17 @@ class Levenshtein(_Base):
     TODO: https://gist.github.com/kylebgorman/1081951/9b38b7743a3cb5167ab2c6608ac8eea7fc629dca
     """
 
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc | None = None,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _recursive(self, s1, s2):
+    def _recursive(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         # TODO: more than 2 sequences support
         if not s1 or not s2:
             return len(s1) + len(s2)
@@ -87,7 +103,7 @@ class Levenshtein(_Base):
         s = self(s1[:-1], s2[:-1])
         return min(d, s) + 1
 
-    def _cicled(self, s1, s2):
+    def _cycled(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         """
         source:
         https://github.com/jamesturk/jellyfish/blob/master/jellyfish/_jellyfish.py#L18
@@ -95,6 +111,7 @@ class Levenshtein(_Base):
         rows = len(s1) + 1
         cols = len(s2) + 1
         prev = None
+        cur: Any
         if numpy:
             cur = numpy.arange(cols)
         else:
@@ -110,14 +127,15 @@ class Levenshtein(_Base):
                 cur[c] = min(edit, deletion, insertion)
         return cur[-1]
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
         if result is not None:
+            assert isinstance(result, int)
             return result
 
-        return self._cicled(s1, s2)
+        return self._cycled(s1, s2)
 
 
 class DamerauLevenshteinRestricted(_Base):
@@ -139,12 +157,17 @@ class DamerauLevenshteinRestricted(_Base):
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     """
 
-    def __init__(self, qval=1, test_func=None, external=True):
+    def __init__(
+        self,
+        qval: int = 1,
+        test_func: TestFunc | None = None,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
 
-    def _numpy(self, s1, s2):
+    def _numpy(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         # TODO: doesn't pass tests, need improve
         d = numpy.zeros([len(s1) + 1, len(s2) + 1], dtype=int)
 
@@ -177,7 +200,7 @@ class DamerauLevenshteinRestricted(_Base):
 
         return d[len(s1) - 1][len(s2) - 1]
 
-    def _pure_python(self, s1, s2):
+    def _pure_python(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         """
         https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
         """
@@ -214,12 +237,12 @@ class DamerauLevenshteinRestricted(_Base):
 
         return d[len(s1) - 1, len(s2) - 1]
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
         if result is not None:
-            return result
+            return result  # type: ignore[return-value]
 
         # if numpy:
         #     return self._numpy(s1, s2)
@@ -316,16 +339,22 @@ class JaroWinkler(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaro-winkler.js
     """
 
-    def __init__(self, long_tolerance=False, winklerize=True, qval=1, external=True):
+    def __init__(
+        self,
+        long_tolerance: bool = False,
+        winklerize: bool = True,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.long_tolerance = long_tolerance
         self.winklerize = winklerize
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence[object]) -> int:
         return 1
 
-    def __call__(self, s1, s2, prefix_weight=0.1):
+    def __call__(self, s1: Sequence[T], s2: Sequence[T], prefix_weight: float = 0.1) -> float:
         s1, s2 = self._get_sequences(s1, s2)
 
         result = self.quick_answer(s1, s2)
@@ -407,7 +436,12 @@ class JaroWinkler(_BaseSimilarity):
 
 
 class Jaro(JaroWinkler):
-    def __init__(self, long_tolerance=False, qval=1, external=True):
+    def __init__(
+        self,
+        long_tolerance: bool = False,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         super().__init__(
             long_tolerance=long_tolerance,
             winklerize=False,
@@ -428,9 +462,14 @@ class NeedlemanWunsch(_BaseSimilarity):
 
     https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
     """
-    positive = False
 
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
+    def __init__(
+        self,
+        gap_cost: float = 1.0,
+        sim_func: SimFunc = None,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         if sim_func:
@@ -439,18 +478,18 @@ class NeedlemanWunsch(_BaseSimilarity):
             self.sim_func = self._ident
         self.external = external
 
-    def minimum(self, *sequences):
+    def minimum(self, *sequences: Sequence[object]) -> float:
         return -max(map(len, sequences)) * self.gap_cost
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence[object]) -> float:
         return max(map(len, sequences))
 
-    def distance(self, *sequences):
+    def distance(self, *sequences: Sequence[object]) -> float:
         """Get distance between sequences
         """
         return -1 * self.similarity(*sequences)
 
-    def normalized_distance(self, *sequences):
+    def normalized_distance(self, *sequences: Sequence[object]) -> float:
         """Get distance from 0 to 1
         """
         minimum = self.minimum(*sequences)
@@ -459,8 +498,8 @@ class NeedlemanWunsch(_BaseSimilarity):
             return 0
         return (self.distance(*sequences) - minimum) / (maximum - minimum)
 
-    def normalized_similarity(self, *sequences):
-        """Get distance from 0 to 1
+    def normalized_similarity(self, *sequences: Sequence[object]) -> float:
+        """Get similarity from 0 to 1
         """
         minimum = self.minimum(*sequences)
         maximum = self.maximum(*sequences)
@@ -468,7 +507,7 @@ class NeedlemanWunsch(_BaseSimilarity):
             return 1
         return (self.similarity(*sequences) - minimum) / (maximum * 2)
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> float:
         if not numpy:
             raise ImportError('Please, install numpy for Needleman-Wunsch measure')
 
@@ -510,16 +549,22 @@ class SmithWaterman(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/smith-waterman.js
     """
 
-    def __init__(self, gap_cost=1.0, sim_func=None, qval=1, external=True):
+    def __init__(
+        self,
+        gap_cost: float = 1.0,
+        sim_func: SimFunc = None,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.gap_cost = gap_cost
         self.sim_func = sim_func or self._ident
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence[object]) -> int:
         return min(map(len, sequences))
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> float:
         if not numpy:
             raise ImportError('Please, install numpy for Smith-Waterman measure')
 
@@ -553,7 +598,14 @@ class Gotoh(NeedlemanWunsch):
     https://www.cs.umd.edu/class/spring2003/cmsc838t/papers/gotoh1982.pdf
     """
 
-    def __init__(self, gap_open=1, gap_ext=0.4, sim_func=None, qval=1, external=True):
+    def __init__(
+        self,
+        gap_open: int = 1,
+        gap_ext: float = 0.4,
+        sim_func: SimFunc = None,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.gap_open = gap_open
         self.gap_ext = gap_ext
@@ -563,13 +615,13 @@ class Gotoh(NeedlemanWunsch):
             self.sim_func = self._ident
         self.external = external
 
-    def minimum(self, *sequences):
+    def minimum(self, *sequences: Sequence[object]) -> int:
         return -min(map(len, sequences))
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence[object]) -> int:
         return min(map(len, sequences))
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> float:
         if not numpy:
             raise ImportError('Please, install numpy for Gotoh measure')
 
@@ -625,7 +677,7 @@ class StrCmp95(_BaseSimilarity):
 
     http://cpansearch.perl.org/src/SCW/Text-JaroWinkler-0.1/strcmp95.c
     """
-    sp_mx = (
+    sp_mx: tuple[tuple[str, str], ...] = (
         ('A', 'E'), ('A', 'I'), ('A', 'O'), ('A', 'U'), ('B', 'V'), ('E', 'I'),
         ('E', 'O'), ('E', 'U'), ('I', 'O'), ('I', 'U'), ('O', 'U'), ('I', 'Y'),
         ('E', 'Y'), ('C', 'G'), ('E', 'F'), ('W', 'U'), ('W', 'V'), ('X', 'K'),
@@ -634,18 +686,18 @@ class StrCmp95(_BaseSimilarity):
         ('1', 'I'), ('1', 'L'), ('0', 'O'), ('0', 'Q'), ('C', 'K'), ('G', 'J'),
     )
 
-    def __init__(self, long_strings=False, external=True):
+    def __init__(self, long_strings: bool = False, external: bool = True) -> None:
         self.long_strings = long_strings
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence[object]) -> int:
         return 1
 
     @staticmethod
-    def _in_range(char):
+    def _in_range(char) -> bool:
         return 0 < ord(char) < 91
 
-    def __call__(self, s1, s2):
+    def __call__(self, s1: str, s2: str) -> float:
         s1 = s1.strip().upper()
         s2 = s2.strip().upper()
 
@@ -777,16 +829,21 @@ class MLIPNS(_BaseSimilarity):
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/mlipns.js
     """
 
-    def __init__(self, threshold=0.25, maxmismatches=2, qval=1, external=True):
+    def __init__(
+        self, threshold: float = 0.25,
+        maxmismatches: int = 2,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.threshold = threshold
         self.maxmismatches = maxmismatches
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence[object]) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence[object]) -> float:
         sequences = self._get_sequences(*sequences)
 
         result = self.quick_answer(*sequences)

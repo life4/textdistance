@@ -1,7 +1,9 @@
+from __future__ import annotations
 # built-in
 from functools import reduce
 from itertools import islice, permutations, repeat
 from math import log
+from typing import Sequence
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
@@ -27,15 +29,21 @@ class Jaccard(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Jaccard_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/jaccard.js
     """
-    def __init__(self, qval=1, as_set=False, external=True):
+
+    def __init__(
+        self,
+        qval: int = 1,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -58,15 +66,16 @@ class Sorensen(_BaseSimilarity):
     https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/dice.js
     """
-    def __init__(self, qval=1, as_set=False, external=True):
+
+    def __init__(self, qval: int = 1, as_set: bool = False, external: bool = True) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -84,20 +93,28 @@ class Tversky(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Tversky_index
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/tversky.js
     """
-    def __init__(self, qval=1, ks=None, bias=None, as_set=False, external=True):
+
+    def __init__(
+        self,
+        qval: int = 1,
+        ks: Sequence[float] = None,
+        bias: float | None = None,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.ks = ks or repeat(1)
         self.bias = bias
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences):
-        result = self.quick_answer(*sequences)
-        if result is not None:
-            return result
+    def __call__(self, *sequences: Sequence) -> float:
+        quick_result = self.quick_answer(*sequences)
+        if quick_result is not None:
+            return quick_result
 
         sequences = self._get_counters(*sequences)                # sets
         intersection = self._intersect_counters(*sequences)       # set
@@ -126,15 +143,21 @@ class Overlap(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Overlap_coefficient
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/overlap.js
     """
-    def __init__(self, qval=1, as_set=False, external=True):
+
+    def __init__(
+        self,
+        qval: int = 1,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -153,15 +176,21 @@ class Cosine(_BaseSimilarity):
     https://en.wikipedia.org/wiki/Cosine_similarity
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/cosine.js
     """
-    def __init__(self, qval=1, as_set=False, external=True):
+
+    def __init__(
+        self,
+        qval: int = 1,
+        as_set: bool = False,
+        external: bool = True,
+    ) -> None:
         self.qval = qval
         self.as_set = as_set
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> int:
         return 1
 
-    def __call__(self, *sequences):
+    def __call__(self, *sequences: Sequence) -> float:
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
@@ -180,7 +209,8 @@ class Tanimoto(Jaccard):
     This is identical to the Jaccard similarity coefficient
     and the Tversky index for alpha=1 and beta=1.
     """
-    def __call__(self, *sequences):
+
+    def __call__(self, *sequences: Sequence) -> float:
         result = super().__call__(*sequences)
         if result == 0:
             return float('-inf')
@@ -196,20 +226,26 @@ class MongeElkan(_BaseSimilarity):
     """
     _damerau_levenshtein = DamerauLevenshtein()
 
-    def __init__(self, algorithm=_damerau_levenshtein, symmetric=False, qval=1, external=True):
+    def __init__(
+        self,
+        algorithm=_damerau_levenshtein,
+        symmetric: bool = False,
+        qval: int = 1,
+        external: bool = True,
+    ) -> None:
         self.algorithm = algorithm
         self.symmetric = symmetric
         self.qval = qval
         self.external = external
 
-    def maximum(self, *sequences):
+    def maximum(self, *sequences: Sequence) -> float:
         result = self.algorithm.maximum(sequences)
         for seq in sequences:
             if seq:
                 result = max(result, self.algorithm.maximum(*seq))
         return result
 
-    def _calc(self, seq, *sequences):
+    def _calc(self, seq, *sequences: Sequence) -> float:
         if not seq:
             return 0
         maxes = []
@@ -221,10 +257,10 @@ class MongeElkan(_BaseSimilarity):
                 maxes.append(max_sim)
         return sum(maxes) / len(seq) / len(maxes)
 
-    def __call__(self, *sequences):
-        result = self.quick_answer(*sequences)
-        if result is not None:
-            return result
+    def __call__(self, *sequences: Sequence) -> float:
+        quick_result = self.quick_answer(*sequences)
+        if quick_result is not None:
+            return quick_result
         sequences = self._get_sequences(*sequences)
 
         if self.symmetric:
@@ -240,12 +276,11 @@ class Bag(_Base):
     """Bag distance
     https://github.com/Yomguithereal/talisman/blob/master/src/metrics/bag.js
     """
-    def __call__(self, *sequences):
+
+    def __call__(self, *sequences: Sequence) -> float:
         sequences = self._get_counters(*sequences)              # sets
         intersection = self._intersect_counters(*sequences)     # set
-        sequences = (self._count_counters(sequence - intersection) for sequence in sequences)
-        # ^ ints
-        return max(sequences)
+        return max(self._count_counters(sequence - intersection) for sequence in sequences)
 
 
 bag = Bag()

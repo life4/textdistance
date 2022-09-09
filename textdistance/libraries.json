@@ -25,8 +25,8 @@
       "damerau_levenshtein_distance"
     ],
     [
-      "pylev",
-      "damerau_levenshtein"
+      "abydos.distance",
+      "DamerauLevenshtein"
     ]
   ],
   "Hamming": [
@@ -35,7 +35,7 @@
       "hamming"
     ],
     [
-      "rapidfuzz.distance.hamming",
+      "rapidfuzz.distance.Hamming",
       "distance"
     ],
     [
@@ -57,16 +57,8 @@
       "similarity"
     ],
     [
-      "Levenshtein",
-      "jaro"
-    ],
-    [
       "jellyfish",
       "jaro_similarity"
-    ],
-    [
-      "py_stringmatching.similarity_measure.jaro",
-      "jaro"
     ]
   ],
   "JaroWinkler": [
@@ -93,20 +85,12 @@
       "levenshtein_distance"
     ],
     [
-      "py_stringmatching.similarity_measure.levenshtein",
-      "levenshtein"
-    ],
-    [
       "pylev",
       "levenshtein"
     ],
     [
       "distance",
       "levenshtein"
-    ],
-    [
-      "abydos.distance",
-      "Levenshtein"
     ]
   ]
 }

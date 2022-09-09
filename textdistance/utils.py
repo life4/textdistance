@@ -1,11 +1,13 @@
+from __future__ import annotations
 # built-in
 from itertools import permutations, product
+from typing import Sequence
 
 
 __all__ = ['words_combinations', 'find_ngrams']
 
 
-def words_combinations(f, *texts):
+def words_combinations(f, *texts) -> float:
     m = float('Inf')
     # split by words
     texts = [t.split() for t in texts]
@@ -21,5 +23,5 @@ def words_combinations(f, *texts):
     return m
 
 
-def find_ngrams(input_list, n):
+def find_ngrams(input_list: Sequence, n: int) -> list[tuple]:
     return list(zip(*[input_list[i:] for i in range(n)]))

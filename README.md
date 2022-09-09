@@ -242,33 +242,32 @@ Algorithms:
 
 Without extras installation:
 
-| algorithm | library | function | time |
-|-----------|---------|----------|------|
-| DamerauLevenshteinUnrestricted | jellyfish | damerau_levenshtein_distance | 0.00965294 |
-| DamerauLevenshteinUnrestricted | **textdistance** | DamerauLevenshteinUnrestricted | 1.130407 |
-| DamerauLevenshteinUnrestricted | abydos | damerau_levenshtein | 4.3831 |
-| DamerauLevenshteinRestricted | pyxdameraulevenshtein | damerau_levenshtein_distance | 0.151378 |
-| DamerauLevenshteinRestricted | pylev | damerau_levenshtein | 0.766461 |
-| DamerauLevenshteinRestricted | **textdistance** | DamerauLevenshteinRestricted | 4.13463 |
-| Hamming | Levenshtein | hamming | 0.0014428 |
-| Hamming | jellyfish | hamming_distance | 0.00240262 |
-| Hamming | distance | hamming | 0.036253 |
-| Hamming | abydos | hamming | 0.0383933 |
-| Hamming | **textdistance** | Hamming | 0.176781 |
-| Jaro | Levenshtein | jaro | 0.00313561 |
-| Jaro | jellyfish | jaro_distance | 0.0051885 |
-| Jaro | py_stringmatching | jaro | 0.180628 |
-| Jaro | **textdistance** | Jaro | 0.278917 |
-| JaroWinkler | Levenshtein | jaro_winkler | 0.00319735 |
-| JaroWinkler | jellyfish | jaro_winkler | 0.00540443 |
-| JaroWinkler | **textdistance** | JaroWinkler | 0.289626 |
-| Levenshtein | Levenshtein | distance | 0.00414404 |
-| Levenshtein | jellyfish | levenshtein_distance | 0.00601647 |
-| Levenshtein | py_stringmatching | levenshtein | 0.252901 |
-| Levenshtein | pylev | levenshtein | 0.569182 |
-| Levenshtein | distance | levenshtein | 1.15726 |
-| Levenshtein | abydos | levenshtein | 3.68451 |
-| Levenshtein | **textdistance** | Levenshtein | 8.63674 |
+| algorithm          | library               |    time |
+|--------------------|-----------------------|---------|
+| DamerauLevenshtein | rapidfuzz             | 0.00312 |
+| DamerauLevenshtein | jellyfish             | 0.00591 |
+| DamerauLevenshtein | pyxdameraulevenshtein | 0.03335 |
+| DamerauLevenshtein | abydos                | 0.63278 |
+| DamerauLevenshtein | **textdistance**      | 0.83524 |
+| Hamming            | Levenshtein           | 0.00038 |
+| Hamming            | rapidfuzz             | 0.00044 |
+| Hamming            | jellyfish             | 0.00091 |
+| Hamming            | distance              | 0.00812 |
+| Hamming            | abydos                | 0.00902 |
+| Hamming            | **textdistance**      | 0.03531 |
+| Jaro               | rapidfuzz             | 0.00092 |
+| Jaro               | jellyfish             | 0.00191 |
+| Jaro               | **textdistance**      | 0.07365 |
+| JaroWinkler        | rapidfuzz             | 0.00094 |
+| JaroWinkler        | jellyfish             | 0.00195 |
+| JaroWinkler        | **textdistance**      | 0.07501 |
+| Levenshtein        | rapidfuzz             | 0.00099 |
+| Levenshtein        | Levenshtein           | 0.00122 |
+| Levenshtein        | jellyfish             | 0.00254 |
+| Levenshtein        | pylev                 | 0.15688 |
+| Levenshtein        | distance              | 0.28669 |
+| Levenshtein        | **textdistance**      | 0.53902 |
+| Levenshtein        | abydos                | 1.25783 |
 
 Total: 24 libs.
 
