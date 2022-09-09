@@ -148,11 +148,6 @@ class DamerauLevenshtein(_Base):
         * substitution:  ABC -> ABE, ADC, FBC..
         * transposition: ABC -> ACB, BAC
 
-    This class calculates the restricted distance, where the same character
-    cannot be touched more than once.  So the distance between BA and ACB
-    is 3:  BA -> A -> AC -> ACB.  Note that BA -> AB -> ACB is disallowed
-    as the transposition requires AB to remain unchanged thereafter.
-
     If `restricted=False`, it will calculate unrestricted distance,
     where the same character can be touched more than once.
     So the distance between BA and ACB is 2: BA -> AB -> ACB.
