@@ -166,10 +166,13 @@ prototype = LibrariesManager()
 reg = prototype.register
 
 alg = 'DamerauLevenshtein'
-reg(alg, LibraryBase('abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs'))
-reg(alg, LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance'))
-reg(alg, TextLibrary('jellyfish', 'damerau_levenshtein_distance'))
-reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance'))
+reg(alg, LibraryBase(
+    'abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs',
+    conditions=dict(restricted=False),
+))
+reg(alg, LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance', conditions=dict(restricted=True)))
+reg(alg, TextLibrary('jellyfish', 'damerau_levenshtein_distance', conditions=dict(restricted=False)))
+reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance', conditions=dict(restricted=False)))
 
 alg = 'Hamming'
 reg(alg, LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'))

@@ -17,8 +17,7 @@ except ImportError:
 
 __all__ = [
     'Hamming', 'MLIPNS',
-    'Levenshtein', 'DamerauLevenshteinUnrestricted',
-    'DamerauLevenshteinRestricted', 'DamerauLevenshtein',
+    'Levenshtein', 'DamerauLevenshtein',
     'Jaro', 'JaroWinkler', 'StrCmp95',
     'NeedlemanWunsch', 'Gotoh', 'SmithWaterman',
 
@@ -138,9 +137,9 @@ class Levenshtein(_Base):
         return self._cycled(s1, s2)
 
 
-class DamerauLevenshteinRestricted(_Base):
+class DamerauLevenshtein(_Base):
     """
-    Compute the absolute restricted Damerau-Levenshtein distance between the two sequences.
+    Compute the absolute Damerau-Levenshtein distance between the two sequences.
     The Damerau-Levenshtein distance is the minimum number of edit operations necessary
     for transforming one sequence into the other. The edit operations allowed are:
 
@@ -154,6 +153,10 @@ class DamerauLevenshteinRestricted(_Base):
     is 3:  BA -> A -> AC -> ACB.  Note that BA -> AB -> ACB is disallowed
     as the transposition requires AB to remain unchanged thereafter.
 
+    If `restricted=False`, it will calculate unrestricted distance,
+    where the same character can be touched more than once.
+    So the distance between BA and ACB is 2: BA -> AB -> ACB.
+
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     """
 
@@ -162,10 +165,12 @@ class DamerauLevenshteinRestricted(_Base):
         qval: int = 1,
         test_func: TestFunc | None = None,
         external: bool = True,
+        restricted: bool = True,
     ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
+        self.restricted = restricted
 
     def _numpy(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         # TODO: doesn't pass tests, need improve
@@ -200,11 +205,54 @@ class DamerauLevenshteinRestricted(_Base):
 
         return d[len(s1) - 1][len(s2) - 1]
 
-    def _pure_python(self, s1: Sequence[T], s2: Sequence[T]) -> int:
+    def _pure_python_unrestricted(self, s1: Sequence[T], s2: Sequence[T]) -> int:
+        """https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
+        """
+        d: dict[tuple[int, int], int] = {}
+        da: defaultdict[T, int] = defaultdict(int)
+
+        len1 = len(s1)
+        len2 = len(s2)
+
+        maxdist = len1 + len2
+        d[-1, -1] = maxdist
+
+        # matrix
+        for i in range(len(s1) + 1):
+            d[i, -1] = maxdist
+            d[i, 0] = i
+        for j in range(len(s2) + 1):
+            d[-1, j] = maxdist
+            d[0, j] = j
+
+        for i, cs1 in enumerate(s1):
+            i += 1
+            db = 0
+            for j, cs2 in enumerate(s2):
+                j += 1
+                i1 = da[cs2]
+                j1 = db
+                if self.test_func(cs1, cs2):
+                    cost = 0
+                    db = j
+                else:
+                    cost = 1
+
+                d[i, j] = min(
+                    d[i - 1, j - 1] + cost,     # substitution
+                    d[i, j - 1] + 1,            # insertion
+                    d[i - 1, j] + 1,            # deletion
+                    d[i1 - 1, j1 - 1] + (i - i1) - 1 + (j - j1),  # transposition
+                )
+            da[cs1] = i
+
+        return d[len1, len2]
+
+    def _pure_python_restricted(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         """
         https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
         """
-        d = {}
+        d: dict[tuple[int, int], int] = {}
 
         # matrix
         for i in range(-1, len(s1) + 1):
@@ -247,84 +295,9 @@ class DamerauLevenshteinRestricted(_Base):
         # if numpy:
         #     return self._numpy(s1, s2)
         # else:
-        return self._pure_python(s1, s2)
-
-
-class DamerauLevenshteinUnrestricted(_Base):
-    """
-    Compute the absolute (unrestricted) Damerau-Levenshtein distance between the two sequences.
-    The Damerau-Levenshtein distance is the minimum number of edit operations necessary
-    for transforming one sequence into the other. The edit operations allowed are:
-
-        * deletion:      ABC -> BC, AC, AB
-        * insertion:     ABC -> ABCD, EABC, AEBC..
-        * substitution:  ABC -> ABE, ADC, FBC..
-        * transposition: ABC -> ACB, BAC
-
-    This class calculates the unrestricted distance, where the same character
-    can be touched more than once.  So the distance between BA and ACB
-    is 2: BA -> AB -> ACB.
-
-    https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
-    """
-    def __init__(self, qval=1, test_func=None, external=True):
-        self.qval = qval
-        self.test_func = test_func or self._ident
-        self.external = external
-
-    def _pure_python(self, s1, s2):
-        # Based on the Wikipedia code
-        d = {}
-        da = defaultdict(int)
-
-        len1 = len(s1)
-        len2 = len(s2)
-
-        maxdist = len1 + len2
-        d[-1, -1] = maxdist
-
-        # matrix
-        for i in range(len(s1) + 1):
-            d[i, -1] = maxdist
-            d[i, 0] = i
-        for j in range(len(s2) + 1):
-            d[-1, j] = maxdist
-            d[0, j] = j
-
-        for i, cs1 in enumerate(s1):
-            i += 1
-            db = 0
-            for j, cs2 in enumerate(s2):
-                j += 1
-                i1 = da[cs2]
-                j1 = db
-                if self.test_func(cs1, cs2):
-                    cost = 0
-                    db = j
-                else:
-                    cost = 1
-
-                d[i, j] = min(
-                    d[i - 1, j - 1] + cost,     # substitution
-                    d[i, j - 1] + 1,            # insertion
-                    d[i - 1, j] + 1,            # deletion
-                    d[i1 - 1, j1 - 1] + (i - i1) - 1 + (j - j1),  # transposition
-                )
-            da[cs1] = i
-
-        return d[len1, len2]
-
-    def __call__(self, s1, s2):
-        s1, s2 = self._get_sequences(s1, s2)
-
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
-
-        return self._pure_python(s1, s2)
-
-
-DamerauLevenshtein = DamerauLevenshteinUnrestricted
+        if self.restricted:
+            return self._pure_python_restricted(s1, s2)
+        return self._pure_python_unrestricted(s1, s2)
 
 
 class JaroWinkler(_BaseSimilarity):

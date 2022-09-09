@@ -7,19 +7,7 @@
     [
       "jellyfish",
       "damerau_levenshtein_distance"
-    ]
-  ],
-  "DamerauLevenshteinUnrestricted": [
-    [
-      "rapidfuzz.distance.DamerauLevenshtein",
-      "distance"
     ],
-    [
-      "jellyfish",
-      "damerau_levenshtein_distance"
-    ]
-  ],
-  "DamerauLevenshteinRestricted": [
     [
       "pyxdameraulevenshtein",
       "damerau_levenshtein_distance"
