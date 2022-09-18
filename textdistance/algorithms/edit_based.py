@@ -204,7 +204,7 @@ class DamerauLevenshtein(_Base):
         """https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
         """
         d: dict[tuple[int, int], int] = {}
-        da: defaultdict[T, int] = defaultdict(int)
+        da: dict[T, int] = {}
 
         len1 = len(s1)
         len2 = len(s2)
@@ -220,12 +220,10 @@ class DamerauLevenshtein(_Base):
             d[-1, j] = maxdist
             d[0, j] = j
 
-        for i, cs1 in enumerate(s1):
-            i += 1
+        for i, cs1 in enumerate(s1, start=1):
             db = 0
-            for j, cs2 in enumerate(s2):
-                j += 1
-                i1 = da[cs2]
+            for j, cs2 in enumerate(s2, start=1):
+                i1 = da.get(cs2, 0)
                 j1 = db
                 if self.test_func(cs1, cs2):
                     cost = 0
