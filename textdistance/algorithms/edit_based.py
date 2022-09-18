@@ -148,6 +148,10 @@ class DamerauLevenshtein(_Base):
         * substitution:  ABC -> ABE, ADC, FBC..
         * transposition: ABC -> ACB, BAC
 
+    If `restricted=False`, it will calculate unrestricted distance,
+    where the same character can be touched more than once.
+    So the distance between BA and ACB is 2: BA -> AB -> ACB.
+
     https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
     """
 
@@ -156,10 +160,12 @@ class DamerauLevenshtein(_Base):
         qval: int = 1,
         test_func: TestFunc | None = None,
         external: bool = True,
+        restricted: bool = True,
     ) -> None:
         self.qval = qval
         self.test_func = test_func or self._ident
         self.external = external
+        self.restricted = restricted
 
     def _numpy(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         # TODO: doesn't pass tests, need improve
@@ -194,11 +200,52 @@ class DamerauLevenshtein(_Base):
 
         return d[len(s1) - 1][len(s2) - 1]
 
-    def _pure_python(self, s1: Sequence[T], s2: Sequence[T]) -> int:
+    def _pure_python_unrestricted(self, s1: Sequence[T], s2: Sequence[T]) -> int:
+        """https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
+        """
+        d: dict[tuple[int, int], int] = {}
+        da: dict[T, int] = {}
+
+        len1 = len(s1)
+        len2 = len(s2)
+
+        maxdist = len1 + len2
+        d[-1, -1] = maxdist
+
+        # matrix
+        for i in range(len(s1) + 1):
+            d[i, -1] = maxdist
+            d[i, 0] = i
+        for j in range(len(s2) + 1):
+            d[-1, j] = maxdist
+            d[0, j] = j
+
+        for i, cs1 in enumerate(s1, start=1):
+            db = 0
+            for j, cs2 in enumerate(s2, start=1):
+                i1 = da.get(cs2, 0)
+                j1 = db
+                if self.test_func(cs1, cs2):
+                    cost = 0
+                    db = j
+                else:
+                    cost = 1
+
+                d[i, j] = min(
+                    d[i - 1, j - 1] + cost,     # substitution
+                    d[i, j - 1] + 1,            # insertion
+                    d[i - 1, j] + 1,            # deletion
+                    d[i1 - 1, j1 - 1] + (i - i1) - 1 + (j - j1),  # transposition
+                )
+            da[cs1] = i
+
+        return d[len1, len2]
+
+    def _pure_python_restricted(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         """
         https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
         """
-        d = {}
+        d: dict[tuple[int, int], int] = {}
 
         # matrix
         for i in range(-1, len(s1) + 1):
@@ -241,7 +288,9 @@ class DamerauLevenshtein(_Base):
         # if numpy:
         #     return self._numpy(s1, s2)
         # else:
-        return self._pure_python(s1, s2)
+        if self.restricted:
+            return self._pure_python_restricted(s1, s2)
+        return self._pure_python_unrestricted(s1, s2)
 
 
 class JaroWinkler(_BaseSimilarity):
