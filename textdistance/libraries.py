@@ -173,6 +173,7 @@ reg(alg, LibraryBase(
 reg(alg, LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance', conditions=dict(restricted=True)))
 reg(alg, TextLibrary('jellyfish', 'damerau_levenshtein_distance', conditions=dict(restricted=False)))
 reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance', conditions=dict(restricted=False)))
+reg(alg, LibraryBase('rapidfuzz.distance.OSA', 'distance', conditions=dict(restricted=True)))
 
 alg = 'Hamming'
 reg(alg, LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'))

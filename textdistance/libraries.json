@@ -1,6 +1,10 @@
 {
   "DamerauLevenshtein": [
     [
+      "rapidfuzz.distance.OSA",
+      "distance"
+    ],
+    [
       "rapidfuzz.distance.DamerauLevenshtein",
       "distance"
     ],
