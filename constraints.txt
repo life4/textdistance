@@ -4,7 +4,7 @@ jellyfish               # https://github.com/jamesturk/jellyfish
 numpy
 py_stringmatching       # https://github.com/anhaidgroup/py_stringmatching
 pylev                   # https://github.com/toastdriven/pylev
-python-Levenshtein      # https://github.com/maxbachmann/python-Levenshtein
+Levenshtein             # https://github.com/maxbachmann/Levenshtein
 pyxDamerauLevenshtein   # https://github.com/gfairchild/pyxDamerauLevenshtein
 tabulate
 

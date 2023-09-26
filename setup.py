@@ -10,7 +10,7 @@ extras = {
         'abydos',
         'jellyfish',                # for DamerauLevenshtein
         'numpy',                    # for SmithWaterman and other
-        'python-Levenshtein',       # for Jaro and Levenshtein
+        'Levenshtein',              # for Jaro and Levenshtein
         'pyxDamerauLevenshtein',    # for DamerauLevenshtein
         'rapidfuzz>=2.6.0',         # for Jaro, Levenshtein and other
     ],
@@ -21,7 +21,7 @@ extras = {
         'abydos',
         'jellyfish',
         'numpy',
-        'python-Levenshtein',
+        'Levenshtein',
         'pyxDamerauLevenshtein',
         'rapidfuzz>=2.6.0',
         # slow
@@ -64,7 +64,7 @@ extras = {
         'pyxDamerauLevenshtein',    # for any iterators
     ],
     'Hamming': [
-        'python-Levenshtein',   # only same length and strings
+        'Levenshtein',          # only same length and strings
         'rapidfuzz>=2.6.0',     # only same length, any iterators of hashable elements
         'jellyfish',            # only strings, any length
         'distance',             # only same length, any iterators
@@ -72,7 +72,7 @@ extras = {
     ],
     'Jaro': [
         'rapidfuzz>=2.6.0',     # any iterators of hashable elements
-        'python-Levenshtein',   # only text
+        'Levenshtein',          # only text
     ],
     'JaroWinkler': [
         'rapidfuzz>=2.6.0',     # any iterators of hashable elements
@@ -80,7 +80,7 @@ extras = {
     ],
     'Levenshtein': [
         'rapidfuzz>=2.6.0',     # any iterators of hashable elements
-        'python-Levenshtein',   # only text
+        'Levenshtein',          # only text
         # yeah, other libs slower than textdistance
     ],
 }
