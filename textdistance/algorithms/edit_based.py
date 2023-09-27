@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 from collections import defaultdict
 from itertools import zip_longest
@@ -6,10 +7,11 @@ from typing import Any, Sequence, TypeVar
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
-from .types import TestFunc, SimFunc
+from .types import SimFunc, TestFunc
 
 
 try:
+    # external
     import numpy
 except ImportError:
     numpy = None  # type: ignore[assignment]

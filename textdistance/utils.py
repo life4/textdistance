@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 from itertools import permutations, product
 from typing import Sequence

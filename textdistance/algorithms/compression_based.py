@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 import codecs
 import math
@@ -12,6 +13,7 @@ from .base import Base as _Base
 
 
 try:
+    # built-in
     import lzma
 except ImportError:
     lzma = None  # type: ignore[assignment]
