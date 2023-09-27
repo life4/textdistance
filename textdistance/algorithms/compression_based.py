@@ -106,8 +106,7 @@ class ArithNCD(_NCDBase):
 
         prob_pairs = {}
         cumulative_count = 0
-        counts = sorted(counts.items(), key=lambda x: (x[1], x[0]), reverse=True)
-        for char, current_count in counts:
+        for char, current_count in counts.most_common():
             prob_pairs[char] = (
                 Fraction(cumulative_count, total_letters),
                 Fraction(current_count, total_letters),
@@ -214,7 +213,7 @@ class SqrtNCD(_NCDBase):
 class EntropyNCD(_NCDBase):
     """Entropy based NCD
 
-    Get Entropy of input secueance as a size of compressed data.
+    Get Entropy of input sequence as a size of compressed data.
 
     https://en.wikipedia.org/wiki/Entropy_(information_theory)
     https://en.wikipedia.org/wiki/Entropy_encoding

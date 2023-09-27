@@ -31,7 +31,7 @@ def test_simmetry_compressor(text):
 @hypothesis.given(text=hypothesis.strategies.text(min_size=1))
 def test_idempotency_compressor(text):
     # I've modified idempotency to some kind of distributivity for constant.
-    # Now it indicates that compressor really compress.
+    # Now it indicates that compressor actually does compression.
     assert ALG._get_size(text * 2) < ALG._get_size(text) * 2
 
 
