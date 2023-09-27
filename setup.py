@@ -7,7 +7,6 @@ from setuptools import setup
 extras = {
     # enough for simple usage
     'extras': [
-        'abydos',
         'jellyfish',                # for DamerauLevenshtein
         'numpy',                    # for SmithWaterman and other
         'python-Levenshtein',       # for Jaro and Levenshtein
@@ -18,7 +17,6 @@ extras = {
     # needed for benchmarking, optimization and testing
     'benchmark': [
         # common
-        'abydos',
         'jellyfish',
         'numpy',
         'python-Levenshtein',
@@ -68,7 +66,6 @@ extras = {
         'rapidfuzz>=2.6.0',     # only same length, any iterators of hashable elements
         'jellyfish',            # only strings, any length
         'distance',             # only same length, any iterators
-        'abydos',               # any iterators
     ],
     'Jaro': [
         'rapidfuzz>=2.6.0',     # any iterators of hashable elements

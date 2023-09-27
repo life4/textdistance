@@ -12,15 +12,7 @@ from textdistance.libraries import prototype
 
 libraries = prototype.clone()
 
-# numpy throws a bunch of warning about abydos using `np.int` isntead of `int`.
-ABYDOS_WARNINGS = (
-    'ignore:`np.int` is a deprecated alias',
-    'ignore:`np.float` is a deprecated alias',
-    'ignore:Using or importing the ABCs',
-)
 
-
-@pytest.mark.filterwarnings(*ABYDOS_WARNINGS)
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
 @hypothesis.settings(deadline=None)
@@ -45,7 +37,6 @@ def test_compare(left, right, alg):
         assert isclose(int_result, ext_result), str(lib)
 
 
-@pytest.mark.filterwarnings(*ABYDOS_WARNINGS)
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
 @hypothesis.given(
@@ -80,7 +71,6 @@ def test_qval(left, right, alg, qval):
         assert isclose(int_result, ext_result), f'{lib}({repr(s1)}, {repr(s2)})'
 
 
-@pytest.mark.filterwarnings(*ABYDOS_WARNINGS)
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
 @hypothesis.given(

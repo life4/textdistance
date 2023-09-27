@@ -167,17 +167,12 @@ prototype = LibrariesManager()
 reg = prototype.register
 
 alg = 'DamerauLevenshtein'
-reg(alg, LibraryBase(
-    'abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs',
-    conditions=dict(restricted=False),
-))
 reg(alg, LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance', conditions=dict(restricted=True)))
 reg(alg, TextLibrary('jellyfish', 'damerau_levenshtein_distance', conditions=dict(restricted=False)))
 reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance', conditions=dict(restricted=False)))
 reg(alg, LibraryBase('rapidfuzz.distance.OSA', 'distance', conditions=dict(restricted=True)))
 
 alg = 'Hamming'
-reg(alg, LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'))
 reg(alg, SameLengthLibrary('distance', 'hamming'))
 reg(alg, SameLengthTextLibrary('Levenshtein', 'hamming'))
 reg(alg, TextLibrary('jellyfish', 'hamming_distance'))
@@ -197,7 +192,6 @@ reg(alg, LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity', conditions=
 # reg(alg, TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
 alg = 'Levenshtein'
-reg(alg, LibraryBase('abydos.distance', 'Levenshtein', presets={}, attr='dist_abs'))
 reg(alg, LibraryBase('distance', 'levenshtein'))
 reg(alg, LibraryBase('pylev', 'levenshtein'))
 reg(alg, TextLibrary('jellyfish', 'levenshtein_distance'))
