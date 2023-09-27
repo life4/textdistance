@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 from difflib import SequenceMatcher as _SequenceMatcher
 from typing import Any
@@ -8,9 +9,12 @@ from ..utils import find_ngrams
 from .base import BaseSimilarity as _BaseSimilarity
 from .types import TestFunc
 
+
 try:
+    # external
     import numpy
 except ImportError:
+    # built-in
     from array import array
     numpy = None  # type: ignore[assignment]
 

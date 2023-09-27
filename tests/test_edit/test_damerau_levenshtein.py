@@ -4,6 +4,7 @@ import pytest
 # project
 import textdistance
 
+
 ALG = textdistance.DamerauLevenshtein
 
 COMMON = [

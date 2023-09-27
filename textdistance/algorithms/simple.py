@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 from itertools import takewhile
 from typing import Sequence
@@ -6,6 +7,7 @@ from typing import Sequence
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 from .types import SimFunc
+
 
 __all__ = [
     'Prefix', 'Postfix', 'Length', 'Identity', 'Matrix',

@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 # built-in
 import json
-from collections import defaultdict
 import math
+from collections import defaultdict
 from timeit import timeit
 from typing import Iterable, Iterator, NamedTuple
 

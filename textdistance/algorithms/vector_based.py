@@ -3,13 +3,14 @@ IMPORTANT: it's just draft
 """
 # built-in
 from functools import reduce
+from typing import Any
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
-from typing import Any
 try:
+    # external
     import numpy
 except ImportError:
     numpy = None  # type: ignore[assignment]
