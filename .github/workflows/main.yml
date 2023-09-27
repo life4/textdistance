@@ -1,0 +1,77 @@
+name: main
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
+      - run: task lint
+
+  pytest-pure:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          # - "3.12.0-rc.1"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
+      - run: task pytest-pure
+
+  pytest-external:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          # - "3.12.0-rc.1"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
+      - run: task pytest-external
+
+  markdownlint-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nosborn/github-action-markdown-cli@v3.2.0
+        with:
+          files: .
+          config_file: .markdownlint.yaml
+          dot: true
