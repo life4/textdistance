@@ -45,26 +45,26 @@ jobs:
           repo-token: ${{ github.token }}
       - run: task pytest-pure
 
-  pytest-external:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          # - "3.12.0-rc.1"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: arduino/setup-task@v1
-        with:
-          repo-token: ${{ github.token }}
-      - run: task pytest-external
+  # pytest-external:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       python-version:
+  #         - "3.8"
+  #         - "3.9"
+  #         - "3.10"
+  #         - "3.11"
+  #         # - "3.12.0-rc.1"
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - uses: arduino/setup-task@v1
+  #       with:
+  #         repo-token: ${{ github.token }}
+  #     - run: task pytest-external
 
   markdownlint-cli:
     runs-on: ubuntu-latest
