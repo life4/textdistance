@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 import json
 from collections import defaultdict
@@ -38,12 +39,12 @@ class LibrariesManager:
             # sort libs by speed
             self.libs[alg].sort(key=lambda lib: libs_names.index([lib.module_name, lib.func_name]))
 
-    def get_algorithms(self) -> list:
+    def get_algorithms(self) -> list[str]:
         """Get list of available algorithms.
         """
         return list(self.libs.keys())
 
-    def get_libs(self, alg) -> list[LibraryBase]:
+    def get_libs(self, alg: str) -> list[LibraryBase]:
         """Get libs list for algorithm
         """
         if alg not in self.libs:
@@ -68,7 +69,7 @@ class LibraryBase:
         *,
         presets: dict[str, Any] | None = None,
         attr: str | None = None,
-        conditions: dict[str, Any] | None = None,
+        conditions: dict[str, bool] | None = None,
     ) -> None:
         self.module_name = module_name
         self.func_name = func_name
@@ -88,7 +89,7 @@ class LibraryBase:
 
         return True
 
-    def prepare(self, *sequences) -> tuple:
+    def prepare(self, *sequences: Sequence) -> tuple:
         return sequences
 
     @property
@@ -127,7 +128,7 @@ class LibraryBase:
 
 
 class TextLibrary(LibraryBase):
-    def check_conditions(self, obj, *sequences: Sequence) -> bool:
+    def check_conditions(self, obj: object, *sequences: Sequence) -> bool:
         if not super().check_conditions(obj, *sequences):
             return False
 
@@ -141,7 +142,7 @@ class TextLibrary(LibraryBase):
                 return False
         return True
 
-    def prepare(self, *sequences) -> tuple:
+    def prepare(self, *sequences: Sequence) -> tuple:
         # convert list of letters to string
         if isinstance(sequences[0], (tuple, list)):
             sequences = tuple(map(lambda x: ''.join(x), sequences))
@@ -149,7 +150,7 @@ class TextLibrary(LibraryBase):
 
 
 class SameLengthLibrary(LibraryBase):
-    def check_conditions(self, obj, *sequences: Sequence) -> bool:
+    def check_conditions(self, obj: object, *sequences: Sequence) -> bool:
         if not super().check_conditions(obj, *sequences):
             return False
         # compare only same length iterators
@@ -166,17 +167,12 @@ prototype = LibrariesManager()
 reg = prototype.register
 
 alg = 'DamerauLevenshtein'
-reg(alg, LibraryBase(
-    'abydos.distance', 'DamerauLevenshtein', presets={}, attr='dist_abs',
-    conditions=dict(restricted=False),
-))
 reg(alg, LibraryBase('pyxdameraulevenshtein', 'damerau_levenshtein_distance', conditions=dict(restricted=True)))
 reg(alg, TextLibrary('jellyfish', 'damerau_levenshtein_distance', conditions=dict(restricted=False)))
 reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance', conditions=dict(restricted=False)))
 reg(alg, LibraryBase('rapidfuzz.distance.OSA', 'distance', conditions=dict(restricted=True)))
 
 alg = 'Hamming'
-reg(alg, LibraryBase('abydos.distance', 'Hamming', presets={}, attr='dist_abs'))
 reg(alg, SameLengthLibrary('distance', 'hamming'))
 reg(alg, SameLengthTextLibrary('Levenshtein', 'hamming'))
 reg(alg, TextLibrary('jellyfish', 'hamming_distance'))
@@ -196,7 +192,6 @@ reg(alg, LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity', conditions=
 # reg(alg, TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
 alg = 'Levenshtein'
-reg(alg, LibraryBase('abydos.distance', 'Levenshtein', presets={}, attr='dist_abs'))
 reg(alg, LibraryBase('distance', 'levenshtein'))
 reg(alg, LibraryBase('pylev', 'levenshtein'))
 reg(alg, TextLibrary('jellyfish', 'levenshtein_distance'))

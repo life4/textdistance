@@ -148,15 +148,15 @@ pip install -e ".[benchmark]"
 All algorithms have 2 interfaces:
 
 1. Class with algorithm-specific params for customizing.
-2. Class instance with default params for quick and simple usage.
+1. Class instance with default params for quick and simple usage.
 
 All algorithms have some common methods:
 
 1. `.distance(*sequences)` -- calculate distance between sequences.
-2. `.similarity(*sequences)` -- calculate similarity for sequences.
-3. `.maximum(*sequences)` -- maximum possible value for distance and similarity. For any sequence: `distance + similarity == maximum`.
-4. `.normalized_distance(*sequences)` -- normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
-5. `.normalized_similarity(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
+1. `.similarity(*sequences)` -- calculate similarity for sequences.
+1. `.maximum(*sequences)` -- maximum possible value for distance and similarity. For any sequence: `distance + similarity == maximum`.
+1. `.normalized_distance(*sequences)` -- normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
+1. `.normalized_similarity(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
 
 Most common init arguments:
 
@@ -164,7 +164,7 @@ Most common init arguments:
     - 1 (default) -- compare sequences by chars.
     - 2 or more -- transform sequences to q-grams.
     - None -- split sequences by words.
-2. `as_set` -- for token-based algorithms:
+1. `as_set` -- for token-based algorithms:
     - True -- `t` and `ttt` is equal.
     - False (default) -- `t` and `ttt` is different.
 
@@ -220,12 +220,11 @@ hamming('text', 'testit')
 
 Supported libraries:
 
-1. [abydos](https://github.com/chrislit/abydos)
 1. [Distance](https://github.com/doukremt/distance)
 1. [jellyfish](https://github.com/jamesturk/jellyfish)
 1. [py_stringmatching](https://github.com/anhaidgroup/py_stringmatching)
 1. [pylev](https://github.com/toastdriven/pylev)
-1. [python-Levenshtein](https://github.com/ztane/python-Levenshtein)
+1. [Levenshtein](https://github.com/maxbachmann/Levenshtein)
 1. [pyxDamerauLevenshtein](https://github.com/gfairchild/pyxDamerauLevenshtein)
 
 Algorithms:
@@ -245,13 +244,11 @@ Without extras installation:
 | DamerauLevenshtein | rapidfuzz             | 0.00312 |
 | DamerauLevenshtein | jellyfish             | 0.00591 |
 | DamerauLevenshtein | pyxdameraulevenshtein | 0.03335 |
-| DamerauLevenshtein | abydos                | 0.63278 |
 | DamerauLevenshtein | **textdistance**      | 0.83524 |
 | Hamming            | Levenshtein           | 0.00038 |
 | Hamming            | rapidfuzz             | 0.00044 |
 | Hamming            | jellyfish             | 0.00091 |
 | Hamming            | distance              | 0.00812 |
-| Hamming            | abydos                | 0.00902 |
 | Hamming            | **textdistance**      | 0.03531 |
 | Jaro               | rapidfuzz             | 0.00092 |
 | Jaro               | jellyfish             | 0.00191 |
@@ -265,7 +262,6 @@ Without extras installation:
 | Levenshtein        | pylev                 | 0.15688 |
 | Levenshtein        | distance              | 0.28669 |
 | Levenshtein        | **textdistance**      | 0.53902 |
-| Levenshtein        | abydos                | 1.25783 |
 
 Total: 24 libs.
 

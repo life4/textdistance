@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 from functools import reduce
 from itertools import islice, permutations, repeat

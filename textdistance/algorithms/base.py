@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # built-in
 from collections import Counter
 from contextlib import suppress
