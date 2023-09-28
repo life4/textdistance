@@ -148,15 +148,15 @@ pip install -e ".[benchmark]"
 All algorithms have 2 interfaces:
 
 1. Class with algorithm-specific params for customizing.
-2. Class instance with default params for quick and simple usage.
+1. Class instance with default params for quick and simple usage.
 
 All algorithms have some common methods:
 
 1. `.distance(*sequences)` -- calculate distance between sequences.
-2. `.similarity(*sequences)` -- calculate similarity for sequences.
-3. `.maximum(*sequences)` -- maximum possible value for distance and similarity. For any sequence: `distance + similarity == maximum`.
-4. `.normalized_distance(*sequences)` -- normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
-5. `.normalized_similarity(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
+1. `.similarity(*sequences)` -- calculate similarity for sequences.
+1. `.maximum(*sequences)` -- maximum possible value for distance and similarity. For any sequence: `distance + similarity == maximum`.
+1. `.normalized_distance(*sequences)` -- normalized distance between sequences. The return value is a float between 0 and 1, where 0 means equal, and 1 totally different.
+1. `.normalized_similarity(*sequences)` -- normalized similarity for sequences. The return value is a float between 0 and 1, where 0 means totally different, and 1 equal.
 
 Most common init arguments:
 
@@ -164,7 +164,7 @@ Most common init arguments:
     - 1 (default) -- compare sequences by chars.
     - 2 or more -- transform sequences to q-grams.
     - None -- split sequences by words.
-2. `as_set` -- for token-based algorithms:
+1. `as_set` -- for token-based algorithms:
     - True -- `t` and `ttt` is equal.
     - False (default) -- `t` and `ttt` is different.
 

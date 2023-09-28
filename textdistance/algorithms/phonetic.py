@@ -1,15 +1,16 @@
 from __future__ import annotations
+
 # built-in
 from collections import defaultdict
-from itertools import groupby
+from itertools import groupby, zip_longest
+from typing import Any, Iterator, Sequence, TypeVar
 
 # app
 from .base import Base as _Base, BaseSimilarity as _BaseSimilarity
 
 
-from itertools import zip_longest
-from typing import Any, Iterator, Sequence, TypeVar
 try:
+    # external
     import numpy
 except ImportError:
     numpy = None  # type: ignore[assignment]

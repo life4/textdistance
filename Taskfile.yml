@@ -48,19 +48,18 @@ tasks:
     cmds:
       - "{{.LINT_ENV}}/bin/twine upload dist/textdistance-*"
 
-  flake8:run:
+  flake8:
     deps:
       - lint:install
     cmds:
       - "{{.LINT_ENV}}/bin/flake8 ."
-  mypy:run:
+  mypy:
     deps:
       - lint:install
     cmds:
       - "{{.LINT_ENV}}/bin/mypy"
 
-
-  pytest-pure:run:
+  pytest-pure:
     deps:
       - task: pip:install
         vars:
@@ -69,7 +68,7 @@ tasks:
     cmds:
       - "{{.TEST_PURE_ENV}}/bin/pytest  -m 'not external' {{.CLI_ARGS}}"
 
-  pytest-external:run:
+  pytest-external:
     deps:
       - task: pip:install
         vars:
@@ -78,11 +77,17 @@ tasks:
     cmds:
       - "{{.TEST_EXT_ENV}}/bin/pytest {{.CLI_ARGS}}"
 
-  isort:run:
+  isort:
     deps:
       - lint:install
     cmds:
       - "{{.LINT_ENV}}/bin/isort ."
+
+  isort:check:
+    deps:
+      - lint:install
+    cmds:
+      - "{{.LINT_ENV}}/bin/isort --check ."
 
   benchmark:
     deps:
@@ -92,3 +97,26 @@ tasks:
           EXTRA: benchmark
     cmds:
       - "{{.BENCHMARK_ENV}}/bin/python3 -m textdistance.benchmark"
+
+  # groups
+  format:
+    desc: "run all code formatters"
+    cmds:
+      - task: isort
+  lint:
+    desc: "run all linters"
+    cmds:
+      - task: flake8
+      # - task: mypy
+      - task: isort:check
+  test:
+    desc: "run all tests"
+    cmds:
+      - task: pytest-pure
+      - task: pytest-external
+  all:
+    desc: "run all code formatters, linters, and tests"
+    cmds:
+      - task: format
+      - task: lint
+      - task: test

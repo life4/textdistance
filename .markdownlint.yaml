@@ -1,0 +1,8 @@
+# https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+default: true   # enable all by default
+MD007:          # unordered list indentation
+  indent: 2
+MD013: false    # do not validate line length
+MD014: false    # allow $ before command output
+MD029:          # ordered list prefix
+  style: "one"
