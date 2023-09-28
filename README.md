@@ -220,7 +220,6 @@ hamming('text', 'testit')
 
 Supported libraries:
 
-1. [abydos](https://github.com/chrislit/abydos)
 1. [Distance](https://github.com/doukremt/distance)
 1. [jellyfish](https://github.com/jamesturk/jellyfish)
 1. [py_stringmatching](https://github.com/anhaidgroup/py_stringmatching)
@@ -245,13 +244,11 @@ Without extras installation:
 | DamerauLevenshtein | rapidfuzz             | 0.00312 |
 | DamerauLevenshtein | jellyfish             | 0.00591 |
 | DamerauLevenshtein | pyxdameraulevenshtein | 0.03335 |
-| DamerauLevenshtein | abydos                | 0.63278 |
 | DamerauLevenshtein | **textdistance**      | 0.83524 |
 | Hamming            | Levenshtein           | 0.00038 |
 | Hamming            | rapidfuzz             | 0.00044 |
 | Hamming            | jellyfish             | 0.00091 |
 | Hamming            | distance              | 0.00812 |
-| Hamming            | abydos                | 0.00902 |
 | Hamming            | **textdistance**      | 0.03531 |
 | Jaro               | rapidfuzz             | 0.00092 |
 | Jaro               | jellyfish             | 0.00191 |
@@ -265,7 +262,6 @@ Without extras installation:
 | Levenshtein        | pylev                 | 0.15688 |
 | Levenshtein        | distance              | 0.28669 |
 | Levenshtein        | **textdistance**      | 0.53902 |
-| Levenshtein        | abydos                | 1.25783 |
 
 Total: 24 libs.
 

@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 # built-in
+import string
 from math import isclose
 
 # external
 import hypothesis
+import hypothesis.strategies
 import pytest
 
 # project
@@ -12,15 +16,7 @@ from textdistance.libraries import prototype
 
 libraries = prototype.clone()
 
-# numpy throws a bunch of warning about abydos using `np.int` isntead of `int`.
-ABYDOS_WARNINGS = (
-    'ignore:`np.int` is a deprecated alias',
-    'ignore:`np.float` is a deprecated alias',
-    'ignore:Using or importing the ABCs',
-)
 
-
-@pytest.mark.filterwarnings(*ABYDOS_WARNINGS)
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
 @hypothesis.settings(deadline=None)
@@ -30,6 +26,12 @@ ABYDOS_WARNINGS = (
 )
 def test_compare(left, right, alg):
     for lib in libraries.get_libs(alg):
+
+        if lib.module_name == 'jellyfish':
+            ascii = set(string.printable)
+            if (set(left) | set(right)) - ascii:
+                continue
+
         conditions = lib.conditions or {}
         internal_func = getattr(textdistance, alg)(external=False, **conditions)
         external_func = lib.get_function()
@@ -45,7 +47,6 @@ def test_compare(left, right, alg):
         assert isclose(int_result, ext_result), str(lib)
 
 
-@pytest.mark.filterwarnings(*ABYDOS_WARNINGS)
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
 @hypothesis.given(
@@ -53,8 +54,14 @@ def test_compare(left, right, alg):
     right=hypothesis.strategies.text(min_size=1),
 )
 @pytest.mark.parametrize('qval', (None, 1, 2, 3))
-def test_qval(left, right, alg, qval):
+def test_qval(left: str, right: str, alg: str, qval: int | None) -> None:
     for lib in libraries.get_libs(alg):
+
+        if lib.module_name == 'jellyfish':
+            ascii = set(string.printable)
+            if (set(left) | set(right)) - ascii:
+                continue
+
         conditions = lib.conditions or {}
         internal_func = getattr(textdistance, alg)(external=False, **conditions)
         external_func = lib.get_function()
@@ -80,7 +87,6 @@ def test_qval(left, right, alg, qval):
         assert isclose(int_result, ext_result), f'{lib}({repr(s1)}, {repr(s2)})'
 
 
-@pytest.mark.filterwarnings(*ABYDOS_WARNINGS)
 @pytest.mark.external
 @pytest.mark.parametrize('alg', libraries.get_algorithms())
 @hypothesis.given(
