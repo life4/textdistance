@@ -224,7 +224,7 @@ Supported libraries:
 1. [jellyfish](https://github.com/jamesturk/jellyfish)
 1. [py_stringmatching](https://github.com/anhaidgroup/py_stringmatching)
 1. [pylev](https://github.com/toastdriven/pylev)
-1. [python-Levenshtein](https://github.com/ztane/python-Levenshtein)
+1. [Levenshtein](https://github.com/maxbachmann/Levenshtein)
 1. [pyxDamerauLevenshtein](https://github.com/gfairchild/pyxDamerauLevenshtein)
 
 Algorithms:
