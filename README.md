@@ -22,7 +22,7 @@ Features:
 | Algorithm                                                                                 | Class                | Functions              |
 |-------------------------------------------------------------------------------------------|----------------------|------------------------|
 | [Hamming](https://en.wikipedia.org/wiki/Hamming_distance)                                 | `Hamming`            | `hamming`              |
-| [MLIPNS](http://www.sial.iias.spb.su/files/386-386-1-PB.pdf)                              | `Mlipns`             | `mlipns`               |
+| [MLIPNS](http://www.sial.iias.spb.su/files/386-386-1-PB.pdf)                              | `MLIPNS`             | `mlipns`               |
 | [Levenshtein](https://en.wikipedia.org/wiki/Levenshtein_distance)                         | `Levenshtein`        | `levenshtein`          |
 | [Damerau-Levenshtein](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) | `DamerauLevenshtein` | `damerau_levenshtein`  |
 | [Jaro-Winkler](https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance)               | `JaroWinkler`        | `jaro_winkler`, `jaro` |
