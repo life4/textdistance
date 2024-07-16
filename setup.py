@@ -102,7 +102,7 @@ except TypeError:
 
 setup(
     name='textdistance',
-    version='4.6.2',
+    version='4.6.3',
 
     author='orsinium',
     author_email='gram@orsinium.dev',
