@@ -1,7 +1,7 @@
 import itertools
 import sys
 from collections import defaultdict
-from typing import List
+from typing import List, Dict, Type
 
 import atheris
 
@@ -47,7 +47,7 @@ FUZZ_METHODS = ["__call__", "distance", "similarity", "normalized_distance", "no
 
 FUZZ_TARGETS: List[FuzzTarget] = []
 
-CONSTRAINT_MEMORY: dict[type, InitializationConstraints] = defaultdict(InitializationConstraints)
+CONSTRAINT_MEMORY: Dict[Type, InitializationConstraints] = defaultdict(InitializationConstraints)
 
 
 def initialize_fuzz_options():
