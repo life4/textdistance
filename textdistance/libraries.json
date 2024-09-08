@@ -29,10 +29,6 @@
     [
       "jellyfish",
       "hamming_distance"
-    ],
-    [
-      "distance",
-      "hamming"
     ]
   ],
   "Jaro": [
@@ -70,10 +66,6 @@
     ],
     [
       "pylev",
-      "levenshtein"
-    ],
-    [
-      "distance",
       "levenshtein"
     ]
   ]

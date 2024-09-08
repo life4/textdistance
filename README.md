@@ -220,7 +220,6 @@ hamming('text', 'testit')
 
 Supported libraries:
 
-1. [Distance](https://github.com/doukremt/distance)
 1. [jellyfish](https://github.com/jamesturk/jellyfish)
 1. [py_stringmatching](https://github.com/anhaidgroup/py_stringmatching)
 1. [pylev](https://github.com/toastdriven/pylev)
@@ -248,7 +247,6 @@ Without extras installation:
 | Hamming            | Levenshtein           | 0.00038 |
 | Hamming            | rapidfuzz             | 0.00044 |
 | Hamming            | jellyfish             | 0.00091 |
-| Hamming            | distance              | 0.00812 |
 | Hamming            | **textdistance**      | 0.03531 |
 | Jaro               | rapidfuzz             | 0.00092 |
 | Jaro               | jellyfish             | 0.00191 |
@@ -260,7 +258,6 @@ Without extras installation:
 | Levenshtein        | Levenshtein           | 0.00122 |
 | Levenshtein        | jellyfish             | 0.00254 |
 | Levenshtein        | pylev                 | 0.15688 |
-| Levenshtein        | distance              | 0.28669 |
 | Levenshtein        | **textdistance**      | 0.53902 |
 
 Total: 24 libs.

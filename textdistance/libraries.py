@@ -173,7 +173,6 @@ reg(alg, LibraryBase('rapidfuzz.distance.DamerauLevenshtein', 'distance', condit
 reg(alg, LibraryBase('rapidfuzz.distance.OSA', 'distance', conditions=dict(restricted=True)))
 
 alg = 'Hamming'
-reg(alg, SameLengthLibrary('distance', 'hamming'))
 reg(alg, SameLengthTextLibrary('Levenshtein', 'hamming'))
 reg(alg, TextLibrary('jellyfish', 'hamming_distance'))
 reg(alg, SameLengthLibrary('rapidfuzz.distance.Hamming', 'distance'))
@@ -192,7 +191,6 @@ reg(alg, LibraryBase('rapidfuzz.distance.JaroWinkler', 'similarity', conditions=
 # reg(alg, TextLibrary('Levenshtein', 'jaro_winkler', conditions=dict(winklerize=True)))
 
 alg = 'Levenshtein'
-reg(alg, LibraryBase('distance', 'levenshtein'))
 reg(alg, LibraryBase('pylev', 'levenshtein'))
 reg(alg, TextLibrary('jellyfish', 'levenshtein_distance'))
 reg(alg, TextLibrary('Levenshtein', 'distance'))
