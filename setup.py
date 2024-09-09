@@ -23,7 +23,6 @@ extras = {
         'pyxDamerauLevenshtein',
         'rapidfuzz>=2.6.0',
         # slow
-        'distance',
         'pylev',
         'py_stringmatching',
         # other
@@ -65,7 +64,6 @@ extras = {
         'Levenshtein',          # only same length and strings
         'rapidfuzz>=2.6.0',     # only same length, any iterators of hashable elements
         'jellyfish',            # only strings, any length
-        'distance',             # only same length, any iterators
     ],
     'Jaro': [
         'rapidfuzz>=2.6.0',     # any iterators of hashable elements
