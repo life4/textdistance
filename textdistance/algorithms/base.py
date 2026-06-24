@@ -128,7 +128,7 @@ class Base:
         if self.qval == 1:
             return list(sequences)
         # by n-grams
-        return [find_ngrams(s, self.qval) for s in sequences]
+        return [find_ngrams(s, self.qval) or list(s) for s in sequences]
 
     def _get_counters(self, *sequences: Sequence[object]) -> list[Counter]:
         """Prepare sequences and convert it to Counters.
