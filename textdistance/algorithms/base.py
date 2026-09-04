@@ -23,10 +23,11 @@ class Base:
     def __call__(self, *sequences: Sequence[object]) -> float:
         raise NotImplementedError
 
-    @staticmethod
-    def maximum(*sequences: Sequence[object]) -> float:
+    def maximum(self, *sequences: Sequence[object]) -> float:
         """Get maximum possible value
         """
+        # Measure the same preprocessed representation `distance()` compares.
+        sequences = self._get_sequences(*sequences)
         return max(map(len, sequences))
 
     def distance(self, *sequences: Sequence[object]) -> float:
