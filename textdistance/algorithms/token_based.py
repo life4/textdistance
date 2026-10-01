@@ -280,7 +280,8 @@ class MongeElkan(_BaseSimilarity):
                 for c2 in s:
                     max_sim = max(max_sim, self.algorithm.similarity(c1, c2))
                 maxes.append(max_sim)
-        return sum(maxes) / len(seq) / len(maxes)
+        # One maximum per token. Averaging those maxima is the Monge-Elkan score.
+        return sum(maxes) / len(maxes)
 
     def __call__(self, *sequences: Sequence) -> float:
         quick_result = self.quick_answer(*sequences)
