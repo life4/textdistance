@@ -109,24 +109,40 @@ class Levenshtein(_Base):
         source:
         https://github.com/jamesturk/jellyfish/blob/master/jellyfish/_jellyfish.py#L18
         """
-        rows = len(s1) + 1
-        cols = len(s2) + 1
-        prev = None
-        cur: Any
         if numpy:
+            rows = len(s1) + 1
+            cols = len(s2) + 1
             cur = numpy.arange(cols)
-        else:
-            cur = range(cols)
+            for r in range(1, rows):
+                prev, cur = cur, [r] + [0] * (cols - 1)
+                for c in range(1, cols):
+                    deletion = prev[c] + 1
+                    insertion = cur[c - 1] + 1
+                    dist = self.test_func(s1[r - 1], s2[c - 1])
+                    edit = prev[c - 1] + (not dist)
+                    cur[c] = min(edit, deletion, insertion)
+            return int(cur[-1])
 
-        for r in range(1, rows):
-            prev, cur = cur, [r] + [0] * (cols - 1)
-            for c in range(1, cols):
-                deletion = prev[c] + 1
-                insertion = cur[c - 1] + 1
-                dist = self.test_func(s1[r - 1], s2[c - 1])
-                edit = prev[c - 1] + (not dist)
-                cur[c] = min(edit, deletion, insertion)
-        return int(cur[-1])
+        if len(s1) < len(s2) and (self.test_func is None or self.test_func == self._ident):
+            s1, s2 = s2, s1
+        cols = len(s2) + 1
+        prev = list(range(cols))
+        cur = [0] * cols
+        is_ident = (self.test_func is None or self.test_func == self._ident)
+
+        for r, char1 in enumerate(s1, 1):
+            cur[0] = r
+            if is_ident:
+                for c, char2 in enumerate(s2, 1):
+                    cost = 0 if char1 == char2 else 1
+                    cur[c] = min(prev[c] + 1, cur[c - 1] + 1, prev[c - 1] + cost)
+            else:
+                test_fn = self.test_func
+                for c, char2 in enumerate(s2, 1):
+                    cost = 0 if test_fn(char1, char2) else 1
+                    cur[c] = min(prev[c] + 1, cur[c - 1] + 1, prev[c - 1] + cost)
+            prev, cur = cur, prev
+        return prev[-1]
 
     def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
@@ -247,38 +263,44 @@ class DamerauLevenshtein(_Base):
         """
         https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
         """
-        d: dict[tuple[int, int], int] = {}
+        len1 = len(s1)
+        len2 = len(s2)
+        d = [[0] * (len2 + 2) for _ in range(len1 + 2)]
 
-        # matrix
-        for i in range(-1, len(s1) + 1):
-            d[i, -1] = i + 1
-        for j in range(-1, len(s2) + 1):
-            d[-1, j] = j + 1
+        for r in range(len1 + 2):
+            d[r][0] = r
+        for c in range(len2 + 2):
+            d[0][c] = c
+
+        test_fn = self.test_func
+        is_ident = (test_fn is None or test_fn == self._ident)
 
         for i, cs1 in enumerate(s1):
+            r = i + 1
+            d_r = d[r]
+            d_prev = d[r - 1]
+            d_prev2 = d[r - 2]
             for j, cs2 in enumerate(s2):
-                cost = int(not self.test_func(cs1, cs2))
-                # ^ 0 if equal, 1 otherwise
+                c = j + 1
+                cost = 0 if (cs1 == cs2 if is_ident else test_fn(cs1, cs2)) else 1
 
-                d[i, j] = min(
-                    d[i - 1, j] + 1,            # deletion
-                    d[i, j - 1] + 1,            # insertion
-                    d[i - 1, j - 1] + cost,     # substitution
+                val = min(
+                    d_prev[c] + 1,
+                    d_r[c - 1] + 1,
+                    d_prev[c - 1] + cost,
                 )
 
-                # transposition
-                if not i or not j:
-                    continue
-                if not self.test_func(cs1, s2[j - 1]):
-                    continue
-                if not self.test_func(s1[i - 1], cs2):
-                    continue
-                d[i, j] = min(
-                    d[i, j],
-                    d[i - 2, j - 2] + cost,
-                )
+                if (
+                    i > 0
+                    and j > 0
+                    and (cs1 == s2[j - 1] if is_ident else test_fn(cs1, s2[j - 1]))
+                    and (s1[i - 1] == cs2 if is_ident else test_fn(s1[i - 1], cs2))
+                ):
+                    val = min(val, d_prev2[c - 2] + cost)
 
-        return d[len(s1) - 1, len(s2) - 1]
+                d_r[c] = val
+
+        return d[len1][len2]
 
     def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
