@@ -162,22 +162,63 @@ class RatcliffObershelp(_BaseSimilarity):
     def maximum(self, *sequences: str) -> int:
         return 1
 
+    @staticmethod
+    def _find_subsequence(sequence, subsequence):
+        if isinstance(sequence, str) and isinstance(subsequence, str):
+            return sequence.find(subsequence)
+        if isinstance(sequence, bytes) and isinstance(subsequence, bytes):
+            return sequence.find(subsequence)
+        length = len(subsequence)
+        for start in range(len(sequence) - length + 1):
+            if all(sequence[start + i] == item for i, item in enumerate(subsequence)):
+                return start
+        return -1
+
     def _find(self, *sequences: str) -> int:
-        subseq = LCSStr()(*sequences)
+        text_sequences = all(isinstance(s, str) for s in sequences)
+        short_bytes = all(isinstance(s, bytes) for s in sequences)
+        if text_sequences or (len(sequences) == 2 and short_bytes and max(map(len, sequences)) < 200):
+            subseq = LCSStr()(*sequences)
+        elif len(sequences) == 2:
+            first, second = sequences
+            previous = [0] * (len(second) + 1)
+            best_start = best_length = 0
+            for i, item in enumerate(first):
+                current = [0] * (len(second) + 1)
+                for j, other in enumerate(second):
+                    if item == other:
+                        current[j + 1] = previous[j] + 1
+                        if current[j + 1] > best_length:
+                            best_length = current[j + 1]
+                            best_start = i + 1 - best_length
+                previous = current
+            subseq = first[best_start:best_start + best_length]
+        else:
+            short = min(sequences, key=len)
+            subseq = short[:0]
+            for length in range(len(short), 0, -1):
+                for start in range(len(short) - length + 1):
+                    candidate = short[start:start + length]
+                    if all(self._find_subsequence(s, candidate) >= 0 for s in sequences):
+                        subseq = candidate
+                        break
+                if subseq:
+                    break
         length = len(subseq)
         if length == 0:
             return 0
-        before = [s[:s.find(subseq)] for s in sequences]
-        after = [s[s.find(subseq) + length:] for s in sequences]
+        starts = [self._find_subsequence(s, subseq) for s in sequences]
+        before = [s[:start] for s, start in zip(sequences, starts)]
+        after = [s[start + length:] for s, start in zip(sequences, starts)]
         return self._find(*before) + length + self._find(*after)
 
     def __call__(self, *sequences: str) -> float:
+        sequences = self._get_sequences(*sequences)
         result = self.quick_answer(*sequences)
         if result is not None:
             return result
         scount = len(sequences)  # sequences count
         ecount = sum(map(len, sequences))  # elements count
-        sequences = self._get_sequences(*sequences)
         return scount * self._find(*sequences) / ecount
 
 
