@@ -5,7 +5,6 @@ from difflib import SequenceMatcher as _SequenceMatcher
 from typing import Any
 
 # app
-from ..utils import find_ngrams
 from .base import BaseSimilarity as _BaseSimilarity
 from .types import TestFunc
 
@@ -115,14 +114,21 @@ class LCSStr(_BaseSimilarity):
         short = min(sequences, key=len)
         length = len(short)
         for n in range(length, 0, -1):
-            for subseq in find_ngrams(short, n):
-                joined = ''.join(subseq)
+            for start in range(length - n + 1):
+                subseq = short[start:start + n]
                 for seq in sequences:
-                    if joined not in seq:
+                    if isinstance(subseq, (str, bytes)) and isinstance(seq, type(subseq)):
+                        found = subseq in seq
+                    else:
+                        found = any(
+                            all(seq[i + j] == item for j, item in enumerate(subseq))
+                            for i in range(len(seq) - n + 1)
+                        )
+                    if not found:
                         break
                 else:
-                    return joined
-        return type(short)()  # empty sequence
+                    return subseq
+        return short[:0]  # empty sequence
 
     def __call__(self, *sequences: str) -> str:
         if not all(sequences):
