@@ -37,7 +37,7 @@ class Prefix(_BaseSimilarity):
         if isinstance(s, str):
             return ''.join(result)
         if isinstance(s, bytes):
-            return b''.join(result)
+            return bytes(result)
         return result
 
     def similarity(self, *sequences: Sequence) -> int:
@@ -55,7 +55,7 @@ class Postfix(Prefix):
         if isinstance(s, str):
             return ''.join(result)
         if isinstance(s, bytes):
-            return b''.join(result)
+            return bytes(result)
         return list(result)
 
 
