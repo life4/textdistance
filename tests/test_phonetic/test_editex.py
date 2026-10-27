@@ -59,3 +59,13 @@ def test_local(left, right, expected):
 
     actual = ALG(external=True, local=True)(left, right)
     assert actual == expected
+
+
+@pytest.mark.parametrize('text, expected', [('a', 1), ('abc', 3), ('AbC', 3)])
+def test_configured_match_cost_for_identical_inputs(text, expected):
+    assert ALG(match_cost=1, group_cost=2, mismatch_cost=3)(text, text) == expected
+
+
+def test_default_match_cost_and_empty_input_controls():
+    assert ALG()('abc', 'abc') == 0
+    assert ALG(match_cost=1, group_cost=2, mismatch_cost=3)('', 'abc') == 9

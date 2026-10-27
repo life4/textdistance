@@ -138,9 +138,10 @@ class Editex(_Base):
         return self.r_cost(*elements)
 
     def __call__(self, s1: str, s2: str) -> float:
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
+        if self.match_cost == 0 or not s1 or not s2:
+            result = self.quick_answer(s1, s2)
+            if result is not None:
+                return result
 
         # must do `upper` before getting length because some one-char lowercase glyphs
         # are represented as two chars in uppercase.
