@@ -22,7 +22,7 @@ NW_MATRIX = {
 
 
 @pytest.mark.parametrize('left, right, expected', [
-    ('AGACTAGTTAC', 'CGAGACGT', 26),
+    ('AGACTAGTTAC', 'CGAGACGT', 41),
 ])
 def test_distance_matrix(left, right, expected):
     sim_matrix = textdistance.Matrix(NW_MATRIX, symmetric=True)
@@ -38,7 +38,7 @@ def sim_ident(x, y):
 
 
 @pytest.mark.parametrize('left, right, expected', [
-    ('GATTACA', 'GCATGCU', 0),
+    ('GATTACA', 'GCATGCU', 2),
 ])
 def test_distance_ident(left, right, expected):
     actual = ALG(sim_func=sim_ident)(left, right)
@@ -46,10 +46,24 @@ def test_distance_ident(left, right, expected):
 
 
 @pytest.mark.parametrize('left, right, expected', [
-    ('CGATATCAG', 'TGACGSTGC', 0),
-    ('AGACTAGTTAC', 'TGACGSTGC', 1),
-    ('AGACTAGTTAC', 'CGAGACGT', 0),
+    ('CGATATCAG', 'TGACGSTGC', 2),
+    ('AGACTAGTTAC', 'TGACGSTGC', 3),
+    ('AGACTAGTTAC', 'CGAGACGT', 4),
 ])
 def test_distance_ident_with_gap_5(left, right, expected):
     actual = ALG(gap_cost=5, sim_func=sim_ident)(left, right)
     assert actual == expected
+
+
+@pytest.mark.parametrize('left, right, expected', [
+    ('ABCxxx', 'ABCyyy', 6), ('xxxABC', 'yyyABC', 6),
+    ('xa', 'ay', 2), ('abc', 'abc', 6), ('abc', '', 0),
+])
+def test_best_local_score(left, right, expected):
+    alg = ALG(gap_cost=2, sim_func=lambda a, b: 2 if a == b else -1)
+    assert alg(left, right) == expected
+
+
+@pytest.mark.parametrize('score', [0, -1])
+def test_custom_identical_score(score):
+    assert ALG(sim_func=lambda a, b: score)('abc', 'abc') == 0

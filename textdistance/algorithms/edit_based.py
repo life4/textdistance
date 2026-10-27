@@ -538,9 +538,10 @@ class SmithWaterman(_BaseSimilarity):
 
         s1, s2 = self._get_sequences(s1, s2)
 
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
+        if self.sim_func is self._ident:
+            result = self.quick_answer(s1, s2)
+            if result is not None:
+                return result
 
         dist_mat = numpy.zeros(
             (len(s1) + 1, len(s2) + 1),
@@ -556,7 +557,7 @@ class SmithWaterman(_BaseSimilarity):
                 delete = dist_mat[i - 1, j] - self.gap_cost
                 insert = dist_mat[i, j - 1] - self.gap_cost
                 dist_mat[i, j] = max(0, match, delete, insert)
-        return dist_mat[dist_mat.shape[0] - 1, dist_mat.shape[1] - 1]
+        return dist_mat.max()
 
 
 class Gotoh(NeedlemanWunsch):
