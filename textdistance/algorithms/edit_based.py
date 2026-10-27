@@ -460,11 +460,7 @@ class NeedlemanWunsch(_BaseSimilarity):
     def normalized_distance(self, *sequences: Sequence[object]) -> float:
         """Get distance from 0 to 1
         """
-        minimum = self.minimum(*sequences)
-        maximum = self.maximum(*sequences)
-        if maximum == 0:
-            return 0
-        return (self.distance(*sequences) - minimum) / (maximum - minimum)
+        return 1 - self.normalized_similarity(*sequences)
 
     def normalized_similarity(self, *sequences: Sequence[object]) -> float:
         """Get similarity from 0 to 1
@@ -473,7 +469,7 @@ class NeedlemanWunsch(_BaseSimilarity):
         maximum = self.maximum(*sequences)
         if maximum == 0:
             return 1
-        return (self.similarity(*sequences) - minimum) / (maximum * 2)
+        return (self.similarity(*sequences) - minimum) / (maximum - minimum)
 
     def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> float:
         if not numpy:

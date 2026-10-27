@@ -53,3 +53,19 @@ def test_distance_ident(left, right, expected):
 def test_distance_ident_with_gap_5(left, right, expected):
     actual = ALG(gap_cost=5, sim_func=sim_ident)(left, right)
     assert actual == expected
+
+
+@pytest.mark.parametrize('gap_cost', [0, .5, 2, 3])
+def test_custom_gap_normalization(gap_cost):
+    alg = ALG(gap_cost=gap_cost)
+    assert alg.normalized_similarity('abc', 'abc') == 1
+    assert alg.normalized_distance('abc', 'abc') == 0
+    assert alg.normalized_similarity('abc', 'ab') == pytest.approx(2 / 3)
+    assert alg.normalized_distance('abc', 'ab') == pytest.approx(1 / 3)
+
+
+@pytest.mark.parametrize('gap_cost, expected', [(0, 0), (.5, 1 / 3), (2, 2 / 3), (3, .75)])
+def test_custom_gap_nonmatching_normalization(gap_cost, expected):
+    alg = ALG(gap_cost=gap_cost)
+    assert alg.normalized_similarity('abc', 'xyz') == pytest.approx(expected)
+    assert alg.normalized_distance('abc', 'xyz') == pytest.approx(1 - expected)
