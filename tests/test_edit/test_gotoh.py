@@ -52,3 +52,16 @@ def test_distance_ident_with_gap_05(left, right, expected):
 def test_distance_ident_with_gap_5(left, right, expected):
     actual = ALG(gap_open=5, gap_ext=5, sim_func=sim_ident)(left, right)
     assert actual == expected
+
+
+@pytest.mark.parametrize('left, right, expected', [
+    ('', '', 0), ('a', '', -2), ('', 'a', -2),
+    ('abc', '', -3), ('', 'abc', -3),
+])
+def test_empty_sequences(left, right, expected):
+    assert ALG(gap_open=2, gap_ext=.5)(left, right) == expected
+
+
+@pytest.mark.parametrize('left, right', [('a', 'b'), ('ab', 'a'), ('a', 'ab')])
+def test_empty_prepared_sequences(left, right):
+    assert ALG(qval=3)(left, right) == 0

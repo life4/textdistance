@@ -612,11 +612,9 @@ class Gotoh(NeedlemanWunsch):
             d_mat[i, 0] = float('-inf')
             p_mat[i, 0] = -self.gap_open - self.gap_ext * (i - 1)
             q_mat[i, 0] = float('-inf')
-            q_mat[i, 1] = -self.gap_open
         for j in range(1, len_s2 + 1):
             d_mat[0, j] = float('-inf')
             p_mat[0, j] = float('-inf')
-            p_mat[1, j] = -self.gap_open
             q_mat[0, j] = -self.gap_open - self.gap_ext * (j - 1)
 
         for i, sc1 in enumerate(s1, start=1):
