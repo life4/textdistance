@@ -2,6 +2,7 @@ from __future__ import annotations
 
 # built-in
 from difflib import SequenceMatcher as _SequenceMatcher
+from operator import eq
 from typing import Any
 
 # app
@@ -53,16 +54,17 @@ class LCSSeq(_BaseSimilarity):
         else:
             lengths = [array('L', [0] * (len(seq2) + 1)) for _ in range(len(seq1) + 1)]
 
+        test_func = eq if self.test_func is self._ident else self.test_func
         # row 0 and column 0 are initialized to 0 already
         for i, char1 in enumerate(seq1):
             for j, char2 in enumerate(seq2):
-                if char1 == char2:
+                if test_func(char1, char2):
                     lengths[i + 1][j + 1] = lengths[i][j] + 1
                 else:
                     lengths[i + 1][j + 1] = max(lengths[i + 1][j], lengths[i][j + 1])
 
         # read the substring out from the matrix
-        result = ''
+        result = seq1[:0]
         i, j = len(seq1), len(seq2)
         while i != 0 and j != 0:
             if lengths[i][j] == lengths[i - 1][j]:
@@ -70,8 +72,8 @@ class LCSSeq(_BaseSimilarity):
             elif lengths[i][j] == lengths[i][j - 1]:
                 j -= 1
             else:
-                assert seq1[i - 1] == seq2[j - 1]
-                result = seq1[i - 1] + result
+                assert test_func(seq1[i - 1], seq2[j - 1])
+                result = seq1[i - 1:i] + result
                 i -= 1
                 j -= 1
         return result
@@ -80,13 +82,13 @@ class LCSSeq(_BaseSimilarity):
         if not all(sequences):
             return type(sequences[0])()  # empty sequence
         if self.test_func(*[s[-1] for s in sequences]):
-            c = sequences[0][-1]
+            c = sequences[0][-1:]
             sequences = tuple(s[:-1] for s in sequences)
-            return self(*sequences) + c
+            return self._recursive(*sequences) + c
         m = type(sequences[0])()  # empty sequence
         for i, s in enumerate(sequences):
             ss = sequences[:i] + (s[:-1], ) + sequences[i + 1:]
-            m = max([self(*ss), m], key=len)
+            m = max([self._recursive(*ss), m], key=len)
         return m
 
     def __call__(self, *sequences: str) -> str:
