@@ -224,14 +224,25 @@ class Tanimoto(Jaccard):
     The return value is a float between -inf and 0, where 0 means equal,
     and -inf totally different
     
-    This is identical to the Jaccard similarity coefficient
-    and the Tversky index for alpha=1 and beta=1.
+    The raw similarity is the base-2 logarithm of the Jaccard coefficient.
+    Distance negates that score. Normalized helpers use the underlying
+    coefficient and its complement, so they stay between zero and one.
 
     https://en.wikipedia.org/wiki/Jaccard_index#Tanimoto_similarity_and_distance
     """
 
+    def maximum(self, *sequences: Sequence) -> float:
+        return 0
+
+    def normalized_similarity(self, *sequences: Sequence) -> float:
+        # Jaccard's shortcuts need its own maximum of one, not the log range.
+        return Jaccard(qval=self.qval, as_set=self.as_set, external=self.external)(*sequences)
+
+    def normalized_distance(self, *sequences: Sequence) -> float:
+        return 1 - self.normalized_similarity(*sequences)
+
     def __call__(self, *sequences: Sequence) -> float:
-        result = super().__call__(*sequences)
+        result = self.normalized_similarity(*sequences)
         if result == 0:
             return float('-inf')
         else:
