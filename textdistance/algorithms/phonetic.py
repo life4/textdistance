@@ -64,7 +64,7 @@ class MRA(_BaseSimilarity):
             # update sequences
             ss: Iterator[tuple[Any, Any]]
             ss = zip_longest(new_sequences, sequences, fillvalue=list())
-            sequences = [s1 + s2[minlen:] for s1, s2 in ss]
+            sequences = [list(reversed(s1 + s2[minlen:])) for s1, s2 in ss]
             # update lengths
             lengths = list(map(len, sequences))
 
