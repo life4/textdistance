@@ -33,3 +33,47 @@ def test_arith_output():
     alg = textdistance.ArithNCD(terminator='\x00')
     fraction = alg._compress('BANANA')
     assert fraction.numerator == 1525
+
+
+@pytest.mark.parametrize('qval, left, right', [
+    (None, 'one two', 'one three'),
+    (2, 'abc', 'abd'),
+    (2, [1, 2, 3], [1, 2, 4]),
+])
+def test_prepared_token_distance(qval, left, right):
+    # Each input contains two distinct tokens with one token in common.
+    # Their encoded sizes are 2, and either concatenation has size 6.
+    alg = textdistance.ArithNCD(qval=qval)
+    assert alg(left, right) == 2
+    assert alg(right, left) == 2
+
+
+@pytest.mark.parametrize('qval, left, right', [
+    (None, '', 'one'),
+    (2, 'a', 'ab'),
+])
+def test_empty_prepared_tokens(qval, left, right):
+    assert textdistance.ArithNCD(qval=qval)(left, right) == 0
+
+
+@pytest.mark.parametrize('left, right, expected', [
+    ('ab', 'ac', 2),
+    ('abc', 'abd', 3.5),
+    ('abca', 'abda', 4 / 3),
+    ('', '', 0),
+])
+def test_character_distances_unchanged(left, right, expected):
+    assert textdistance.ArithNCD()(left, right) == expected
+
+
+@pytest.mark.parametrize('qval, terminator, left, right, expected', [
+    (None, '#', 'one two', 'one three', 2.5),
+    (2, '#', 'abc', 'abd', 2.5),
+    (None, '#', 'one # two', 'one # three', 1.25),
+    (None, 'END', 'one two', 'one three', 2.5),
+    (2, 'END', 'abc', 'abd', 2.5),
+])
+def test_prepared_token_terminator(qval, terminator, left, right, expected):
+    alg = textdistance.ArithNCD(qval=qval, terminator=terminator)
+    assert alg(left, right) == expected
+    assert alg(right, left) == expected
