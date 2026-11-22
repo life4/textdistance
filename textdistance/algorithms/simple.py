@@ -49,9 +49,17 @@ class Postfix(Prefix):
     """
 
     def __call__(self, *sequences: Sequence) -> Sequence:
+        if not sequences:
+            return ''
+        sequences = self._get_sequences(*sequences)
         s = sequences[0]
-        sequences = [list(reversed(s)) for s in sequences]
-        result = reversed(super().__call__(*sequences))
+        sequences = [reversed(s) for s in sequences]
+
+        def test(seq):
+            return self.sim_test(*seq)
+
+        result = [c[0] for c in takewhile(test, zip(*sequences))]
+        result.reverse()
         if isinstance(s, str):
             return ''.join(result)
         if isinstance(s, bytes):
