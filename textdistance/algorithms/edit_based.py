@@ -210,6 +210,9 @@ class DamerauLevenshtein(_Base):
 
         len1 = len(s1)
         len2 = len(s2)
+        # Custom matches track the last source row per target position.
+        custom = self.test_func is not self._ident
+        last_seen = [0] * (len2 + 1) if custom else []
 
         maxdist = len1 + len2
         d[-1, -1] = maxdist
@@ -225,11 +228,13 @@ class DamerauLevenshtein(_Base):
         for i, cs1 in enumerate(s1, start=1):
             db = 0
             for j, cs2 in enumerate(s2, start=1):
-                i1 = da.get(cs2, 0)
+                i1 = last_seen[j] if custom else da.get(cs2, 0)
                 j1 = db
                 if self.test_func(cs1, cs2):
                     cost = 0
                     db = j
+                    if custom:
+                        last_seen[j] = i
                 else:
                     cost = 1
 
@@ -239,7 +244,8 @@ class DamerauLevenshtein(_Base):
                     d[i - 1, j] + 1,            # deletion
                     d[i1 - 1, j1 - 1] + (i - i1) - 1 + (j - j1),  # transposition
                 )
-            da[cs1] = i
+            if not custom:
+                da[cs1] = i
 
         return d[len1, len2]
 
