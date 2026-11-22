@@ -112,7 +112,7 @@ setup(
 
     packages=['textdistance', 'textdistance.algorithms'],
     package_data={'': ['*.json']},
-    python_requires='>=3.5',
+    python_requires='>=3.7',
     extras_require=extras,
 
     url='https://github.com/orsinium/textdistance',
