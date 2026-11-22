@@ -96,11 +96,11 @@ class ArithNCD(_NCDBase):
         self.terminator = terminator
         self.qval = qval
 
-    def _make_probs(self, *sequences) -> dict[str, tuple[Fraction, Fraction]]:
+    def _make_probs(self, *sequences) -> dict[Any, tuple[Fraction, Fraction]]:
         """
         https://github.com/gw-c/arith/blob/master/arith.py
         """
-        sequences = self._get_counters(*sequences)
+        sequences = [Counter(s) for s in sequences]
         counts = self._sum_counters(*sequences)
         if self.terminator is not None:
             counts[self.terminator] = 1
@@ -119,13 +119,17 @@ class ArithNCD(_NCDBase):
 
     def _get_range(
         self,
-        data: str,
-        probs: dict[str, tuple[Fraction, Fraction]],
+        data: Sequence,
+        probs: dict[Any, tuple[Fraction, Fraction]],
     ) -> tuple[Fraction, Fraction]:
         if self.terminator is not None:
-            if self.terminator in data:
-                data = data.replace(self.terminator, '')
-            data += self.terminator
+            if isinstance(data, str):
+                if self.terminator in data:
+                    data = data.replace(self.terminator, '')
+                data += self.terminator
+            else:
+                data = [char for char in data if char != self.terminator]
+                data.append(self.terminator)
 
         start = Fraction(0, 1)
         width = Fraction(1, 1)
@@ -135,7 +139,7 @@ class ArithNCD(_NCDBase):
             width *= prob_width
         return start, start + width
 
-    def _compress(self, data: str) -> Fraction:
+    def _compress(self, data: Sequence) -> Fraction:
         probs = self._make_probs(data)
         start, end = self._get_range(data=data, probs=probs)
         output_fraction = Fraction(0, 1)
@@ -146,7 +150,7 @@ class ArithNCD(_NCDBase):
             output_denominator *= 2
         return output_fraction
 
-    def _get_size(self, data: str) -> int:
+    def _get_size(self, data: Sequence) -> int:
         numerator = self._compress(data).numerator
         if numerator == 0:
             return 0
