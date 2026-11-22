@@ -160,7 +160,7 @@ class Base:
         """Return all elements count from Counter
         """
         if getattr(self, 'as_set', False):
-            return len(set(counter))
+            return sum(count > 0 for count in counter.values())
         else:
             return sum(counter.values())
 
@@ -179,6 +179,8 @@ class BaseSimilarity(Base):
         return self(*sequences)
 
     def quick_answer(self, *sequences: Sequence[object]) -> float | None:
+        if getattr(self, 'as_set', False) and all(isinstance(s, Counter) for s in sequences):
+            sequences = tuple(+s for s in sequences)
         if not sequences:
             return self.maximum(*sequences)
         if len(sequences) == 1:
