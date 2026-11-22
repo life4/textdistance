@@ -85,7 +85,7 @@ class Sorensen(_BaseSimilarity):
         count = sum(self._count_counters(s) for s in sequences)
         intersection = self._intersect_counters(*sequences)      # set
         intersection = self._count_counters(intersection)        # int
-        return 2.0 * intersection / count
+        return len(sequences) * intersection / count
 
 
 class Tversky(_BaseSimilarity):
