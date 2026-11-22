@@ -2,7 +2,7 @@ from __future__ import annotations
 
 # built-in
 from collections import defaultdict
-from itertools import zip_longest
+from itertools import islice, zip_longest
 from typing import Any, Sequence, TypeVar
 
 # app
@@ -53,14 +53,27 @@ class Hamming(_Base):
 
     def __call__(self, *sequences: Sequence[object]) -> int:
         sequences = self._get_sequences(*sequences)
+        if self.truncate and len(sequences) > 1:
+            size = min(map(len, sequences))
+            if any(len(sequence) != size for sequence in sequences):
+                truncated = []
+                for sequence in sequences:
+                    try:
+                        truncated.append(sequence[:size])
+                    except TypeError:
+                        truncated.append(tuple(islice(sequence, size)))
+                sequences = truncated
 
         result = self.quick_answer(*sequences)
         if result is not None:
             assert isinstance(result, int)
             return result
 
-        _zip = zip if self.truncate else zip_longest
-        return sum(not self.test_func(*es) for es in _zip(*sequences))
+        missing = object()
+        return sum(
+            any(e is missing for e in es) or not self.test_func(*es)
+            for es in zip_longest(*sequences, fillvalue=missing)
+        )
 
 
 class Levenshtein(_Base):
