@@ -325,9 +325,11 @@ class JaroWinkler(_BaseSimilarity):
     def __call__(self, s1: Sequence[T], s2: Sequence[T], prefix_weight: float = 0.1) -> float:
         s1, s2 = self._get_sequences(s1, s2)
 
-        result = self.quick_answer(s1, s2)
-        if result is not None:
-            return result
+        # Registered external implementations use the default prefix weight.
+        if prefix_weight == 0.1 or self._ident(s1, s2) or not s1 or not s2:
+            result = self.quick_answer(s1, s2)
+            if result is not None:
+                return result
 
         s1_len = len(s1)
         s2_len = len(s2)
