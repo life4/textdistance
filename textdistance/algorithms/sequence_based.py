@@ -2,10 +2,9 @@ from __future__ import annotations
 
 # built-in
 from difflib import SequenceMatcher as _SequenceMatcher
-from typing import Any
+from typing import Any, Sequence
 
 # app
-from ..utils import find_ngrams
 from .base import BaseSimilarity as _BaseSimilarity
 from .types import TestFunc
 
@@ -106,25 +105,33 @@ class LCSStr(_BaseSimilarity):
     """longest common substring similarity
     """
 
-    def _standart(self, s1: str, s2: str) -> str:
+    def _standart(self, s1: Sequence, s2: Sequence) -> Sequence:
         matcher = _SequenceMatcher(a=s1, b=s2)
         match = matcher.find_longest_match(0, len(s1), 0, len(s2))
         return s1[match.a: match.a + match.size]
 
-    def _custom(self, *sequences: str) -> str:
+    @staticmethod
+    def _contains(sequence: Sequence, subsequence: Sequence) -> bool:
+        if isinstance(sequence, (str, bytes)) and isinstance(subsequence, type(sequence)):
+            return subsequence in sequence
+        length = len(subsequence)
+        needle = tuple(subsequence)
+        return any(
+            tuple(sequence[start:start + length]) == needle
+            for start in range(len(sequence) - length + 1)
+        )
+
+    def _custom(self, *sequences: Sequence) -> Sequence:
         short = min(sequences, key=len)
         length = len(short)
         for n in range(length, 0, -1):
-            for subseq in find_ngrams(short, n):
-                joined = ''.join(subseq)
-                for seq in sequences:
-                    if joined not in seq:
-                        break
-                else:
-                    return joined
-        return type(short)()  # empty sequence
+            for start in range(length - n + 1):
+                subseq = short[start:start + n]
+                if all(self._contains(seq, subseq) for seq in sequences):
+                    return subseq
+        return short[:0]  # empty sequence
 
-    def __call__(self, *sequences: str) -> str:
+    def __call__(self, *sequences: Sequence) -> Sequence:
         if not all(sequences):
             return ''
         length = len(sequences)
@@ -138,7 +145,7 @@ class LCSStr(_BaseSimilarity):
             return self._standart(*sequences)
         return self._custom(*sequences)
 
-    def similarity(self, *sequences: str) -> int:
+    def similarity(self, *sequences: Sequence) -> int:
         return len(self(*sequences))
 
 
