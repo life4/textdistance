@@ -109,24 +109,20 @@ class Levenshtein(_Base):
         source:
         https://github.com/jamesturk/jellyfish/blob/master/jellyfish/_jellyfish.py#L18
         """
-        rows = len(s1) + 1
         cols = len(s2) + 1
-        prev = None
-        cur: Any
-        if numpy:
-            cur = numpy.arange(cols)
-        else:
-            cur = range(cols)
+        prev = list(range(cols))
+        cur = [0] * cols
 
-        for r in range(1, rows):
-            prev, cur = cur, [r] + [0] * (cols - 1)
-            for c in range(1, cols):
+        for r, cs1 in enumerate(s1, start=1):
+            cur[0] = r
+            for c, cs2 in enumerate(s2, start=1):
                 deletion = prev[c] + 1
                 insertion = cur[c - 1] + 1
-                dist = self.test_func(s1[r - 1], s2[c - 1])
+                dist = self.test_func(cs1, cs2)
                 edit = prev[c - 1] + (not dist)
                 cur[c] = min(edit, deletion, insertion)
-        return int(cur[-1])
+            prev, cur = cur, prev
+        return int(prev[-1])
 
     def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
@@ -205,25 +201,26 @@ class DamerauLevenshtein(_Base):
     def _pure_python_unrestricted(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         """https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
         """
-        d: dict[tuple[int, int], int] = {}
-        da: dict[T, int] = {}
-
         len1 = len(s1)
         len2 = len(s2)
+        if not len1:
+            return len2
+        if not len2:
+            return len1
 
+        da: dict[T, int] = {}
         maxdist = len1 + len2
-        d[-1, -1] = maxdist
+        d = [[maxdist] * (len2 + 2) for _ in range(len1 + 2)]
 
-        # matrix
-        for i in range(len(s1) + 1):
-            d[i, -1] = maxdist
-            d[i, 0] = i
-        for j in range(len(s2) + 1):
-            d[-1, j] = maxdist
-            d[0, j] = j
+        for i in range(len1 + 1):
+            d[i + 1][1] = i
+        for j in range(len2 + 1):
+            d[1][j + 1] = j
 
         for i, cs1 in enumerate(s1, start=1):
             db = 0
+            row_i = d[i + 1]
+            row_prev = d[i]
             for j, cs2 in enumerate(s2, start=1):
                 i1 = da.get(cs2, 0)
                 j1 = db
@@ -233,52 +230,57 @@ class DamerauLevenshtein(_Base):
                 else:
                     cost = 1
 
-                d[i, j] = min(
-                    d[i - 1, j - 1] + cost,     # substitution
-                    d[i, j - 1] + 1,            # insertion
-                    d[i - 1, j] + 1,            # deletion
-                    d[i1 - 1, j1 - 1] + (i - i1) - 1 + (j - j1),  # transposition
+                row_i[j + 1] = min(
+                    row_prev[j] + cost,                           # substitution
+                    row_i[j] + 1,                                 # insertion
+                    row_prev[j + 1] + 1,                          # deletion
+                    d[i1][j1] + (i - i1) - 1 + (j - j1),          # transposition
                 )
             da[cs1] = i
 
-        return d[len1, len2]
+        return d[len1 + 1][len2 + 1]
 
     def _pure_python_restricted(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         """
         https://www.guyrutenberg.com/2008/12/15/damerau-levenshtein-distance-in-python/
         """
-        d: dict[tuple[int, int], int] = {}
+        len1 = len(s1)
+        len2 = len(s2)
+        if not len1:
+            return len2
+        if not len2:
+            return len1
 
-        # matrix
-        for i in range(-1, len(s1) + 1):
-            d[i, -1] = i + 1
-        for j in range(-1, len(s2) + 1):
-            d[-1, j] = j + 1
+        cols = len2 + 2
+        row_prev2 = list(range(cols))
+        row_prev = list(range(cols))
+        row_cur = [0] * cols
 
         for i, cs1 in enumerate(s1):
+            row_cur[0] = i + 1
+            prev_s1 = s1[i - 1] if i > 0 else None
             for j, cs2 in enumerate(s2):
                 cost = int(not self.test_func(cs1, cs2))
                 # ^ 0 if equal, 1 otherwise
 
-                d[i, j] = min(
-                    d[i - 1, j] + 1,            # deletion
-                    d[i, j - 1] + 1,            # insertion
-                    d[i - 1, j - 1] + cost,     # substitution
-                )
+                c_del = row_prev[j + 1] + 1
+                c_ins = row_cur[j] + 1
+                c_sub = row_prev[j] + cost
+                m = c_del if c_del < c_ins else c_ins
+                if c_sub < m:
+                    m = c_sub
 
                 # transposition
-                if not i or not j:
-                    continue
-                if not self.test_func(cs1, s2[j - 1]):
-                    continue
-                if not self.test_func(s1[i - 1], cs2):
-                    continue
-                d[i, j] = min(
-                    d[i, j],
-                    d[i - 2, j - 2] + cost,
-                )
+                if i and j and self.test_func(cs1, s2[j - 1]) and self.test_func(prev_s1, cs2):
+                    c_trans = row_prev2[j - 1] + cost
+                    if c_trans < m:
+                        m = c_trans
 
-        return d[len(s1) - 1, len(s2) - 1]
+                row_cur[j + 1] = m
+
+            row_prev2, row_prev, row_cur = row_prev, row_cur, row_prev2
+
+        return row_prev[len2]
 
     def __call__(self, s1: Sequence[T], s2: Sequence[T]) -> int:
         s1, s2 = self._get_sequences(s1, s2)
